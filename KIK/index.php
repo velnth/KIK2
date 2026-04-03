@@ -9,7 +9,7 @@ if (isset($_POST['login'])) {
         header("Location: admin/dashboard.php");
         exit();
     } elseif ($role == 'user') {
-        header("Location: home.php");
+        header("Location: home.html");
         exit();
     } else {
         $error = "Email atau Password salah!";
