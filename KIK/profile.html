@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="database.js"></script>
+    <script src="wishlist.js"></script>
+</head>
+<body>
+    <div class="app-container" style="padding-bottom: 50px; min-height: 100vh;">
+        
+        <div class="p-20 flex-between">
+            <span id="backBtn" style="cursor: pointer; font-size: 20px; font-weight: bold;">←</span>
+            <h2 id="pageTitle" style="font-size: 18px;">Profile</h2>
+            <div style="width: 20px;"></div> </div>
+
+        <div id="profileHeaderInfo" class="p-20" style="display: flex; align-items: center; gap: 15px;">
+            <div class="profile-header-icon"></div>
+            <div>
+                <h3 id="profileName" style="font-size: 18px;">Guest</h3>
+                <p id="profileEmail" style="color: var(--text-muted); font-size: 12px;">Belum Login</p>
+            </div>
+        </div>
+
+        <div id="mainProfileMenu" style="padding: 0 20px;">
+            <p class="menu-section-title">General</p>
+            <div class="menu-item" onclick="openSubPage('editProfilePage', 'Edit Profile')">
+                <span>Edit Profile</span> <span style="color:#ccc;">›</span>
+            </div>
+            <div class="menu-item" onclick="openSubPage('notificationsPage', 'Notifications')">
+                <span>Notifications <span id="notifDotMaster" class="unread-dot"></span></span> 
+                <span style="color:#ccc;">›</span>
+            </div>
+            <div class="menu-item" onclick="openSubPage('wishlistPage', 'Wishlist')">
+                <span>Wishlist</span> <span style="color:#ccc;">›</span>
+            </div>
+
+            <p class="menu-section-title">Legal</p>
+            <div class="menu-item" onclick="openSubPage('termsPage', 'Terms of Use')">
+                <span>Terms of Use</span> <span style="color:#ccc;">›</span>
+            </div>
+            <div class="menu-item" onclick="openSubPage('privacyPage', 'Privacy Policy')">
+                <span>Privacy Policy</span> <span style="color:#ccc;">›</span>
+            </div>
+
+            <p class="menu-section-title">Personal</p>
+            <div class="menu-item" onclick="alert('Buka aplikasi Email untuk melaporkan bug ke admin@mountster.com')">
+                <span>Report a Bug</span> <span style="color:#ccc;">›</span>
+            </div>
+            <a href="#" id="btnLogout" class="menu-item" style="color: red; text-decoration: none;">Logout</a>
+        </div>
+
+        <div style="padding: 0 20px;">
+            
+            <div id="editProfilePage" class="sub-page">
+                <div class="input-group"><label>Display Name</label><input type="text" id="editNameInput" class="input-form" value=""></div>
+                <div class="input-group"><label>Email Address</label><input type="email" id="editEmailInput" class="input-form" value=""></div>
+                
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px; font-weight: bold;">Ubah Password</p>
+                
+                <div class="input-group">
+                    <label>Current Password</label>
+                    <div class="verify-group">
+                        <input type="password" id="currentPass" class="input-form" placeholder="Masukkan password lama">
+                        <button class="verify-btn" onclick="verifyPassword()">Verify</button>
+                        <span id="verifiedCheck" class="verified-icon">✔️</span>
+                    </div>
+                </div>
+
+                <div class="input-group"><label>New Password</label><input type="password" id="newPass" class="input-form" placeholder="Password baru" disabled></div>
+                <div class="input-group"><label>Confirm New Password</label><input type="password" id="newPassConfirm" class="input-form" placeholder="Ulangi password baru" disabled></div>
+                
+                <button class="btn btn-primary" onclick="alert('Profil berhasil disimpan!'); closeSubPages();">Save Changes</button>
+            </div>
+
+            <div id="notificationsPage" class="sub-page">
+                <div id="promoChat" class="notif-card" onclick="readPromoChat()">
+                    <div style="font-size:24px;">⛺</div>
+                    <div style="flex:1;">
+                        <h4 style="font-size: 14px; margin-bottom: 3px;">Mountster Support <span id="chatDot" class="unread-dot"></span></h4>
+                        <p style="font-size: 12px; color: #555;">Don't forget discount 50% blabla...</p>
+                    </div>
+                </div>
+
+                <div id="promoChatDetail" style="display:none; background: #fff; padding: 15px; border-radius: 10px; border: 1px solid var(--primary); margin-top: 10px;">
+                    <p style="font-size: 12px; color: #888; margin-bottom: 10px;">Hari ini, 10:00 AM</p>
+                    <p style="font-size: 14px; line-height: 1.5;">Halo Sobat Mountster! 👋<br><br>Jangan lupa ada diskon 50% untuk penyewaan semua jenis Tenda Kapasitas 4 Orang minggu ini. Gunakan kode promo <b>MuncakHemat50</b> saat checkout ya!</p>
+                </div>
+            </div>
+
+            <div id="wishlistPage" class="sub-page">
+                <div id="wishlistContainer"></div>
+            </div>
+
+            <div id="termsPage" class="sub-page">
+                <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; height: 70vh; overflow-y: auto; padding-right: 10px;">
+                    <h4 style="color: var(--text-main); margin-bottom: 5px; font-size: 14px;">1. Acceptance of Terms</h4>
+                    <p style="margin-bottom: 15px;">Dengan menggunakan Mountster, Anda menyetujui syarat dan ketentuan penyewaan alat yang berlaku di sistem kami. Harap membaca dengan saksama sebelum melakukan transaksi.</p>
+                    
+                    <h4 style="color: var(--text-main); margin-bottom: 5px; font-size: 14px;">2. User Conduct & Responsibilities</h4>
+                    <p style="margin-bottom: 15px;">Penyewa wajib menjaga kondisi barang. Kerusakan akibat kelalaian akan dikenakan denda sesuai persentase kerusakan barang tersebut saat dikembalikan. Dilarang keras menggunakan alat untuk kegiatan ilegal.</p>
+                    
+                    <h4 style="color: var(--text-main); margin-bottom: 5px; font-size: 14px;">3. Payment & Deposits</h4>
+                    <p>Beberapa alat berat atau paket ekspedisi mungkin memerlukan uang jaminan (deposit) yang akan dikembalikan secara penuh jika barang kembali dalam kondisi sempurna.</p>
+                </div>
+            </div>
+
+            <div id="privacyPage" class="sub-page">
+                <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; height: 70vh; overflow-y: auto; padding-right: 10px;">
+                    <h4 style="color: var(--text-main); margin-bottom: 5px; font-size: 14px;">1. Data Collection</h4>
+                    <p style="margin-bottom: 15px;">Data pribadi Anda seperti nama, email, nomor telepon, dan identitas KTP digunakan murni untuk verifikasi dan jaminan keamanan penyewaan barang Mountster.</p>
+                    
+                    <h4 style="color: var(--text-main); margin-bottom: 5px; font-size: 14px;">2. Data Protection</h4>
+                    <p style="margin-bottom: 15px;">Kami menggunakan enkripsi standar industri untuk melindungi data Anda. Data KTP fisik maupun digital tidak akan disebarluaskan, dijual, atau dipindahtangankan kepada pihak ketiga mana pun.</p>
+                    
+                    <h4 style="color: var(--text-main); margin-bottom: 5px; font-size: 14px;">3. Account Deletion</h4>
+                    <p>Anda memiliki hak untuk meminta penghapusan akun beserta seluruh data yang tersimpan di dalam server kami setelah tidak memiliki tanggungan penyewaan aktif.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Logika Menampilkan Nama User
+        const savedEmail = localStorage.getItem('userEmail');
+        if (savedEmail) {
+            const userName = savedEmail.split('@')[0];
+            document.getElementById('profileName').innerText = userName;
+            document.getElementById('profileEmail').innerText = savedEmail;
+            
+            // Isi otomatis di halaman Edit Profile
+            document.getElementById('editNameInput').value = userName;
+            document.getElementById('editEmailInput').value = savedEmail;
+        }
+
+        // Logout
+        document.getElementById('btnLogout').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('userEmail');
+            window.location.href = 'index.html';
+        });
+
+        // ==========================================
+        // SISTEM NAVIGASI BACK BUTTON PINTAR
+        // ==========================================
+        const backBtn = document.getElementById('backBtn');
+        const pageTitle = document.getElementById('pageTitle');
+        const profileHeaderInfo = document.getElementById('profileHeaderInfo');
+        const mainProfileMenu = document.getElementById('mainProfileMenu');
+        let currentSubPage = null; 
+
+        backBtn.addEventListener('click', function() {
+            if (currentSubPage !== null) {
+                closeSubPages();
+            } else {
+                window.location.href = 'home.html';
+            }
+        });
+
+        function openSubPage(pageId, titleText) {
+            currentSubPage = pageId;
+            pageTitle.innerText = titleText; 
+            profileHeaderInfo.style.display = 'none'; 
+            mainProfileMenu.style.display = 'none'; 
+            
+            document.querySelectorAll('.sub-page').forEach(page => page.classList.remove('active'));
+            // Tambahkan timeout sedikit agar display berubah dulu baru transisi muncul (Fix Bug Kosong)
+            setTimeout(() => {
+                document.getElementById(pageId).classList.add('active'); 
+            }, 10);
+            
+            if(pageId === 'wishlistPage') renderProfileWishlist();
+        }
+
+        function closeSubPages() {
+            currentSubPage = null;
+            pageTitle.innerText = "Profile"; 
+            profileHeaderInfo.style.display = 'flex'; 
+            mainProfileMenu.style.display = 'block'; 
+            
+            document.querySelectorAll('.sub-page').forEach(page => page.classList.remove('active'));
+        }
+
+        // ==========================================
+        // LOGIKA VERIFIKASI PASSWORD
+        // ==========================================
+        function verifyPassword() {
+            const pass = document.getElementById('currentPass').value;
+            if(pass.length > 3) { 
+                document.getElementById('verifiedCheck').style.display = 'block';
+                document.getElementById('newPass').disabled = false;
+                document.getElementById('newPassConfirm').disabled = false;
+                document.getElementById('newPass').focus();
+            } else {
+                alert("Password salah! Masukkan password saat ini untuk melanjutkan.");
+            }
+        }
+
+        // ==========================================
+        // LOGIKA BACA CHAT/NOTIFIKASI
+        // ==========================================
+        function readPromoChat() {
+            const chatCard = document.getElementById('promoChat');
+            chatCard.classList.add('read'); 
+            document.getElementById('chatDot').style.display = 'none'; 
+            document.getElementById('notifDotMaster').style.display = 'none'; 
+            document.getElementById('promoChatDetail').style.display = 'block'; 
+        }
+
+        // ==========================================
+        // LOGIKA WISHLIST DI PROFIL
+        // ==========================================
+        function renderProfileWishlist() {
+            let wishlist = JSON.parse(localStorage.getItem('mountsterWishlist')) || [];
+            const container = document.getElementById('wishlistContainer');
+            container.innerHTML = "";
+            if (wishlist.length === 0) {
+                container.innerHTML = `<p style="text-align:center; color:#888; font-size:14px; margin-top:20px;">Belum ada produk favorit.</p>`;
+                return;
+            }
+            wishlist.forEach(productId => {
+                const product = products.find(p => p.id === productId);
+                if (product) {
+                    container.innerHTML += `
+                        <div style="display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom:15px;">
+                            <div style="font-size: 30px; background:#f0f0f0; width:60px; height:60px; display:flex; align-items:center; justify-content:center; border-radius:10px;">⛺</div>
+                            <div>
+                                <h4 style="font-size:14px; margin-bottom:5px;">${product.name}</h4>
+                                <p style="color:var(--primary); font-size:12px; font-weight:bold;">${product.price}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,431 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --primary: #1f5130;
+    --bg-color: #e8ebea;
+    --text-main: #333333;
+    --text-muted: #888888;
+    --white: #ffffff;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+body { background-color: #e0e0e0; display: flex; justify-content: center; min-height: 100vh; }
+
+/* =========================================
+   TAMPILAN DEFAULT (MOBILE FIRST)
+   ========================================= */
+.app-container {
+    width: 100%; 
+    max-width: 100%; /* Di HP akan memenuhi layar 100% */
+    min-height: 100vh;
+    background-color: var(--bg-color); 
+    position: relative;
+    overflow-x: hidden; 
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    padding-bottom: 20px;
+}
+
+.p-20 { padding: 20px; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.bold { font-weight: bold; }
+
+.btn {
+    display: block; width: 100%; padding: 15px; border-radius: 10px; border: none;
+    font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none;
+    transition: background 0.3s ease;
+}
+.btn-primary { background-color: var(--primary); color: var(--white); }
+.btn-primary:hover { background-color: #88b888; } /* Efek hover saat di PC */
+
+.search-bar { width: 100%; padding: 12px 15px; border-radius: 25px; border: none; margin-top: 15px; outline: none; }
+
+.header-green { background-color: var(--primary); padding: 30px 20px; color: white; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; }
+
+.categories { display: flex; gap: 10px; overflow-x: auto; padding: 15px 20px; scrollbar-width: none; }
+.cat-chip { background: var(--white); padding: 8px 15px; border-radius: 20px; font-size: 12px; white-space: nowrap; color: var(--text-main); font-weight: bold; cursor: pointer; transition: 0.2s;}
+.cat-chip:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+
+.product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; }
+.card-new {
+    background: white; border-radius: 15px; padding: 15px; text-decoration: none; color: black;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03); display: flex; flex-direction: column; position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.card-new:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+.card-new img { width: 100%; height: 100px; object-fit: contain; margin-bottom: 15px; background: #fff; }
+.card-new-title { font-size: 14px; font-weight: 500; margin-bottom: 5px; line-height: 1.3; }
+.card-new-price { font-size: 14px; font-weight: bold; margin-bottom: 10px; }
+.card-new-footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); }
+
+/* Tabs, Review, Profil dll */
+.tab-container { display: flex; gap: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-top: 20px; }
+.tab-item { color: var(--text-muted); cursor: pointer; font-size: 14px; }
+.tab-item.active { color: var(--primary); font-weight: bold; border-bottom: 2px solid var(--primary); }
+.tab-content { display: none; margin-top: 20px; }
+.tab-content.active { display: block; animation: fadeIn 0.3s; }
+
+.review-item { margin-bottom: 20px; font-size: 14px; }
+.review-header { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+.review-avatar { width: 35px; height: 35px; border-radius: 50%; background: #ccc; }
+
+.qty-btn { border: 1px solid #ddd; padding: 2px 10px; background: white; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+.profile-icon { width: 35px; height: 35px; border-radius: 50%; background: url('image_0.png') center/cover; background-color: #ddd; }
+.profile-header-icon { width: 60px; height: 60px; border-radius: 50%; background: url('image_0.png') center/cover; background-color: #ddd; margin-right: 15px; }
+
+.heart-icon { font-size: 24px; color: #ccc; cursor: pointer; text-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.2s; }
+.heart-icon:active { transform: scale(1.3); }
+.heart-icon.loved { color: red; }
+
+.latest-search-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #ddd; font-size: 14px; color: var(--text-muted); }
+.latest-search-del { cursor: pointer; color: red; font-size: 12px; }
+
+/* Styles Halaman Login */
+.login-card { background: rgba(255, 255, 255, 0.95); padding: 30px 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); backdrop-filter: blur(10px); }
+.login-title { text-align: center; font-size: 22px; font-weight: bold; margin-bottom: 25px; color: var(--text-main); }
+.input-group { margin-bottom: 18px; position: relative; text-align: left; }
+.input-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; }
+.input-form { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #eee; background-color: #fafafa; font-size: 14px; outline: none; transition: all 0.3s ease; }
+.input-form:focus { border-color: var(--primary); background-color: white; box-shadow: 0 0 0 4px rgba(153, 204, 153, 0.3); }
+
+/* Menu Profil Interaktif */
+.menu-item { padding: 15px 0; border-bottom: 1px solid #eee; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
+.menu-item:hover { background-color: #f0f0f0; padding-left: 10px; } /* Efek geser dikit saat di-hover PC */
+.menu-section-title { font-size: 12px; color: var(--text-muted); margin-top: 20px; margin-bottom: 5px; }
+
+.sub-page { display: none; padding: 20px; background: white; border-radius: 15px; margin-top: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); animation: fadeIn 0.3s ease; }
+.sub-page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.unread-dot { width: 10px; height: 10px; background-color: #007bff; border-radius: 50%; display: inline-block; margin-left: 5px; }
+.notif-card { padding: 15px; border-radius: 12px; margin-bottom: 15px; cursor: pointer; background: #f4f8fb; border-left: 4px solid #007bff; display: flex; align-items: center; gap: 15px; }
+.notif-card.read { background: white; border-left: 4px solid #ddd; border: 1px solid #eee; color: var(--text-muted); }
+
+.verify-group { display: flex; gap: 10px; align-items: center; }
+.verify-btn { padding: 10px 15px; border-radius: 8px; border: none; background: var(--text-main); color: white; cursor: pointer; font-size: 12px; font-weight: bold;}
+.verified-icon { color: var(--primary); font-size: 18px; display: none; }
+
+/* Toast Notification Tetap di Dalam Frame */
+.toast-container {
+    position: absolute; 
+    top: 20px;
+    right: 20px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+.toast-box { background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px); color: var(--text-main); padding: 15px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; box-shadow: 0 8px 20px rgba(0,0,0,0.15); display: flex; align-items: center; border-left: 5px solid var(--primary); animation: slideInToast 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards, fadeOutToast 0.4s ease 2.6s forwards; }
+.toast-box.hapus { border-left: 5px solid #ff4d4f; }
+@keyframes slideInToast { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes fadeOutToast { from { transform: translateX(0); opacity: 1; } to { transform: translateX(120%); opacity: 0; } }
+
+div[style*="position: fixed; bottom: 0;"] {
+    max-width: 100% !important;
+}
+
+.hide-on-mobile {
+    display: none !important;
+}
+
+@media (min-width: 768px) {
+    .app-container {
+        max-width: 800px; 
+        margin: 40px auto; 
+        border-radius: 20px; /* Ujungnya dibuat melengkung */
+        box-shadow: 0 15px 50px rgba(0,0,0,0.2); /* Efek bayangan aplikasi */
+        padding-bottom: 100px;
+        min-height: calc(100vh - 80px); /* Menyesuaikan margin layar */
+    }
+
+    .header-green {
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        padding: 40px 30px; /* Header lebih lega */
+    }
+
+    /* Grid Produk Berubah Jadi 3 Kolom */
+    .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .card-new img {
+        height: 150px; /* Gambar produk lebih besar di PC */
+    }
+
+    .login-card {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    /* Memaksa tombol 'Add to Cart' & Checkout menempel di dalam Container, bukan di layar monitor */
+    div[style*="position: fixed; bottom: 0;"] {
+        position: absolute !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+        width: 100% !important;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+
+    /* Menghilangkan enter (<br>) di PC */
+.mobile-br {
+    display: none;
+}
+/* Membesarkan teks judul sekalian biar lebih pas di layar lebar */
+.hero-title {
+    font-size: 32px !important; 
+}
+
+/* Meratakan menu kategori ke seluruh layar */
+.categories {
+    justify-content: space-between;
+}
+
+.cat-chip {
+    flex: 1; /* Bikin tiap tombol kategori lebarnya sama rata */
+    text-align: center;
+    padding: 12px 15px; /* Dibesarin dikit biar gampang diklik di PC */
+}
+
+/* Munculin lagi produk ke-3 dan ke-4 di layar PC/Tablet */
+.hide-on-mobile {
+    display: flex !important; /* Harus flex ngikutin bawaan .card-new */
+}
+}
+
+/* Untuk Layar Lebar (Desktop/PC > 1024px) */
+@media (min-width: 1024px) {
+    .app-container {
+        max-width: 1000px; /* Makin lebar lagi */
+    }
+
+    /* Grid Produk Berubah Jadi 4 Kolom */
+    .product-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    /* Banner diskon di halaman depan dibikin lebih tinggi */
+    .p-20 > div[style*="height: 150px;"] {
+        height: 250px !important; 
+    }
+}
+
+.checkout-wrapper {
+    display: grid;
+    grid-template-columns: 1fr; /* Default HP: 1 Kolom */
+    gap: 20px;
+    padding: 20px;
+}
+
+@media (min-width: 768px) {
+    .checkout-wrapper {
+        grid-template-columns: 2fr 1fr; /* PC: 2 Kolom (Kiri lebih lebar) */
+        align-items: start;
+    }
+}
+
+.checkout-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 15px;
+}
+
+.checkout-card-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+/* Style Alamat */
+.address-box {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    position: relative;
+}
+.address-box.active {
+    border-color: var(--primary);
+    background-color: #f4fbf4;
+}
+.address-badge {
+    background: #e0e0e0;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 5px;
+}
+
+/* Radio & Checkbox Custom */
+.custom-radio {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+.custom-radio input[type="radio"] {
+    accent-color: var(--primary);
+    width: 18px;
+    height: 18px;
+}
+
+/* Modal / Popup Alamat */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+.modal-overlay.active {
+    display: flex;
+}
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 15px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+}
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-body {
+    padding: 20px;
+    overflow-y: auto;
+}
+.modal-close {
+    font-size: 24px;
+    cursor: pointer;
+    color: #888;
+}
+
+.btn-outline-primary {
+    background-color: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+.btn-outline-primary:hover {
+    background-color: #f4fbf4;
+}
+
+#mapContainer {
+    height: 200px; 
+    width: 100%; 
+    border-radius: 8px; 
+    margin-bottom: 15px;
+    z-index: 1; 
+}
+
+/* =========================================
+   NAVBAR NAVIGASI (PC & MOBILE)
+   ========================================= */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 400px;
+    height: 70px;
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+@media (min-width: 768px) {
+    .bottom-nav {
+        max-width: 800px;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .bottom-nav { max-width: 1000px; }
+}
+
+.nav-item {
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 12px;
+    flex: 1;
+    cursor: pointer;
+}
+
+.nav-item.active { color: var(--primary); }
+.nav-item span { font-size: 22px; display: block; margin-bottom: 2px; }
+
+/* =========================================
+   STYLE HALAMAN ORDER & STATUS
+   ========================================= */
+.order-card {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.status-badge {
+    color: #009933;
+    font-size: 12px;
+    font-weight: bold;
+    float: right;
+}
+
+.order-info-box {
+    background: #f4fbf4;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #009933;
+    border: 1px solid #e0f2e0;
+}
+
+.order-btn-group {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+.btn-order {
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    background: white;
+    font-weight: bold;
+}
+
+.btn-order-active {
+    border-color: #009933;
+    color: #009933;
+}
