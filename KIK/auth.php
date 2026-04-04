@@ -4,7 +4,7 @@ session_start();
 $users = [
     ['name' => 'Admin', 'email' => 'admin@mountster.com', 'password' => 'admin123', 'role' => 'admin'],
     ['name' => 'Customer 1', 'email' => 'cust1@gmail.com', 'password' => 'user123', 'role' => 'user', 'gender'=> 'Male', 'avatar_url' => 'https://api.dicebear.com/8.x/notionists/svg?seed=Erick'],
-    ['name' => 'Customer 2', 'email' => 'cust2@gmail.com', 'password' => 'user456', 'role' => 'user', 'gender'=> 'Female', 'avatar_url' => 'https://api.dicebear.com/8.x/notionists/svg?seed=Anya']
+    ['name' => 'Carmen', 'email' => 'carmenita@gmail.com', 'password' => 'carmenheart2hearts', 'role' => 'user', 'gender'=> 'Female', 'avatar_url' => 'https://i.pinimg.com/736x/67/ba/9b/67ba9baf20594962401c2c46ab136dca.jpg']
 ];
 
 function login($email, $password) {
