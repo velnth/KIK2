@@ -280,14 +280,14 @@ $store_gmaps = "https://maps.google.com/mountsterstore";
 <body>
 
     <div class="sidebar">
-        <a href="#" class="sidebar-logo">M<span>ST</span></a>
+        <a href="#" class="sidebar-logo">MOUNT<span>STER</span></a>
         <nav style="flex: 1;">
             <a href="#" class="nav-item active"><i class="fas fa-th-large"></i> Dashboard</a>
-            <a href="#" class="nav-item"><i class="fas fa-mountain"></i> Inventory</a>
-            <a href="#" class="nav-item"><i class="fas fa-shopping-cart"></i> Orders</a>
-            <a href="#" class="nav-item"><i class="fas fa-user-tag"></i> Renters</a>
-            <a href="#" class="nav-item"><i class="fas fa-comment-alt"></i> Messages</a>
-            <a href="#" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
+            <a href="inventory.php" class="nav-item"><i class="fas fa-mountain"></i> Inventory</a>
+            <a href="orders.php" class="nav-item"><i class="fas fa-shopping-cart"></i> Orders</a>
+            <a href="renters.php" class="nav-item"><i class="fas fa-user-tag"></i> Renters</a>
+            <a href="messages.php" class="nav-item"><i class="fas fa-comment-alt"></i> Messages</a>
+            <a href="settings.php" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
         </nav>
         <div class="logout-nav">
             <a href="logout.php" class="nav-item logout"><i class="fas fa-power-off"></i> Logout</a>

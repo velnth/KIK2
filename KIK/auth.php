@@ -14,8 +14,8 @@ function login($email, $password) {
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_email'] = $user['email'];
             $_SESSION['user_role'] = $user['role'];
-            $_SESSION['user_gender'] = $user['gender'];
-            $_SESSION['user_avatar'] = $user['avatar_url'];
+            $_SESSION['user_gender'] = $user['gender'] ?? null;
+            $_SESSION['user_avatar'] = $user['avatar_url'] ?? null;
             return $user['role'];
         }
     }
