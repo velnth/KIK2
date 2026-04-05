@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Produk</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="database.js"></script>
+    <script src="wishlist.js"></script>
+</head>
+<body>
+    <div class="app-container" style="padding-bottom: 80px;">
+        <div class="p-20 flex-between">
+            <a href="javascript:history.back()" style="text-decoration: none; color: black; font-size: 20px;">←</a>
+            <a href="cart.html" style="text-decoration: none; font-size: 20px;">🛒</a>
+        </div>
+
+        <div class="p-20" style="padding-top: 0;">
+            <p id="detPrice" style="color: var(--primary); font-weight: bold;">Rp -</p>
+            <h2 id="detName" style="font-size: 22px; margin-top: 5px; margin-bottom: 10px;">Nama Produk</h2>
+
+            <div class="tab-container">
+                <div class="tab-item active" onclick="switchTab('overview')">Overview</div>
+                <div class="tab-item" onclick="switchTab('spec')">Specification</div>
+            </div>
+
+            <div id="overview" class="tab-content active">
+                
+                <div style="position: relative; margin-bottom: 20px;">
+                    <img id="detImage" src="" alt="Product" style="width: 100%; height: 200px; background-color: #eee; border-radius: 15px; object-fit: contain;">
+                    <span class="heart-icon" id="detHeartIcon" style="position: absolute; bottom: 15px; right: 15px; background: white; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor:pointer; font-size: 24px;">♥</span>
+                </div>
+                
+                <h3 style="font-size: 16px; margin-bottom: 15px;">Review (102)</h3>
+                
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="review-avatar"></div>
+                        <div><p class="bold">Madelina</p><p style="font-size:10px; color:#888;">1 Month ago</p></div>
+                    </div>
+                    <p style="color: #ffc107; font-size:12px;">⭐⭐⭐⭐⭐</p>
+                    <p style="color: var(--text-muted); margin-top: 5px;">Sangat bagus, tendanya luas dan anti bocor. Sangat direkomendasikan.</p>
+                </div>
+
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="review-avatar"></div>
+                        <div><p class="bold">Irfan</p><p style="font-size:10px; color:#888;">1 Month ago</p></div>
+                    </div>
+                    <p style="color: #ffc107; font-size:12px;">⭐⭐⭐⭐⭐</p>
+                    <p style="color: var(--text-muted); margin-top: 5px;">Barang terawat, wangi, pelayanan juga ramah.</p>
+                </div>
+
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="review-avatar"></div>
+                        <div><p class="bold">Ravi Putra</p><p style="font-size:10px; color:#888;">2 Months ago</p></div>
+                    </div>
+                    <p style="color: #ffc107; font-size:12px;">⭐⭐⭐⭐</p>
+                    <p style="color: var(--text-muted); margin-top: 5px;">Oke banget buat naik ke Merbabu kemarin.</p>
+                </div>
+
+                <div class="text-center mt-20 mb-20">
+                    <span style="font-size: 12px; color: var(--text-muted);">See All Reviews</span>
+                </div>
+
+                <div class="flex-between" style="margin-bottom: 15px; margin-top: 30px;">
+                    <h3 style="font-size: 16px;">Another Product</h3>
+                    <a href="search.html" style="font-size: 12px; color: var(--text-muted); text-decoration: none;">See All</a>
+                </div>
+                <div class="product-grid" id="randomProducts" style="padding: 0;"></div>
+            </div>
+
+            <div id="spec" class="tab-content">
+                <p id="detDesc" style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    Deskripsi produk akan muncul di sini...
+                </p>
+            </div>
+        </div>
+
+        <div style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 400px; padding: 20px; background: white; box-shadow: 0 -5px 10px rgba(0,0,0,0.05); z-index: 10; display: flex; gap: 10px;">
+            <button id="btnBuyNow" class="btn btn-outline-primary" style="margin: 0; flex: 1; font-size: 14px;">Rental Sekarang</button>
+            <button id="btnAddToCart" class="btn btn-primary" style="margin: 0; flex: 1; font-size: 14px;">Add To Cart</button>
+        </div>
+    </div>
+
+    <script>
+        // Sihir rating otomatis
+        products.forEach((p, i) => {
+            p.rating = p.rating || (i % 3 === 0 ? 4.8 : (i % 2 === 0 ? 5.0 : 4.5));
+            p.reviews = p.reviews || Math.floor(Math.random() * 100) + 10;
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = parseInt(urlParams.get('id'));
+        const product = products.find(p => p.id === productId) || products[0];
+
+        function getProductImage(product) {
+            if (product.name === 'Eiger Wanderlust 60') return 'images/eiger-wanderlust-60.jpeg';
+            if (product.name === 'Consina Magnum 4') return 'images/consina-magnum-4.jpeg';
+            if (product.name === 'Great Outdoor Java 4') return 'images/great-outdoor-java-4.jpeg';
+            if (product.name === 'Naturehike Cloud Up 2') return 'images/naturehike-cloud-up-2.jpeg';
+            if (product.name === 'Merapi Mountain Half Moon') return 'images/merapi-mountain-half-moon.jpeg';
+            if (product.name === 'Tenda Pramuka Regu') return 'images/tenda-pramuka-regu.jpg';
+            if (product.name === 'Tenda Dome 2 Orang') return 'images/tenda-dome-2-orang.jpg';
+            if (product.name === 'Naturehike Village 5') return 'images/naturehike-village-5.jpg';
+            if (product.name === 'Eiger Shira 1P') return 'images/eiger-shira-1p.jpg';
+            if (product.name === 'Antarestar') return 'images/antarestar.png';
+            if (product.name === 'Osprey Aether 65L') return 'images/osprey-aether-65l.jpg';
+            if (product.name === 'Deuter Futura Pro 40') return 'images/deuter-futura-pro-40.jpg';
+            if (product.name === 'Eiger Eliptic Solaris 65L') return 'images/eiger-eliptic-solaris-65l.jpg';
+            if (product.name === 'Consina Tarebbi 60L') return 'images/consina-tarebbi-60l.jpg';
+            if (product.name === 'Arei Ramandika 60L') return 'images/arei-ramandika-60l.jpg';
+            if (product.name === 'Eiger Rhinos 60L') return 'images/eiger-rhinos-60l.jpg';
+            if (product.name === 'Osprey Ariel 55L (Women)') return 'images/osprey-ariel-55l-women.jpg';
+            if (product.name === 'Consina Extraterrestrial 60L') return 'images/consina-extraterrestrial-60l.jpg';
+            if (product.name === 'Deuter Aircontact 50+10') return 'images/deuter-aircontact-50plus10.jpg';
+            if (product.name === 'Naturehike Rock 60L') return 'images/naturehike-rock-60l.jpg';
+            if (product.name === 'Salomon Quest 4 GTX') return 'images/salomon-quest-4-gtx.jpg';
+            if (product.name === 'Eiger Pollock') return 'images/eiger-pollock.jpg';
+            if (product.name === 'Consina Alpine') return 'images/consina-alpine.jpg';
+            if (product.name === 'SNTA 471') return 'images/snta-471.jpg';
+            if (product.name === 'La Sportiva TX4') return 'images/la-sportiva-tx4.jpg';
+            if (product.name === 'Merrell Moab 3') return 'images/merrell-moab-3.jpg';
+            if (product.name === 'Eiger Anaconda') return 'images/eiger-anaconda.jpg';
+            if (product.name === 'Columbia Newton Ridge') return 'images/columbia-newton-ridge.png';
+            if (product.name === 'Arei Outdoorgear Shoes') return 'images/arei-outdoorgear-shoes.jpg';
+            if (product.name === 'Karrimor Bodmin') return 'images/karrimor-bodmin.jpg';
+            if (product.name === 'Kompor Portable Kotak') return 'images/kompor-portable-kotak.jpg';
+            if (product.name === 'Trangia 27-1 UL') return 'images/trangia-27-1-ul.jpg';
+            if (product.name === 'Nesting Bulat 4 in 1') return 'images/nesting-bulat-4-in-1.png';
+            if (product.name === 'Nesting Kotak TNI') return 'images/nesting-kotak-tni.jpg';
+            if (product.name === 'Kompor Mawar (Windproof)') return 'images/kompor-mawar-windproof.jpg';
+            if (product.name === 'Panci Lipat Naturehike') return 'images/panci-lipat-naturehike.png';
+            if (product.name === 'Gas Kaleng Hi-Cook') return 'images/gas-kaleng-hi-cook.jpg';
+            if (product.name === 'Windshield (Pelindung Angin)') return 'images/windshield-pelindung-angin.jpg';
+            if (product.name === 'Jerigen Air Lipat 5L') return 'images/jerigen-air-lipat-5l.jpg';
+            if (product.name === 'Set Alat Makan (Sendok Garpu Pisau)') return 'images/set-alat-makan-sendok-garpu-pisau.jpg';
+            if (product.name === 'Jaket Eiger Tropic') return 'images/jaket-eiger-tropic.jpg';
+            if (product.name === 'Celana Sambung Consina') return 'images/celana-sambung-consina.jpg';
+            if (product.name === 'Jas Hujan Arei Ponco') return 'images/jas-hujan-arei-ponco.jpg';
+            if (product.name === 'Base Layer Thermal') return 'images/base-layer-thermal.jpg';
+            if (product.name === 'Kupluk Rajut (Beanie)') return 'images/kupluk-rajut-beanie.jpg';
+            if (product.name === 'Sarung Tangan Polar') return 'images/sarung-tangan-polar.jpg';
+            if (product.name === 'Jaket Bulang (Down Jacket)') return 'images/jaket-bulang-down-jacket.jpg';
+            if (product.name === 'Kaos Kaki Trekking Tebal') return 'images/kaos-kaki-trekking-tebal.jpg';
+            if (product.name === 'Gaiter Anti Pacet') return 'images/gaiter-anti-pacet.jpg';
+            if (product.name === 'Topi Rimba Eiger') return 'images/topi-rimba-eiger.jpg';
+            return '';
+        }
+
+        // Masukkan data ID produk secara paksa ke tombol Hati agar tidak Error
+        document.getElementById('detHeartIcon').setAttribute('onclick', `toggleWishlist(${product.id})`);
+
+        document.getElementById('detName').innerText = product.name;
+        document.getElementById('detPrice').innerText = product.price;
+        document.getElementById('detImage').src = getProductImage(product);
+        document.getElementById('detDesc').innerText = `${product.name} adalah salah satu perlengkapan terbaik di kategori ${product.category}. Dirancang dengan material berkualitas tinggi untuk menunjang keamanan dan kenyamanan aktivitas outdoor Anda di segala cuaca. Pastikan perlengkapan ini masuk dalam list penyewaan Anda!`;
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        const randomProds = products.sort(() => 0.5 - Math.random()).slice(0, 2);
+        const randomContainer = document.getElementById('randomProducts');
+        randomProds.forEach(p => {
+            randomContainer.innerHTML += `
+                <div class="card-new">
+                    <a href="detail.html?id=${p.id}" style="text-decoration:none; color:inherit; display:block;">
+                        <img src="${getProductImage(p)}" alt="${p.name}" style="height: 80px;">
+                        <h4 class="card-new-title" style="font-size:12px;">${p.name}</h4>
+                        <p class="card-new-price" style="font-size:12px;">${p.price}</p>
+                    </a>
+                </div>
+            `;
+        });
+
+        document.getElementById('btnAddToCart').addEventListener('click', function() {
+            handleAddToCart(product);
+            this.innerText = "✓ Added to Cart!";
+            this.style.backgroundColor = "#333";
+            setTimeout(() => {
+                this.innerText = "Add To Cart";
+                this.style.backgroundColor = "var(--primary)";
+            }, 1500);
+        });
+
+        document.getElementById('btnBuyNow').addEventListener('click', function() {
+            // Simpan produk ke memori sementara khusus "Rental Sekarang"
+            let directItem = [{ id: product.id, name: product.name, price: product.price, qty: 1 }];
+            localStorage.setItem('mountsterDirectBuy', JSON.stringify(directItem));
+            window.location.href = 'checkout.html'; // Langsung lompat ke checkout
+        });
+        
+        // Panggil wishlist untuk mengubah warna hati di gambar jika sudah disukai
+        updateWishlistIcons();
+    </script>
+</body>
+</html>

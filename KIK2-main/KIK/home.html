@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mountster - Home</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="database.js"></script>
+    <script src="wishlist.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header-green">
+            <div class="flex-between">
+                <a href="cart.html" style="text-decoration: none; font-size: 24px;">🛒</a>
+                <h1 style="font-size: 20px; flex: 1; text-align: center; margin: 0;">mountster</h1>
+                <a href="profile.html"><div class="profile-icon"></div></a>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <p id="greetingName" style="font-size: 14px;">Hi, Guest</p>
+                <h2 style="font-size: 22px; margin-top: 5px;" class="hero-title">Mau Muncak<br class="mobile-br"> Kemana Hari Ini?</h2>
+            </div>
+            <input type="text" id="searchInput" class="search-bar" placeholder="Search Tenda, Carrier Atau Sepatu...">
+        </div>
+
+        <div class="categories">
+            <a href="search.html?cat=Tenda" class="cat-chip" style="text-decoration: none;">Tenda</a>
+            <a href="search.html?cat=Tas Carrier" class="cat-chip" style="text-decoration: none;">Carrier</a>
+            <a href="search.html?cat=Sepatu" class="cat-chip" style="text-decoration: none;">Sepatu</a>
+            <a href="search.html?cat=Alat Masak" class="cat-chip" style="text-decoration: none;">Alat Masak</a>
+            <a href="search.html?cat=Apparel" class="cat-chip" style="text-decoration: none;">Apparel</a>
+        </div>
+
+        <div class="p-20" style="padding-top: 0;">
+            <div style="width: 100%; height: 150px; background-image: url('images/Tent_aglow.jpg'); background-size: cover; background-position: center; position: relative; border-radius: 15px; overflow: hidden;">
+                <div style="position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 100%);"></div>
+                <div style="position: relative; z-index: 2; padding: 20px; height: 100%; display: flex; flex-direction: column; justify-content: center; color: white;">
+                    <h3 style="margin: 0; font-weight: 800; font-size: 24px; line-height: 1.15;">Paket Hemat<br>Semeru</h3>
+                    <p style="margin: 8px 0 0; color: rgba(255,255,255,0.8); font-size: 13px; line-height: 1.4;">Sewa lengkap mulai Rp 150.000</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-20 flex-between" style="padding-top: 0;">
+            <h3 style="font-size: 16px;">Best Seller Rental</h3>
+            <a href="search.html?rating=4.8" style="font-size: 12px; color: var(--text-muted); text-decoration: none;">See All</a>
+        </div>
+
+        <div class="product-grid" id="homeProductGrid"></div>
+    </div>
+
+    <script>
+        const savedEmail = localStorage.getItem('userEmail');
+        if (savedEmail) {
+            document.getElementById('greetingName').innerText = `Hi, ${savedEmail.split('@')[0]}`;
+        }
+
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' && this.value.trim() !== "") {
+                handleLatestSearch(this.value);
+                window.location.href = `search.html?q=${this.value}`;
+            }
+        });
+
+        // Sihir untuk memberikan rating & review otomatis agar database.js tetap aman
+        products.forEach((p, i) => {
+            p.rating = p.rating || (i % 3 === 0 ? 4.8 : (i % 2 === 0 ? 5.0 : 4.5)); // Sebagian dapat 4.8
+            p.reviews = p.reviews || Math.floor(Math.random() * 100) + 10;
+        });
+
+        function getProductImage(product) {
+            if (product.name === 'Eiger Wanderlust 60') return 'images/eiger-wanderlust-60.jpeg';
+            if (product.name === 'Consina Magnum 4') return 'images/consina-magnum-4.jpeg';
+            if (product.name === 'Great Outdoor Java 4') return 'images/great-outdoor-java-4.jpeg';
+            if (product.name === 'Naturehike Cloud Up 2') return 'images/naturehike-cloud-up-2.jpeg';
+            if (product.name === 'Merapi Mountain Half Moon') return 'images/merapi-mountain-half-moon.jpeg';
+            if (product.name === 'Tenda Pramuka Regu') return 'images/tenda-pramuka-regu.jpg';
+            if (product.name === 'Tenda Dome 2 Orang') return 'images/tenda-dome-2-orang.jpg';
+            if (product.name === 'Naturehike Village 5') return 'images/naturehike-village-5.jpg';
+            if (product.name === 'Eiger Shira 1P') return 'images/eiger-shira-1p.jpg';
+            if (product.name === 'Antarestar') return 'images/antarestar.png';
+            if (product.name === 'Osprey Aether 65L') return 'images/osprey-aether-65l.jpg';
+            if (product.name === 'Deuter Futura Pro 40') return 'images/deuter-futura-pro-40.jpg';
+            if (product.name === 'Eiger Eliptic Solaris 65L') return 'images/eiger-eliptic-solaris-65l.jpg';
+            if (product.name === 'Consina Tarebbi 60L') return 'images/consina-tarebbi-60l.jpg';
+            if (product.name === 'Arei Ramandika 60L') return 'images/arei-ramandika-60l.jpg';
+            if (product.name === 'Eiger Rhinos 60L') return 'images/eiger-rhinos-60l.jpg';
+            if (product.name === 'Osprey Ariel 55L (Women)') return 'images/osprey-ariel-55l-women.jpg';
+            if (product.name === 'Consina Extraterrestrial 60L') return 'images/consina-extraterrestrial-60l.jpg';
+            if (product.name === 'Deuter Aircontact 50+10') return 'images/deuter-aircontact-50plus10.jpg';
+            if (product.name === 'Naturehike Rock 60L') return 'images/naturehike-rock-60l.jpg';
+            if (product.name === 'Salomon Quest 4 GTX') return 'images/salomon-quest-4-gtx.jpg';
+            if (product.name === 'Eiger Pollock') return 'images/eiger-pollock.jpg';
+            if (product.name === 'Consina Alpine') return 'images/consina-alpine.jpg';
+            if (product.name === 'SNTA 471') return 'images/snta-471.jpg';
+            if (product.name === 'La Sportiva TX4') return 'images/la-sportiva-tx4.jpg';
+            if (product.name === 'Merrell Moab 3') return 'images/merrell-moab-3.jpg';
+            if (product.name === 'Eiger Anaconda') return 'images/eiger-anaconda.jpg';
+            if (product.name === 'Columbia Newton Ridge') return 'images/columbia-newton-ridge.png';
+            if (product.name === 'Arei Outdoorgear Shoes') return 'images/arei-outdoorgear-shoes.jpg';
+            if (product.name === 'Karrimor Bodmin') return 'images/karrimor-bodmin.jpg';
+            if (product.name === 'Kompor Portable Kotak') return 'images/kompor-portable-kotak.jpg';
+            if (product.name === 'Trangia 27-1 UL') return 'images/trangia-27-1-ul.jpg';
+            if (product.name === 'Nesting Bulat 4 in 1') return 'images/nesting-bulat-4-in-1.png';
+            if (product.name === 'Nesting Kotak TNI') return 'images/nesting-kotak-tni.jpg';
+            if (product.name === 'Kompor Mawar (Windproof)') return 'images/kompor-mawar-windproof.jpg';
+            if (product.name === 'Panci Lipat Naturehike') return 'images/panci-lipat-naturehike.png';
+            if (product.name === 'Gas Kaleng Hi-Cook') return 'images/gas-kaleng-hi-cook.jpg';
+            if (product.name === 'Windshield (Pelindung Angin)') return 'images/windshield-pelindung-angin.jpg';
+            if (product.name === 'Jerigen Air Lipat 5L') return 'images/jerigen-air-lipat-5l.jpg';
+            if (product.name === 'Set Alat Makan (Sendok Garpu Pisau)') return 'images/set-alat-makan-sendok-garpu-pisau.jpg';
+            if (product.name === 'Jaket Eiger Tropic') return 'images/jaket-eiger-tropic.jpg';
+            if (product.name === 'Celana Sambung Consina') return 'images/celana-sambung-consina.jpg';
+            if (product.name === 'Jas Hujan Arei Ponco') return 'images/jas-hujan-arei-ponco.jpg';
+            if (product.name === 'Base Layer Thermal') return 'images/base-layer-thermal.jpg';
+            if (product.name === 'Kupluk Rajut (Beanie)') return 'images/kupluk-rajut-beanie.jpg';
+            if (product.name === 'Sarung Tangan Polar') return 'images/sarung-tangan-polar.jpg';
+            if (product.name === 'Jaket Bulang (Down Jacket)') return 'images/jaket-bulang-down-jacket.jpg';
+            if (product.name === 'Kaos Kaki Trekking Tebal') return 'images/kaos-kaki-trekking-tebal.jpg';
+            if (product.name === 'Gaiter Anti Pacet') return 'images/gaiter-anti-pacet.jpg';
+            if (product.name === 'Topi Rimba Eiger') return 'images/topi-rimba-eiger.jpg';
+            return '';
+        }
+
+        const container = document.getElementById('homeProductGrid');
+        // Menampilkan produk terlaris dengan rating tepat 4.8
+        const bestSellers = products.filter(p => p.rating === 4.8).slice(0, 4);
+        
+bestSellers.forEach((p, index) => {
+    // Produk urutan ke-3 dan ke-4 dikasih class 'hide-on-mobile'
+    let hideClass = (index > 1) ? 'hide-on-mobile' : '';
+
+    container.innerHTML += `
+        <div class="card-new ${hideClass}">
+            <a href="detail.html?id=${p.id}" style="text-decoration:none; color:inherit; display:block;">
+                <img src="${getProductImage(p)}" alt="${p.name}">
+                <h4 class="card-new-title">${p.name}</h4>
+                <p class="card-new-price">${p.price}</p>
+            </a>
+            <div class="card-new-footer">
+                <span>⭐ ${p.rating}</span> 
+                <span>${p.reviews} Reviews</span>
+            </div>
+        </div>
+    `;
+});
+    </script>
+
+    <div class="bottom-nav">
+        <a href="home.html" class="nav-item active"><span>🏠</span>Beranda</a>
+        <a href="order.html" class="nav-item"><span>📋</span>Order</a>
+        <a href="profile.html" class="nav-item"><span>👤</span>Saya</a>
+    </div>
+    
+</body>
+</html>

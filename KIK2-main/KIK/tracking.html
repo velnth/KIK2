@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mountster - Lacak Pesanan</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --tracking-green: #2d6a4f;
+            --tracking-green-soft: #edf7f1;
+            --tracking-text: #1f2937;
+            --tracking-muted: #8b8f97;
+            --tracking-line: #d9dde3;
+        }
+
+        .tracking-page {
+            padding-bottom: 100px;
+        }
+
+        .tracking-topbar {
+            background: white;
+            border-bottom: 1px solid #eee;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 24px 1fr 24px;
+            align-items: center;
+        }
+
+        .tracking-back {
+            text-decoration: none;
+            color: black;
+            font-size: 20px;
+        }
+
+        .tracking-page-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .tracking-card {
+            background: white;
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+            margin-bottom: 16px;
+        }
+
+        .tracking-status {
+            display: inline-flex;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: var(--tracking-green-soft);
+            color: var(--tracking-green);
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .tracking-info {
+            display: grid;
+            gap: 8px;
+            color: var(--tracking-text);
+            font-size: 14px;
+        }
+
+        .tracking-info span {
+            color: var(--tracking-muted);
+            display: inline-block;
+            min-width: 90px;
+        }
+
+        .tracking-product {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .tracking-product-image {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            background: #f1f1f1;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .tracking-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .tracking-product-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--tracking-text);
+            margin-bottom: 4px;
+        }
+
+        .tracking-product-meta {
+            font-size: 13px;
+            color: var(--tracking-muted);
+        }
+
+        .tracking-progress {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .tracking-step {
+            text-align: center;
+            position: relative;
+        }
+
+        .tracking-step::after {
+            content: '';
+            position: absolute;
+            top: 13px;
+            left: calc(50% + 15px);
+            width: calc(100% - 22px);
+            height: 3px;
+            background: #dfe5df;
+            z-index: 0;
+        }
+
+        .tracking-step:last-child::after {
+            display: none;
+        }
+
+        .tracking-step.done::after,
+        .tracking-step.active::after {
+            background: var(--tracking-green);
+        }
+
+        .tracking-step-dot {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            margin: 0 auto 8px;
+            border: 2px solid #cfd6cf;
+            background: #fff;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tracking-step.done .tracking-step-dot,
+        .tracking-step.active .tracking-step-dot {
+            border-color: var(--tracking-green);
+            background: var(--tracking-green);
+        }
+
+        .tracking-step-label {
+            font-size: 11px;
+            line-height: 1.35;
+            color: var(--tracking-muted);
+            font-weight: 700;
+        }
+
+        .tracking-step.done .tracking-step-label,
+        .tracking-step.active .tracking-step-label {
+            color: var(--tracking-green);
+        }
+
+        .timeline-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: var(--tracking-text);
+        }
+
+        .tracking-timeline {
+            position: relative;
+            padding-left: 4px;
+        }
+
+        .tracking-item {
+            display: grid;
+            grid-template-columns: 52px 22px 1fr;
+            gap: 10px;
+            position: relative;
+            padding-bottom: 16px;
+        }
+
+        .tracking-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .tracking-time {
+            font-size: 12px;
+            color: var(--tracking-muted);
+            text-align: right;
+            padding-top: 1px;
+        }
+
+        .tracking-dot-wrap {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .tracking-dot-wrap::after {
+            content: '';
+            position: absolute;
+            top: 14px;
+            bottom: -18px;
+            width: 2px;
+            background: var(--tracking-line);
+        }
+
+        .tracking-item:last-child .tracking-dot-wrap::after {
+            display: none;
+        }
+
+        .tracking-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #c4c9cf;
+            margin-top: 3px;
+            z-index: 1;
+        }
+
+        .tracking-item.done .tracking-dot,
+        .tracking-item.latest .tracking-dot {
+            background: var(--tracking-green);
+        }
+
+        .tracking-content {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--tracking-muted);
+        }
+
+        .tracking-item.latest .tracking-content {
+            color: var(--tracking-text);
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container tracking-page">
+        <div class="tracking-topbar">
+            <a href="order.html?tab=riwayat" class="tracking-back">←</a>
+            <div class="tracking-page-title">Lacak Pesanan</div>
+            <div></div>
+        </div>
+
+        <div class="p-20" id="trackingPageContent"></div>
+
+        <div class="bottom-nav">
+            <a href="home.html" class="nav-item"><span>🏠</span>Beranda</a>
+            <a href="order.html" class="nav-item active"><span>📋</span>Order</a>
+            <a href="profile.html" class="nav-item"><span>👤</span>Saya</a>
+        </div>
+    </div>
+
+    <script>
+        function getProductImage(productName) {
+            if (productName === 'Eiger Wanderlust 60') return 'images/eiger-wanderlust-60.jpeg';
+            if (productName === 'Consina Magnum 4') return 'images/consina-magnum-4.jpeg';
+            if (productName === 'Great Outdoor Java 4') return 'images/great-outdoor-java-4.jpeg';
+            if (productName === 'Naturehike Cloud Up 2') return 'images/naturehike-cloud-up-2.jpeg';
+            if (productName === 'Antarestar') return 'images/antarestar.png';
+            if (productName === 'Merapi Mountain Half Moon') return 'images/merapi-mountain-half-moon.jpeg';
+            if (productName === 'Tenda Pramuka Regu') return 'images/tenda-pramuka-regu.jpg';
+            if (productName === 'Tenda Dome 2 Orang') return 'images/tenda-dome-2-orang.jpg';
+            if (productName === 'Naturehike Village 5') return 'images/naturehike-village-5.jpg';
+            if (productName === 'Eiger Shira 1P') return 'images/eiger-shira-1p.jpg';
+            if (productName === 'Osprey Aether 65L') return 'images/osprey-aether-65l.jpg';
+            if (productName === 'Deuter Futura Pro 40') return 'images/deuter-futura-pro-40.jpg';
+            if (productName === 'Eiger Eliptic Solaris 65L') return 'images/eiger-eliptic-solaris-65l.jpg';
+            if (productName === 'Consina Tarebbi 60L') return 'images/consina-tarebbi-60l.jpg';
+            if (productName === 'Arei Ramandika 60L') return 'images/arei-ramandika-60l.jpg';
+            if (productName === 'Eiger Rhinos 60L') return 'images/eiger-rhinos-60l.jpg';
+            if (productName === 'Osprey Ariel 55L (Women)') return 'images/osprey-ariel-55l-women.jpg';
+            if (productName === 'Consina Extraterrestrial 60L') return 'images/consina-extraterrestrial-60l.jpg';
+            if (productName === 'Deuter Aircontact 50+10') return 'images/deuter-aircontact-50plus10.jpg';
+            if (productName === 'Naturehike Rock 60L') return 'images/naturehike-rock-60l.jpg';
+            if (productName === 'Salomon Quest 4 GTX') return 'images/salomon-quest-4-gtx.jpg';
+            if (productName === 'Eiger Pollock') return 'images/eiger-pollock.jpg';
+            if (productName === 'Consina Alpine') return 'images/consina-alpine.jpg';
+            if (productName === 'SNTA 471') return 'images/snta-471.jpg';
+            if (productName === 'La Sportiva TX4') return 'images/la-sportiva-tx4.jpg';
+            if (productName === 'Merrell Moab 3') return 'images/merrell-moab-3.jpg';
+            if (productName === 'Eiger Anaconda') return 'images/eiger-anaconda.jpg';
+            if (productName === 'Columbia Newton Ridge') return 'images/columbia-newton-ridge.png';
+            if (productName === 'Arei Outdoorgear Shoes') return 'images/arei-outdoorgear-shoes.jpg';
+            if (productName === 'Karrimor Bodmin') return 'images/karrimor-bodmin.jpg';
+            if (productName === 'Kompor Portable Kotak') return 'images/kompor-portable-kotak.jpg';
+            if (productName === 'Trangia 27-1 UL') return 'images/trangia-27-1-ul.jpg';
+            if (productName === 'Nesting Bulat 4 in 1') return 'images/nesting-bulat-4-in-1.png';
+            if (productName === 'Nesting Kotak TNI') return 'images/nesting-kotak-tni.jpg';
+            if (productName === 'Kompor Mawar (Windproof)') return 'images/kompor-mawar-windproof.jpg';
+            if (productName === 'Panci Lipat Naturehike') return 'images/panci-lipat-naturehike.png';
+            if (productName === 'Gas Kaleng Hi-Cook') return 'images/gas-kaleng-hi-cook.jpg';
+            if (productName === 'Windshield (Pelindung Angin)') return 'images/windshield-pelindung-angin.jpg';
+            if (productName === 'Jerigen Air Lipat 5L') return 'images/jerigen-air-lipat-5l.jpg';
+            if (productName === 'Set Alat Makan (Sendok Garpu Pisau)') return 'images/set-alat-makan-sendok-garpu-pisau.jpg';
+            if (productName === 'Jaket Eiger Tropic') return 'images/jaket-eiger-tropic.jpg';
+            if (productName === 'Celana Sambung Consina') return 'images/celana-sambung-consina.jpg';
+            if (productName === 'Jas Hujan Arei Ponco') return 'images/jas-hujan-arei-ponco.jpg';
+            if (productName === 'Base Layer Thermal') return 'images/base-layer-thermal.jpg';
+            if (productName === 'Kupluk Rajut (Beanie)') return 'images/kupluk-rajut-beanie.jpg';
+            if (productName === 'Sarung Tangan Polar') return 'images/sarung-tangan-polar.jpg';
+            if (productName === 'Jaket Bulang (Down Jacket)') return 'images/jaket-bulang-down-jacket.jpg';
+            if (productName === 'Kaos Kaki Trekking Tebal') return 'images/kaos-kaki-trekking-tebal.jpg';
+            if (productName === 'Gaiter Anti Pacet') return 'images/gaiter-anti-pacet.jpg';
+            if (productName === 'Topi Rimba Eiger') return 'images/topi-rimba-eiger.jpg';
+            return '';
+        }
+
+        function formatOrderDateRange(createdAt) {
+            const start = new Date(createdAt);
+            const end = new Date(start);
+            end.setDate(start.getDate() + 1);
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            return `${start.getDate()} ${monthNames[start.getMonth()]} - ${end.getDate()} ${monthNames[end.getMonth()]}`;
+        }
+
+        function getAllOrders() {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            if (Array.isArray(orders) && orders.length > 0) return orders;
+            const legacyOrders = JSON.parse(localStorage.getItem('mountsterOrders') || '[]');
+            if (Array.isArray(legacyOrders) && legacyOrders.length > 0) return legacyOrders;
+            const lastOrder = JSON.parse(localStorage.getItem('mountsterLastOrder'));
+            return lastOrder ? [lastOrder] : [];
+        }
+
+        function normalizeOrderItems(items) {
+            if (Array.isArray(items)) return items;
+            if (items && typeof items === 'object') return [items];
+            return [];
+        }
+
+        function getTrackingStageIndex(status) {
+            const normalized = String(status || '').toLowerCase();
+            if (normalized.includes('tiba') || normalized.includes('selesai')) return 3;
+            if (normalized.includes('antar') || normalized.includes('perjalanan')) return 2;
+            if (normalized.includes('kirim')) return 1;
+            return 0;
+        }
+
+        function formatTimelineTime(date) {
+            return new Date(date).toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function buildTrackingEvents(order) {
+            const stageIndex = getTrackingStageIndex(order?.status);
+            const base = new Date(order?.createdAt || Date.now());
+            const allEvents = [
+                { stage: 0, time: new Date(base.getTime()), text: 'Pesanan masuk & dikonfirmasi toko' },
+                { stage: 0, time: new Date(base.getTime() + 5 * 60000), text: 'Pembayaran dikonfirmasi' },
+                { stage: 0, time: new Date(base.getTime() + 21 * 60000), text: 'Pesanan diproses di gudang' },
+                { stage: 1, time: new Date(base.getTime() + 60 * 60000), text: 'Pesanan dikirim ke jalur distribusi' },
+                { stage: 2, time: new Date(base.getTime() + 3 * 60 * 60000), text: 'Paket dalam perjalanan menuju Hub' },
+                { stage: 2, time: new Date(base.getTime() + 5 * 60 * 60000), text: 'Paket dibawa kurir menuju lokasi' },
+                { stage: 3, time: new Date(base.getTime() + 7 * 60 * 60000), text: 'Pesanan telah tiba di tujuan' }
+            ];
+
+            const visibleEvents = allEvents.filter(item => {
+                if (stageIndex === 0) return item.stage <= 0;
+                if (stageIndex === 1) return item.stage <= 1;
+                if (stageIndex === 2) return item.stage <= 2;
+                return true;
+            });
+
+            return visibleEvents.reverse();
+        }
+
+        function renderTrackingProgress(status) {
+            const steps = ['Dikemas', 'Dikirim', 'Dalam Perjalanan', 'Tiba'];
+            const stageIndex = getTrackingStageIndex(status);
+            return steps.map((step, index) => {
+                const stateClass = index < stageIndex ? 'done' : index === stageIndex ? 'active' : '';
+                return `
+                    <div class="tracking-step ${stateClass}">
+                        <div class="tracking-step-dot"></div>
+                        <div class="tracking-step-label">${step}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderTrackingPage() {
+            const params = new URLSearchParams(window.location.search);
+            const orderId = params.get('orderId');
+            const order = getAllOrders().find(item => String(item.id) === String(orderId));
+            const container = document.getElementById('trackingPageContent');
+
+            if (!order) {
+                container.innerHTML = `
+                    <div class="tracking-card" style="text-align:center;">
+                        <p style="font-size: 14px; color: #888;">Data tracking pesanan tidak ditemukan.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const items = normalizeOrderItems(order.items);
+            const leadItem = items[0] || {};
+            const estimatedArrival = order.estimatedArrival || formatOrderDateRange(order.createdAt);
+            const timelineHtml = buildTrackingEvents(order).map((event, index) => `
+                <div class="tracking-item ${index === 0 ? 'latest done' : 'done'}">
+                    <div class="tracking-time">${formatTimelineTime(event.time)}</div>
+                    <div class="tracking-dot-wrap">
+                        <div class="tracking-dot"></div>
+                    </div>
+                    <div class="tracking-content">${event.text}</div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="tracking-card">
+                    <div class="tracking-status">${order.status || 'Dikemas'}</div>
+                    <div class="tracking-info">
+                        <div><span>Estimasi</span>${estimatedArrival}</div>
+                        <div><span>ID Transaksi</span>${order.id}</div>
+                    </div>
+                    <div class="tracking-product">
+                        <div class="tracking-product-image">
+                            <img src="${leadItem.image || getProductImage(leadItem.name || order.productName || '')}" alt="${leadItem.name || order.productName || 'Produk'}">
+                        </div>
+                        <div>
+                            <div class="tracking-product-name">${leadItem.name || order.productName || 'Produk Mountster'}</div>
+                            <div class="tracking-product-meta">${leadItem.price || order.productPrice || 'Rp0'} • ${order.paymentMethod || 'COD'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tracking-card">
+                    <div class="tracking-progress">
+                        ${renderTrackingProgress(order.status || 'Dikemas')}
+                    </div>
+                </div>
+
+                <div class="tracking-card">
+                    <div class="timeline-title">Riwayat Pengiriman</div>
+                    <div class="tracking-timeline">
+                        ${timelineHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        renderTrackingPage();
+    </script>
+</body>
+</html>
