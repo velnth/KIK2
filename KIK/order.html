@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mountster - Pesanan Saya</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* CSS Tambahan untuk Toast Pop-up */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: white;
+            color: #333;
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 13px;
+            font-weight: 500;
+            min-width: 200px;
+            border-left: 4px solid #1b4332; /* Warna hijau Mountster */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: slideIn 0.3s ease forwards, fadeOut 0.3s ease forwards 2.7s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(20px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" style="padding-bottom: 100px;">
+        <div class="p-20 flex-between" style="background: white; border-bottom: 1px solid #eee;">
+            <a href="home.php" style="text-decoration: none; color: black; font-size: 20px;">←</a>
+            <h2 style="font-size: 18px;">Pesanan Saya</h2>
+            <div style="width: 20px;"></div>
+        </div>
+
+        <div class="tab-container" style="background: white; padding: 0 20px; margin-top: 0; display: flex;">
+            <div class="tab-item active" style="flex:1; text-align:center; padding: 15px 0;" onclick="switchOrderTab('riwayat')">Riwayat Order</div>
+            <div class="tab-item" style="flex:1; text-align:center; padding: 15px 0;" onclick="switchOrderTab('pengembalian')">Pengembalian</div>
+        </div>
+
+        <div id="riwayat" class="tab-content active" style="padding: 15px;">
+            <div class="order-card">
+                <span class="status-badge">Dikemas</span>
+                <div style="display: flex; gap: 15px; margin-top: 10px;">
+                    <div style="width: 70px; height: 70px; background: #eee; border-radius: 8px; display:flex; justify-content:center; align-items:center; font-size:30px;">⛺</div>
+                    <div style="flex: 1;">
+                        <h4 style="font-size: 14px; font-weight: bold; margin-bottom: 3px;">Tenda Naturehike Cloud Up 2</h4>
+                        <p style="font-size: 12px; color: #888;">Hitam</p>
+                        <p style="text-align: right; font-weight: bold; margin-top: 5px;">Rp60.000 <span style="font-weight: normal; color: #888;">x1</span></p>
+                    </div>
+                </div>
+                
+                <div class="order-info-box">
+                    <p style="font-weight: bold;">Estimasi Tiba: 4 Apr - 5 Apr</p>
+                    <p style="font-size: 12px; margin-top: 3px; color: #666;">Pesanan sedang dikemas</p>
+                </div>
+
+                <div class="order-btn-group">
+                    <button class="btn-order" disabled style="color: #ccc;">Pesanan Selesai</button>
+                    <button class="btn-order btn-order-active" onclick="showToast('Melacak posisi kurir...')">Lacak</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="pengembalian" class="tab-content" style="padding: 50px 20px; text-align: center;">
+            <p style="color: #888; font-size: 14px;">Belum ada pengembalian alat aktif.</p>
+        </div>
+
+        <div class="bottom-nav">
+            <a href="home.php" class="nav-item"><span>🏠</span>Beranda</a>
+            <a href="order.html" class="nav-item active"><span>📋</span>Order</a>
+            <a href="profile.php" class="nav-item"><span>👤</span>Saya</a>
+        </div>
+    </div>
+
+    <script>
+        function switchOrderTab(tabId) {
+            document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Fungsi baru untuk menampilkan Toast di pojok kanan atas
+        function showToast(message) {
+            // Cek apakah kontainer sudah ada, jika belum buat baru
+            let container = document.querySelector('.toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+
+            // Buat elemen toast
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<span>${message}</span> <span style="margin-left:10px; cursor:pointer" onclick="this.parentElement.remove()">✕</span>`;
+
+            // Masukkan ke kontainer
+            container.appendChild(toast);
+
+            // Hapus otomatis setelah 3 detik (sesuai durasi animasi)
+            setTimeout(() => {
+                toast.remove();
+                // Hapus kontainer jika sudah kosong
+                if (container.childNodes.length === 0) container.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
