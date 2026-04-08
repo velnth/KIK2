@@ -1,5 +1,9 @@
+<?php
+include 'auth.php';
+?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,46 +14,267 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         /* CSS Tambahan Khusus Checkout */
-        .payment-option-note { font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.5; }
-        #mapContainer { height: 200px; width: 100%; border-radius: 8px; margin-bottom: 15px; z-index: 1; }
-        .checkout-wrapper { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 20px; }
-        @media (min-width: 768px) { .checkout-wrapper { grid-template-columns: 2fr 1fr; align-items: start; } }
-        .checkout-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        .checkout-card-title { font-size: 14px; font-weight: bold; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; }
-        .custom-radio { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; cursor: pointer; }
-        .custom-radio input[type="radio"] { accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer; }
-        .qris-box { text-align: center; padding: 10px 0; }
-        .qris-code-wrap { width: 240px; height: 240px; margin: 18px auto; background: #fff; border-radius: 20px; padding: 20px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; }
-        .qris-code-wrap img, .qris-code-wrap canvas { max-width: 100%; max-height: 100%; }
-        .qris-amount { font-size: 30px; font-weight: 800; color: var(--primary); margin-top: 8px; }
-        .qris-subtext { font-size: 13px; color: var(--text-muted); line-height: 1.5; max-width: 280px; margin: 12px auto 0; }
-        .qris-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; background: #f4fbf4; border-radius: 999px; color: var(--primary); font-size: 12px; font-weight: 700; }
-        .qris-chip-dot { width: 8px; height: 8px; border-radius: 50%; background: #2eb872; }
-        .qris-meta { background: #f7faf8; border: 1px solid #e5efea; border-radius: 16px; padding: 14px; margin-top: 16px; text-align: left; }
-        .qris-meta-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; margin-bottom: 8px; }
-        .qris-meta-row:last-child { margin-bottom: 0; }
-        .qris-meta-row span:first-child { color: var(--text-muted); }
-        .qris-meta-row span:last-child { color: var(--text-main); font-weight: 700; text-align: right; }
-        .qris-expired { color: #d9534f; font-weight: 700; }
-        .qris-loading { width: 56px; height: 56px; border-radius: 50%; border: 5px solid #dbe7df; border-top-color: var(--primary); margin: 18px auto 0; animation: qrisSpin 0.8s linear infinite; }
-        .success-shell { text-align: center; padding: 10px 0 5px; }
-        .success-ring { width: 92px; height: 92px; border-radius: 50%; margin: 5px auto 18px; background: linear-gradient(135deg, #dff7ea, #effcf4); display: flex; align-items: center; justify-content: center; }
-        .success-check { width: 48px; height: 24px; border-left: 6px solid #1fa65a; border-bottom: 6px solid #1fa65a; transform: rotate(-45deg) scale(0.3); opacity: 0; animation: checkPop 0.45s ease forwards; animation-delay: 0.1s; }
-        .success-title { font-size: 24px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
-        .success-caption { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
-        .success-card { background: #f7faf8; border: 1px solid #e5efea; border-radius: 16px; padding: 16px; text-align: left; margin-bottom: 18px; }
-        .success-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; margin-bottom: 10px; }
-        .success-row:last-child { margin-bottom: 0; }
-        .success-row span:first-child { color: var(--text-muted); }
-        .success-row span:last-child { font-weight: 700; color: var(--text-main); text-align: right; }
-        .success-countdown { color: var(--primary); font-weight: 700; font-size: 13px; }
-        @keyframes qrisSpin { to { transform: rotate(360deg); } }
+        .payment-option-note {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        #mapContainer {
+            height: 200px;
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            z-index: 1;
+        }
+
+        .checkout-wrapper {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .checkout-wrapper {
+                grid-template-columns: 2fr 1fr;
+                align-items: start;
+            }
+        }
+
+        .checkout-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+        }
+
+        .checkout-card-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .custom-radio {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            cursor: pointer;
+        }
+
+        .custom-radio input[type="radio"] {
+            accent-color: var(--primary);
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .qris-box {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .qris-code-wrap {
+            width: 240px;
+            height: 240px;
+            margin: 18px auto;
+            background: #fff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qris-code-wrap img,
+        .qris-code-wrap canvas {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .qris-amount {
+            font-size: 30px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-top: 8px;
+        }
+
+        .qris-subtext {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            max-width: 280px;
+            margin: 12px auto 0;
+        }
+
+        .qris-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: #f4fbf4;
+            border-radius: 999px;
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .qris-chip-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2eb872;
+        }
+
+        .qris-meta {
+            background: #f7faf8;
+            border: 1px solid #e5efea;
+            border-radius: 16px;
+            padding: 14px;
+            margin-top: 16px;
+            text-align: left;
+        }
+
+        .qris-meta-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .qris-meta-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .qris-meta-row span:first-child {
+            color: var(--text-muted);
+        }
+
+        .qris-meta-row span:last-child {
+            color: var(--text-main);
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .qris-expired {
+            color: #d9534f;
+            font-weight: 700;
+        }
+
+        .qris-loading {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 5px solid #dbe7df;
+            border-top-color: var(--primary);
+            margin: 18px auto 0;
+            animation: qrisSpin 0.8s linear infinite;
+        }
+
+        .success-shell {
+            text-align: center;
+            padding: 10px 0 5px;
+        }
+
+        .success-ring {
+            width: 92px;
+            height: 92px;
+            border-radius: 50%;
+            margin: 5px auto 18px;
+            background: linear-gradient(135deg, #dff7ea, #effcf4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-check {
+            width: 48px;
+            height: 24px;
+            border-left: 6px solid #1fa65a;
+            border-bottom: 6px solid #1fa65a;
+            transform: rotate(-45deg) scale(0.3);
+            opacity: 0;
+            animation: checkPop 0.45s ease forwards;
+            animation-delay: 0.1s;
+        }
+
+        .success-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .success-caption {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .success-card {
+            background: #f7faf8;
+            border: 1px solid #e5efea;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: left;
+            margin-bottom: 18px;
+        }
+
+        .success-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .success-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .success-row span:first-child {
+            color: var(--text-muted);
+        }
+
+        .success-row span:last-child {
+            font-weight: 700;
+            color: var(--text-main);
+            text-align: right;
+        }
+
+        .success-countdown {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        @keyframes qrisSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         @keyframes checkPop {
-            from { transform: rotate(-45deg) scale(0.3); opacity: 0; }
-            to { transform: rotate(-45deg) scale(1); opacity: 1; }
+            from {
+                transform: rotate(-45deg) scale(0.3);
+                opacity: 0;
+            }
+
+            to {
+                transform: rotate(-45deg) scale(1);
+                opacity: 1;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="app-container" style="max-width: 1000px;">
         <div class="p-20 flex-between" style="background: white; border-bottom: 1px solid #eee;">
@@ -68,7 +293,7 @@
                 <div class="checkout-card">
                     <p style="font-weight: bold; margin-bottom: 15px;">⛺ Mountster Rental Store</p>
                     <div id="checkoutItemsContainer"></div>
-                    
+
                     <div style="margin-top: 20px; border: 1px solid #ddd; border-radius: 8px; padding: 15px;">
                         <p style="font-weight: bold; font-size: 14px; margin-bottom: 5px;">Pilih Pengiriman</p>
                         <select class="input-form" style="padding: 10px; font-weight: bold; width: 100%;" id="shippingSelect" onchange="updateSummary()">
@@ -90,7 +315,7 @@
                     </div>
 
                     <div id="selectedPaymentContainer" onclick="openPaymentModal()" style="cursor: pointer; padding-top: 5px;">
-                        </div>
+                    </div>
                 </div>
 
                 <div class="checkout-card">
@@ -163,7 +388,7 @@
                 <span class="modal-close" onclick="closePaymentModal()">×</span>
             </div>
             <div class="modal-body" style="overflow-y: auto; padding: 20px;">
-                
+
                 <label class="custom-radio" style="border-bottom: 1px solid #eee; padding-bottom: 15px;">
                     <span><b>QRIS</b></span>
                     <input type="radio" name="modal_payment" value="QRIS" onclick="selectPayment('<b>QRIS</b>', 'QRIS', false)">
@@ -204,10 +429,10 @@
 
     <script>
         // --- 1. INISIALISASI DATA ---
-        let addresses = JSON.parse(localStorage.getItem('mountsterAddresses')) || []; 
+        let addresses = JSON.parse(localStorage.getItem('mountsterAddresses')) || [];
         let selectedAddressId = localStorage.getItem('mountsterSelectedAddress') || null;
         let pendingDeleteId = null;
-        
+
         let cartToCheckout = [];
         let totalItemPrice = 0;
         let qrisTransactionId = null;
@@ -230,7 +455,9 @@
 
         async function initializeServerBaseUrl() {
             try {
-                const response = await fetch(`${getApiBaseUrl()}/api/server-info`, { cache: 'no-store' });
+                const response = await fetch(`${getApiBaseUrl()}/api/server-info`, {
+                    cache: 'no-store'
+                });
                 if (!response.ok) throw new Error('server-info gagal dibaca');
                 const data = await response.json();
                 currentServerBaseUrl = data.baseUrl || getApiBaseUrl();
@@ -307,23 +534,26 @@
         }
 
         // --- Variabel Pembayaran (Kosong secara default) ---
-        let finalPaymentMethod = null; 
+        let finalPaymentMethod = null;
         let finalPaymentDisplayName = null;
         let isFinalPaymentCOD = false;
 
         // --- 2. RENDER PRODUK & RINGKASAN ---
         function loadCheckout() {
             if (cartToCheckout.length === 0) {
-                window.location.href = "home.html"; return;
+                window.location.href = "home.php";
+                return;
             }
 
             const container = document.getElementById('checkoutItemsContainer');
             container.innerHTML = "";
-            let totalItems = 0; totalItemPrice = 0;
+            let totalItems = 0;
+            totalItemPrice = 0;
 
             cartToCheckout.forEach(item => {
                 let priceNumber = parseInt(item.price.replace(/[^0-9]/g, '')) || 0;
-                totalItems += item.qty; totalItemPrice += (priceNumber * item.qty);
+                totalItems += item.qty;
+                totalItemPrice += (priceNumber * item.qty);
 
                 container.innerHTML += `
                     <div style="display: flex; gap: 15px; margin-bottom: 15px;">
@@ -339,7 +569,7 @@
 
             document.getElementById('summaryTotalItems').innerText = `Total Harga (${totalItems} Barang)`;
             document.getElementById('summaryItemPrice').innerText = `Rp ` + totalItemPrice.toLocaleString('id-ID');
-            
+
             updateSummary();
             renderActiveAddress();
             renderPaymentUI(); // Render tampilan pembayaran awal (Pilih Metode)
@@ -348,7 +578,7 @@
         function updateSummary() {
             const selectEl = document.getElementById('shippingSelect');
             const shippingCost = parseInt(selectEl.value);
-            document.getElementById('shippingDesc').innerText = selectEl.options[selectEl.selectedIndex].getAttribute('data-desc'); 
+            document.getElementById('shippingDesc').innerText = selectEl.options[selectEl.selectedIndex].getAttribute('data-desc');
             document.getElementById('summaryShippingPrice').innerText = `Rp ` + shippingCost.toLocaleString('id-ID');
             document.getElementById('summaryGrandTotal').innerText = `Rp ` + (totalItemPrice + shippingCost).toLocaleString('id-ID');
         }
@@ -369,20 +599,34 @@
         function renderActiveAddress() {
             const display = document.getElementById('addressDisplay');
             if (addresses.length === 0 || !selectedAddressId) {
-                display.innerHTML = `<div style="text-align: center; padding: 20px; border: 1px dashed #ccc; border-radius: 8px; cursor: pointer;" onclick="openAddressModal()"><span style="font-size: 24px; color: var(--primary);">+</span><p style="margin-top: 10px; color: var(--text-main); font-weight: bold;">Isi Alamat Pengiriman</p></div>`; return;
+                display.innerHTML = `<div style="text-align: center; padding: 20px; border: 1px dashed #ccc; border-radius: 8px; cursor: pointer;" onclick="openAddressModal()"><span style="font-size: 24px; color: var(--primary);">+</span><p style="margin-top: 10px; color: var(--text-main); font-weight: bold;">Isi Alamat Pengiriman</p></div>`;
+                return;
             }
             const activeAddr = addresses.find(a => a.id == selectedAddressId);
-            if(activeAddr) {
+            if (activeAddr) {
                 display.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: flex-start;"><div><p style="font-size: 14px; margin-bottom: 5px;"><span style="font-weight: bold;">${activeAddr.name}</span></p><p style="font-size: 13px; color: var(--text-main); line-height: 1.5; margin-bottom: 5px;">${activeAddr.address}</p><p style="font-size: 13px; color: var(--text-muted);">+${activeAddr.phone}</p></div><button style="background: none; border: 1px solid var(--primary); color: var(--primary); padding: 5px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px;" onclick="openAddressModal()">Ganti</button></div>`;
             }
         }
 
-        function openAddressModal() { document.getElementById('addressModal').classList.add('active'); document.getElementById('addressListView').style.display = 'block'; document.getElementById('addressFormView').style.display = 'none'; document.getElementById('modalTitle').innerText = 'Daftar Alamat'; renderAddressList(); }
-        function closeAddressModal() { document.getElementById('addressModal').classList.remove('active'); }
-        
+        function openAddressModal() {
+            document.getElementById('addressModal').classList.add('active');
+            document.getElementById('addressListView').style.display = 'block';
+            document.getElementById('addressFormView').style.display = 'none';
+            document.getElementById('modalTitle').innerText = 'Daftar Alamat';
+            renderAddressList();
+        }
+
+        function closeAddressModal() {
+            document.getElementById('addressModal').classList.remove('active');
+        }
+
         function renderAddressList() {
-            const container = document.getElementById('addressListContainer'); container.innerHTML = "";
-            if(addresses.length === 0) { container.innerHTML = `<p style="text-align:center; color:#888; font-size:14px; padding: 20px;">Belum ada alamat tersimpan.</p>`; return; }
+            const container = document.getElementById('addressListContainer');
+            container.innerHTML = "";
+            if (addresses.length === 0) {
+                container.innerHTML = `<p style="text-align:center; color:#888; font-size:14px; padding: 20px;">Belum ada alamat tersimpan.</p>`;
+                return;
+            }
             addresses.forEach(addr => {
                 const isActive = (addr.id == selectedAddressId);
                 const borderStyle = isActive ? 'border: 1px solid var(--primary); background-color: #f4fbf4;' : 'border: 1px solid #ddd;';
@@ -390,15 +634,35 @@
                 container.innerHTML += `<div style="${borderStyle} padding: 15px; border-radius: 8px; margin-bottom: 15px;"><p style="font-weight: bold; font-size: 14px; margin-bottom: 5px;">${addr.name}</p><p style="font-size: 13px; color: var(--text-main); margin-bottom: 5px;">+${addr.phone}</p><p style="font-size: 13px; color: var(--text-main); line-height: 1.4; margin-bottom: 15px;">${addr.address}</p><div class="flex-between" style="border-top: 1px solid #eee; margin-top: 10px; padding-top: 10px;"><div style="display: flex; gap: 15px;"><span style="color: var(--primary); font-size: 12px; font-weight: bold; cursor: pointer;">Ubah</span><span style="color: #ff4d4f; font-size: 12px; font-weight: bold; cursor: pointer;" onclick="deleteAddress(${addr.id})">Hapus</span></div>${actionBtn}</div></div>`;
             });
         }
-        function selectAddress(id) { selectedAddressId = id; localStorage.setItem('mountsterSelectedAddress', id); renderActiveAddress(); closeAddressModal(); }
-        
-        function deleteAddress(id) { pendingDeleteId = id; document.getElementById('confirmDeleteModal').classList.add('active'); }
-        function closeConfirmModal() { pendingDeleteId = null; document.getElementById('confirmDeleteModal').classList.remove('active'); }
+
+        function selectAddress(id) {
+            selectedAddressId = id;
+            localStorage.setItem('mountsterSelectedAddress', id);
+            renderActiveAddress();
+            closeAddressModal();
+        }
+
+        function deleteAddress(id) {
+            pendingDeleteId = id;
+            document.getElementById('confirmDeleteModal').classList.add('active');
+        }
+
+        function closeConfirmModal() {
+            pendingDeleteId = null;
+            document.getElementById('confirmDeleteModal').classList.remove('active');
+        }
+
         function executeDeleteAddress() {
             if (pendingDeleteId !== null) {
-                addresses = addresses.filter(a => a.id !== pendingDeleteId); localStorage.setItem('mountsterAddresses', JSON.stringify(addresses));
-                if (selectedAddressId == pendingDeleteId) { selectedAddressId = null; localStorage.removeItem('mountsterSelectedAddress'); }
-                renderAddressList(); renderActiveAddress(); closeConfirmModal();
+                addresses = addresses.filter(a => a.id !== pendingDeleteId);
+                localStorage.setItem('mountsterAddresses', JSON.stringify(addresses));
+                if (selectedAddressId == pendingDeleteId) {
+                    selectedAddressId = null;
+                    localStorage.removeItem('mountsterSelectedAddress');
+                }
+                renderAddressList();
+                renderActiveAddress();
+                closeConfirmModal();
             }
         }
 
@@ -407,40 +671,77 @@
             document.getElementById('alertModalMessage').innerText = message;
             document.getElementById('alertModal').classList.add('active');
         }
+
         function closeAlertModal() {
             document.getElementById('alertModal').classList.remove('active');
         }
 
         // --- 5. LOGIKA PETA (LEAFLET) ---
         let map, marker;
+
         function showAddForm() {
-            document.getElementById('addressListView').style.display = 'none'; document.getElementById('addressFormView').style.display = 'block'; document.getElementById('modalTitle').innerText = 'Tambah Alamat Baru';
-            if(!map) {
-                map = L.map('mapContainer').setView([-6.238270, 106.975573], 13); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-                marker = L.marker([-6.238270, 106.975573], {draggable: true}).addTo(map);
-                marker.on('dragend', function(e) { let pos = marker.getLatLng(); fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.lat}&lon=${pos.lng}`).then(res => res.json()).then(data => { document.getElementById('formDetail').value = data.display_name; }); });
+            document.getElementById('addressListView').style.display = 'none';
+            document.getElementById('addressFormView').style.display = 'block';
+            document.getElementById('modalTitle').innerText = 'Tambah Alamat Baru';
+            if (!map) {
+                map = L.map('mapContainer').setView([-6.238270, 106.975573], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                marker = L.marker([-6.238270, 106.975573], {
+                    draggable: true
+                }).addTo(map);
+                marker.on('dragend', function(e) {
+                    let pos = marker.getLatLng();
+                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.lat}&lon=${pos.lng}`).then(res => res.json()).then(data => {
+                        document.getElementById('formDetail').value = data.display_name;
+                    });
+                });
             }
-            setTimeout(() => { map.invalidateSize(); }, 300);
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 300);
         }
         document.getElementById('mapSearchInput').addEventListener('keypress', function(e) {
-            if(e.key === 'Enter') {
+            if (e.key === 'Enter') {
                 fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${this.value}&limit=1`).then(res => res.json()).then(data => {
-                    if(data.length > 0) { let lat = data[0].lat; let lon = data[0].lon; map.setView([lat, lon], 16); marker.setLatLng([lat, lon]); document.getElementById('formDetail').value = data[0].display_name; } else { showAlert("Lokasi tidak ditemukan!"); }
+                    if (data.length > 0) {
+                        let lat = data[0].lat;
+                        let lon = data[0].lon;
+                        map.setView([lat, lon], 16);
+                        marker.setLatLng([lat, lon]);
+                        document.getElementById('formDetail').value = data[0].display_name;
+                    } else {
+                        showAlert("Lokasi tidak ditemukan!");
+                    }
                 });
             }
         });
+
         function saveNewAddress() {
-            const name = document.getElementById('formName').value, phone = document.getElementById('formPhone').value, detail = document.getElementById('formDetail').value;
-            if(!name || !phone || !detail) { showAlert("Harap lengkapi semua data alamat!"); return; }
-            const newId = Date.now(); addresses.push({ id: newId, name: name, phone: phone, address: detail }); localStorage.setItem('mountsterAddresses', JSON.stringify(addresses));
-            document.getElementById('formName').value = ""; document.getElementById('formPhone').value = ""; document.getElementById('formDetail').value = "";
-            selectAddress(newId); 
+            const name = document.getElementById('formName').value,
+                phone = document.getElementById('formPhone').value,
+                detail = document.getElementById('formDetail').value;
+            if (!name || !phone || !detail) {
+                showAlert("Harap lengkapi semua data alamat!");
+                return;
+            }
+            const newId = Date.now();
+            addresses.push({
+                id: newId,
+                name: name,
+                phone: phone,
+                address: detail
+            });
+            localStorage.setItem('mountsterAddresses', JSON.stringify(addresses));
+            document.getElementById('formName').value = "";
+            document.getElementById('formPhone').value = "";
+            document.getElementById('formDetail').value = "";
+            selectAddress(newId);
         }
 
         // --- 6. LOGIKA METODE PEMBAYARAN (MODAL & UI) ---
         function renderPaymentUI() {
             const container = document.getElementById('selectedPaymentContainer');
-            
+
             if (!finalPaymentMethod) {
                 // Tampilan jika belum ada yang dipilih
                 container.innerHTML = `
@@ -479,7 +780,7 @@
             finalPaymentMethod = systemName;
             finalPaymentDisplayName = displayName;
             isFinalPaymentCOD = isCOD;
-            
+
             renderPaymentUI();
             closePaymentModal();
         }
@@ -570,16 +871,18 @@
         async function checkPaymentStatus() {
             if (!currentQrisOrderId) return;
             try {
-                const response = await fetch(`${getApiBaseUrl()}/api/payment/status?orderId=${encodeURIComponent(currentQrisOrderId)}`, { cache: 'no-store' });
+                const response = await fetch(`${getApiBaseUrl()}/api/payment/status?orderId=${encodeURIComponent(currentQrisOrderId)}`, {
+                    cache: 'no-store'
+                });
                 if (!response.ok) return;
                 const data = await response.json();
                 const statusEl = document.getElementById('qrisStatusText');
                 if (statusEl) {
-                    statusEl.innerText = data.status === 'paid'
-                        ? 'Pembayaran terdeteksi'
-                        : data.status === 'expired'
-                            ? 'QR expired'
-                            : 'Menunggu pembayaran';
+                    statusEl.innerText = data.status === 'paid' ?
+                        'Pembayaran terdeteksi' :
+                        data.status === 'expired' ?
+                        'QR expired' :
+                        'Menunggu pembayaran';
                 }
                 if (data.status === 'paid') {
                     stopQrisRealtimeChecks();
@@ -742,11 +1045,11 @@
         // --- 7. PROSES BAYAR ---
         function processPayment() {
             // Validasi Alamat menggunakan Modal Alert yang baru
-            if (!selectedAddressId) { 
-                showAlert("Harap isi alamat pengiriman terlebih dahulu sebelum membayar!"); 
-                return; 
+            if (!selectedAddressId) {
+                showAlert("Harap isi alamat pengiriman terlebih dahulu sebelum membayar!");
+                return;
             }
-            
+
             // Validasi Pembayaran menggunakan Modal Alert yang baru
             if (!finalPaymentMethod) {
                 showAlert("Harap pilih metode pembayaran terlebih dahulu!");
@@ -768,4 +1071,5 @@
         loadCheckout();
     </script>
 </body>
+
 </html>

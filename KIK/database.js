@@ -1,11 +1,11 @@
 // database.js
 const products = [
     // TENDA
-    { id: 1, name: "Eiger Wanderlust 60", category: "Tenda", price: "Rp 50.000 / Hari" },
+    { id: 1, name: "Eiger Wanderlust 60", category: "Tas Carrier", price: "Rp 50.000 / Hari" },
     { id: 2, name: "Consina Magnum 4", category: "Tenda", price: "Rp 45.000 / Hari" },
     { id: 3, name: "Naturehike Cloud Up 2", category: "Tenda", price: "Rp 60.000 / Hari" },
     { id: 4, name: "Great Outdoor Java 4", category: "Tenda", price: "Rp 40.000 / Hari" },
-    { id: 5, name: "Arei Gobi 4", category: "Tenda", price: "Rp 45.000 / Hari" },
+    { id: 5, name: "Antarestar", category: "Tenda", price: "Rp 45.000 / Hari" },
     { id: 6, name: "Merapi Mountain Half Moon", category: "Tenda", price: "Rp 55.000 / Hari" },
     { id: 7, name: "Tenda Pramuka Regu", category: "Tenda", price: "Rp 30.000 / Hari" },
     { id: 8, name: "Tenda Dome 2 Orang", category: "Tenda", price: "Rp 25.000 / Hari" },

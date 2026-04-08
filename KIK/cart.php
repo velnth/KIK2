@@ -1,3 +1,6 @@
+<?php 
+include 'auth.php'; 
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -9,7 +12,7 @@
 <body>
     <div class="app-container" style="padding-bottom: 100px;">
         <div class="p-20 flex-between">
-            <a href="home.html" style="text-decoration: none; color: black; font-size: 20px;">←</a>
+            <a href="home.php" style="text-decoration: none; color: black; font-size: 20px;">←</a>
             <h2 style="font-size: 18px;">Shopping Cart</h2>
             <div style="width: 20px;"></div>
         </div>
@@ -21,7 +24,7 @@
                 <span style="color: var(--text-muted);" id="cartTotalItems">Total 0 Item</span>
                 <span class="bold" style="font-size: 18px; color: var(--primary);" id="cartTotalPrice">Rp 0</span>
             </div>
-            <a href="checkout.html" class="btn btn-primary" style="margin: 0;">Checkout Sekarang</a>
+            <a href="checkout.php" class="btn btn-primary" style="margin: 0;">Checkout Sekarang</a>
         </div>
     </div>
 

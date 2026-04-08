@@ -64,6 +64,16 @@ if (isset($_POST['login'])) {
 
         </div>
     </div>
+
+    <script>
+        // Hapus paksa semua riwayat di browser setiap kali halaman login ini dibuka
+        localStorage.removeItem('mountsterOrders');
+        localStorage.removeItem('mountsterCart');
+        localStorage.removeItem('mountsterSelectedAddress');
+    </script>
+</body>
+</html>
+
 </body>
 
 </html>
