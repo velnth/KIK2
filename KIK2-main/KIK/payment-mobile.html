@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran Demo Mountster</title>
+    <style>
+        :root {
+            --primary: #1f5130;
+            --bg: #eef5f0;
+            --card: #ffffff;
+            --text: #223127;
+            --muted: #65756c;
+            --danger: #d9534f;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #edf7ef 0%, #f8fbf9 100%);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .page {
+            width: 100%;
+            max-width: 420px;
+            background: var(--card);
+            border-radius: 24px;
+            box-shadow: 0 18px 42px rgba(0,0,0,0.08);
+            padding: 28px 22px;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: #edf8f0;
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2eb872;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 22px;
+        }
+
+        .amount {
+            font-size: 34px;
+            color: var(--primary);
+            font-weight: 800;
+            margin-bottom: 22px;
+        }
+
+        .summary {
+            background: #f7faf8;
+            border: 1px solid #e5efea;
+            border-radius: 18px;
+            padding: 16px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .row:last-child { margin-bottom: 0; }
+        .row span:first-child { color: var(--muted); }
+        .row span:last-child { font-weight: 700; text-align: right; }
+
+        .note {
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .status {
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .status.error { color: var(--danger); }
+        .loading {
+            width: 54px;
+            height: 54px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            border: 5px solid #dbe7df;
+            border-top-color: var(--primary);
+            animation: spin 0.8s linear infinite;
+        }
+
+        .success-wrap {
+            display: none;
+            text-align: center;
+        }
+
+        .success-ring {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #dff7ea, #f2fbf5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-check {
+            width: 52px;
+            height: 28px;
+            border-left: 7px solid #1fa65a;
+            border-bottom: 7px solid #1fa65a;
+            transform: rotate(-45deg) scale(0.3);
+            opacity: 0;
+            animation: checkIn 0.45s ease forwards;
+        }
+
+        @keyframes checkIn {
+            from { transform: rotate(-45deg) scale(0.3); opacity: 0; }
+            to { transform: rotate(-45deg) scale(1); opacity: 1; }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div id="paymentView">
+            <div class="badge"><span class="badge-dot"></span>Demo QRIS Mountster</div>
+            <h1>Memproses Scan QR</h1>
+            <p class="subtitle">Begitu halaman ini terbuka dari hasil scan QR, sistem akan langsung menandai pembayaran sebagai berhasil secara otomatis.</p>
+            <div class="amount" id="amountText">Rp 0</div>
+            <div class="summary">
+                <div class="row"><span>Toko</span><span>Mountster Rental Store</span></div>
+                <div class="row"><span>Order ID</span><span id="orderIdText">-</span></div>
+                <div class="row"><span>Token</span><span id="tokenText">-</span></div>
+            </div>
+            <div class="loading"></div>
+            <p class="note">Kalau halaman ini berhasil dibuka dari QR, checkout di laptop akan otomatis mendeteksi pembayaran berhasil dalam beberapa detik.</p>
+            <p class="status" id="statusText">Mengirim status pembayaran ke server...</p>
+        </div>
+
+        <div class="success-wrap" id="successView">
+            <div class="badge"><span class="badge-dot"></span>Pembayaran Terkonfirmasi</div>
+            <div class="success-ring"><div class="success-check"></div></div>
+            <h1>Pembayaran Berhasil!</h1>
+            <p class="subtitle">Status order sudah dikirim ke web utama. Kamu bisa kembali ke halaman belanja atau tutup halaman ini.</p>
+            <div class="summary">
+                <div class="row"><span>Nominal</span><span id="successAmountText">Rp 0</span></div>
+                <div class="row"><span>Order ID</span><span id="successOrderIdText">-</span></div>
+            </div>
+            <a href="home.html" class="btn" style="display:block; text-decoration:none;">Kembali ke Beranda</a>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const orderId = params.get('orderId') || '';
+        const token = params.get('token') || '';
+        const amount = Number.parseInt(params.get('amount') || '0', 10);
+
+        const amountText = document.getElementById('amountText');
+        const orderIdText = document.getElementById('orderIdText');
+        const tokenText = document.getElementById('tokenText');
+        const successAmountText = document.getElementById('successAmountText');
+        const successOrderIdText = document.getElementById('successOrderIdText');
+        const statusText = document.getElementById('statusText');
+
+        amountText.innerText = `Rp ${amount.toLocaleString('id-ID')}`;
+        orderIdText.innerText = orderId || '-';
+        tokenText.innerText = token || '-';
+        successAmountText.innerText = `Rp ${amount.toLocaleString('id-ID')}`;
+        successOrderIdText.innerText = orderId || '-';
+
+        if (!orderId || !token || amount <= 0) {
+            statusText.innerText = 'Link pembayaran tidak valid. Silakan scan QR baru dari checkout.';
+            statusText.classList.add('error');
+        }
+
+        function getApiBaseUrl() {
+            return window.location.origin;
+        }
+
+        async function confirmPayment() {
+            statusText.innerText = 'Sedang mengirim status pembayaran ke server...';
+            statusText.classList.remove('error');
+
+            try {
+                const response = await fetch(`${getApiBaseUrl()}/api/payment/confirm`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ orderId, token, amount })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Pembayaran gagal diproses');
+                }
+
+                document.getElementById('paymentView').style.display = 'none';
+                document.getElementById('successView').style.display = 'block';
+            } catch (error) {
+                statusText.innerText = error.message || 'Terjadi kendala saat memproses pembayaran.';
+                statusText.classList.add('error');
+            }
+        }
+
+        if (orderId && token && amount > 0) {
+            confirmPayment();
+        }
+    </script>
+</body>
+</html>
