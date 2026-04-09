@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_email'])) {
 }
 
 $userName = $_SESSION['user_name'];
+$userEmail = $_SESSION['user_email']; // DITAMBAHKAN UNTUK KUNCI JS
 $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionists/svg?seed=Admin'; 
 ?>
 <!DOCTYPE html>
@@ -230,7 +231,6 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
         <div class="survival-card"><h4>🥶 Gejala Hipotermia</h4><p>Ganti baju basah dengan kering. Peluk penderita. Jangan beri minuman keras.</p></div>
         <div class="survival-card"><h4>🐍 Gigitan Ular</h4><p>Tenangkan korban, bidai area tergigit. Jangan disedot! Segera evakuasi turun.</p></div>
     </div>
-
     <div class="screen-flash-overlay" id="flashOverlay" onclick="toggleScreenFlash()">
         <h1 style="color: black; text-align: center; margin-top: 50vh; transform: translateY(-50%); font-size: 40px;">TAP UNTUK MATIKAN</h1>
     </div>
@@ -242,16 +242,16 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
     </div>
 
     <script>
-        // Sinkronisasi Nama & Avatar hasil editan di Home
+        // Sinkronisasi Nama & Avatar hasil editan di Home (DENGAN KUNCI EMAIL)
         window.addEventListener('DOMContentLoaded', (event) => {
-            const editedName = localStorage.getItem('mountsterUserName');
-            const editedAvatar = localStorage.getItem('mountsterUserAvatar');
+            const userEmailKey = "<?php echo $userEmail; ?>";
+            const editedName = localStorage.getItem('mountsterUserName_' + userEmailKey);
+            const editedAvatar = localStorage.getItem('mountsterUserAvatar_' + userEmailKey);
             
             if (editedName) {
                 document.getElementById('greetingName').innerText = "Hi, " + editedName;
             }
             if (editedAvatar) {
-                // Mencari elemen dengan class profile-icon dan mengubah background-image nya
                 const profileIcon = document.querySelector('.profile-icon');
                 if(profileIcon) {
                     profileIcon.style.backgroundImage = `url('${editedAvatar}')`;
