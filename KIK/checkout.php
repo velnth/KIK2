@@ -364,10 +364,13 @@ $userEmail = $_SESSION['user_email'] ?? '';
                 totalItems += item.qty;
                 totalItemPrice += (priceNumber * item.qty);
 
+                // LOGIKA BARU: Cek apakah item bawa image sendiri. Jika tidak ada, baru cari di getProductImage()
+                let imageSrc = item.image ? item.image : getProductImage(item.name);
+
                 container.innerHTML += `
                     <div style="display: flex; gap: 15px; margin-bottom: 15px;">
                         <div style="width: 60px; height: 60px; background: #eee; border-radius: 8px; overflow: hidden; display:flex; justify-content:center; align-items:center;">
-                            <img src="${getProductImage(item.name)}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: contain;">
+                            <img src="${imageSrc}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: contain;">
                         </div>
                         <div style="flex: 1;">
                             <h4 style="font-size: 14px; margin-bottom: 5px;">${item.name}</h4>

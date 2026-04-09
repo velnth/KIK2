@@ -12,7 +12,7 @@ include 'auth.php';
 <body>
     <div class="app-container" style="padding-bottom: 100px;">
         <div class="p-20 flex-between">
-            <a href="home.php" style="text-decoration: none; color: black; font-size: 20px;">←</a>
+            <a href="javascript:history.back()" style="text-decoration: none; color: black; font-size: 20px;">←</a>
             <h2 style="font-size: 18px;">Shopping Cart</h2>
             <div style="width: 20px;"></div>
         </div>

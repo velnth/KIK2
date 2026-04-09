@@ -469,6 +469,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
 
             <div id="termsPage" class="sub-page">
                 <div style="padding: 10px 5px; text-align: left; font-size: 13px; line-height: 1.6; color: #444;">
+
                     
                     <p style="margin-bottom: 15px; text-align: center; color: #666;">Dengan menggunakan layanan rental alat hiking pada website ini, pengguna dianggap telah membaca, memahami, dan menyetujui seluruh syarat dan ketentuan yang berlaku.</p>
 
