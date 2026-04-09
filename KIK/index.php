@@ -27,7 +27,7 @@ if (isset($_POST['login'])) {
 </head>
 
 <body>
-    <div class="app-container" style="background: url('TARUH_LINK_GAMBAR_BACKGROUND_GUNUNG_DISINI') center/cover;">
+    <div class="app-container" style="background: url('https://images.unsplash.com/photo-1511884642898-4c92249e20b6?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover;">
 
         <div style="background: rgba(0,0,0,0.5); width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 40px 20px;">
 
