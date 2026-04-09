@@ -1,3 +1,6 @@
+<?php
+include 'auth.php';
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -145,6 +148,22 @@
             animation: checkIn 0.45s ease forwards;
         }
 
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            display: block;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #153b22;
+        }
+
         @keyframes checkIn {
             from { transform: rotate(-45deg) scale(0.3); opacity: 0; }
             to { transform: rotate(-45deg) scale(1); opacity: 1; }
@@ -181,7 +200,7 @@
                 <div class="row"><span>Nominal</span><span id="successAmountText">Rp 0</span></div>
                 <div class="row"><span>Order ID</span><span id="successOrderIdText">-</span></div>
             </div>
-            <a href="home.html" class="btn" style="display:block; text-decoration:none;">Kembali ke Beranda</a>
+            <a href="home.php" class="btn">Kembali ke Beranda</a>
         </div>
     </div>
 

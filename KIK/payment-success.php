@@ -1,3 +1,6 @@
+<?php
+include 'auth.php';
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -127,6 +130,11 @@
             font-size: 15px;
             font-weight: 700;
             text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #153b22;
         }
 
         @keyframes checkIn {
@@ -150,7 +158,7 @@
         </div>
 
         <p class="small">Untuk demo utama, gunakan halaman pembayaran HP yang muncul dari QR checkout lalu tekan tombol bayar di sana.</p>
-        <a href="home.html" class="btn">Kembali ke Beranda</a>
+        <a href="home.php" class="btn">Kembali ke Beranda</a>
     </div>
 
     <script>

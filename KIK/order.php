@@ -32,7 +32,7 @@ include 'auth.php';
             font-weight: bold;
         }
 
-        /* Modal & QRIS CSS (Sama dengan Checkout) */
+        /* Modal & QRIS CSS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 9000; backdrop-filter: blur(4px); }
         .modal-overlay.active { display: flex; }
         .modal-content { background: white; border-radius: 12px; width: 90%; max-width: 400px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); animation: modalFadeIn 0.3s ease; }
@@ -41,7 +41,8 @@ include 'auth.php';
         @keyframes modalFadeIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
         .qris-box { text-align: center; padding: 10px 0; }
-        .qris-code-wrap { width: 240px; height: 240px; margin: 18px auto; background: #fff; border-radius: 20px; padding: 20px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08); display: flex; align-items: center; justify-content: center; }
+        .qris-code-wrap { width: 240px; height: 240px; margin: 18px auto; background: #fff; border-radius: 20px; padding: 20px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
+        .qris-code-wrap:hover { transform: scale(1.02); }
         .qris-code-wrap img, .qris-code-wrap canvas { max-width: 100%; max-height: 100%; }
         .qris-amount { font-size: 30px; font-weight: 800; color: var(--primary); margin-top: 8px; }
         .qris-subtext { font-size: 13px; color: var(--text-muted); line-height: 1.5; max-width: 280px; margin: 12px auto 0; }
@@ -137,7 +138,9 @@ include 'auth.php';
             currentQrisOrderId = orderId;
             currentQrisAmount = order.grandTotal;
             currentQrisPaymentToken = createDemoPaymentToken();
-            currentQrisExpiryAt = Date.now() + (10 * 60 * 1000); // 10 Menit masa aktif barcode 1 sesi
+            
+            // Ambil waktu batas bayar 24 jam dari data order
+            currentQrisExpiryAt = order.deadline; 
 
             document.getElementById('qrisModal').classList.add('active');
             showQrisLoadingState();
@@ -161,21 +164,18 @@ include 'auth.php';
         }
 
         function renderQrisWaitingState() {
-            const isLocalhostHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-            const networkHint = isLocalhostHost ? `<p class="qris-subtext" style="margin-top:12px; color:#d9534f;">Buka website ini memakai IP LAN yang sama supaya QR bisa discan dari HP lain.</p>` : `<p class="qris-subtext" style="margin-top:12px;">Akses dari HP: ${currentServerBaseUrl || getApiBaseUrl()}</p>`;
-
             document.getElementById('qrisModalBody').innerHTML = `
-                <div class="qris-chip"><span class="qris-chip-dot"></span>Menunggu Pembayaran</div>
-                <p class="qris-amount">${formatRupiah(currentQrisAmount)}</p>
-                <div class="qris-code-wrap"><div id="qrisCode"></div></div>
-                <p class="qris-subtext">Scan QR ini dengan kamera HP Anda. Pembayaran otomatis ter-trigger saat halaman scan terbuka di HP.</p>
+                <div class="qris-chip" style="margin-bottom: 10px;"><span class="qris-chip-dot"></span>Menunggu Pembayaran</div>
+                <p class="qris-amount" style="font-size: 32px; color: #1b4332; margin-bottom: 20px;">${formatRupiah(currentQrisAmount)}</p>
+                <div class="qris-code-wrap" style="cursor: pointer;" onclick="window.open('${currentQrisPaymentUrl}', '_blank')" title="Klik untuk simulasi bayar">
+                    <div id="qrisCode"></div>
+                </div>
+                <p class="qris-subtext">Scan QR ini dengan kamera HP Anda.<br>Pembayaran otomatis ter-trigger saat<br>halaman scan terbuka di HP.</p>
                 <div class="qris-meta">
                     <div class="qris-meta-row"><span>Order ID</span><span id="qrisOrderIdText">${currentQrisOrderId}</span></div>
                     <div class="qris-meta-row"><span>Status</span><span id="qrisStatusText">Menunggu pembayaran</span></div>
-                    <div class="qris-meta-row"><span>Berlaku sampai</span><span id="qrisExpiryText">10:00</span></div>
+                    <div class="qris-meta-row"><span>Berlaku sampai</span><span id="qrisExpiryText">Memuat...</span></div>
                 </div>
-                ${networkHint}
-                <a href="${currentQrisPaymentUrl}" target="_blank" style="display:block; margin-top:14px; color:var(--primary); font-size:13px; font-weight:700; word-break:break-word;">Buka link hasil scan</a>
             `;
 
             const qrisCodeEl = document.getElementById('qrisCode');
@@ -184,21 +184,39 @@ include 'auth.php';
                 if (typeof QRCode === 'function') new QRCode(qrisCodeEl, { text: currentQrisPaymentUrl, width: 200, height: 200 });
             }
         }
+
         function showQrisLoadingState() { document.getElementById('qrisModalBody').innerHTML = `<div class="qris-chip"><span class="qris-chip-dot"></span>Mempersiapkan QR Demo</div><p class="qris-amount">${formatRupiah(currentQrisAmount)}</p><div class="qris-loading"></div>`; }
+        
         function showQrisErrorState(msg) { document.getElementById('qrisModalBody').innerHTML = `<div class="qris-chip"><span class="qris-chip-dot" style="background:#d9534f;"></span>QRIS Belum Siap</div><p class="qris-amount">${formatRupiah(currentQrisAmount)}</p><p class="qris-subtext">${msg}</p>`; }
+        
         function startQrisExpiryCountdown() { updateQrisExpiryText(); qrisExpiryTimer = setInterval(updateQrisExpiryText, 1000); }
+        
         function updateQrisExpiryText() {
-            const expiryEl = document.getElementById('qrisExpiryText'); const statusEl = document.getElementById('qrisStatusText');
+            const expiryEl = document.getElementById('qrisExpiryText'); 
+            const statusEl = document.getElementById('qrisStatusText');
             if (!expiryEl || !currentQrisExpiryAt) return;
+            
             const remainingMs = currentQrisExpiryAt - Date.now();
             if (remainingMs <= 0) {
                 expiryEl.innerText = 'Expired'; expiryEl.classList.add('qris-expired');
                 if (statusEl) statusEl.innerText = 'QR expired';
-                stopQrisRealtimeChecks(); return;
+                stopQrisRealtimeChecks(); 
+                return;
             }
+            
+            // Konversi dari MS ke Jam:Menit:Detik
             const totalSeconds = Math.floor(remainingMs / 1000);
-            expiryEl.innerText = `${String(Math.floor(totalSeconds / 60)).padStart(2, '0')}:${String(totalSeconds % 60).padStart(2, '0')}`;
+            const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+            const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+            const seconds = String(totalSeconds % 60).padStart(2, '0');
+            
+            if (hours > 0) {
+                expiryEl.innerText = `${hours}:${minutes}:${seconds}`;
+            } else {
+                expiryEl.innerText = `${minutes}:${seconds}`;
+            }
         }
+
         async function startQrisStatusPolling() { await checkPaymentStatus(); qrisStatusPollingTimer = setInterval(checkPaymentStatus, 3000); }
         async function checkPaymentStatus() {
             if (!currentQrisOrderId) return;
@@ -359,7 +377,7 @@ include 'auth.php';
             }
         }
 
-        // Loop Global untuk mengupdate teks hitung mundur (hanya UI tanpa harus re-render ulang HTML)
+        // Loop Global untuk mengupdate teks hitung mundur
         setInterval(() => {
             let orders = JSON.parse(localStorage.getItem('mountsterOrders')) || [];
             let now = Date.now();
