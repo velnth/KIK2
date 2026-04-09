@@ -242,6 +242,23 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
     </div>
 
     <script>
+        // Sinkronisasi Nama & Avatar hasil editan di Home
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const editedName = localStorage.getItem('mountsterUserName');
+            const editedAvatar = localStorage.getItem('mountsterUserAvatar');
+            
+            if (editedName) {
+                document.getElementById('greetingName').innerText = "Hi, " + editedName;
+            }
+            if (editedAvatar) {
+                // Mencari elemen dengan class profile-icon dan mengubah background-image nya
+                const profileIcon = document.querySelector('.profile-icon');
+                if(profileIcon) {
+                    profileIcon.style.backgroundImage = `url('${editedAvatar}')`;
+                }
+            }
+        });
+        
         // --- CUSTOM ALERT DI TENGAH ---
         function showCustomAlert(message, title = "Perhatian", emoji = "⚠️") {
             document.getElementById('alertEmoji').innerText = emoji;

@@ -22,64 +22,391 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
     <script src="wishlist.js"></script>
     <style>
         /* --- Core Layout --- */
-        .profile-header-icon { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); background: #eee; }
-        .profile-header-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-header-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            background: #eee;
+        }
+
+        .profile-header-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
         /* --- Modal System --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(4px); animation: fadeIn 0.3s ease; }
-        .modal-box { background: white; width: 85%; max-width: 340px; padding: 30px 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); transform: scale(0.8); animation: scaleUp 0.3s forwards; }
-        .sub-page { display: none; animation: slideUp 0.3s ease-out; }
-        .sub-page.active { display: block; }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-box {
+            background: white;
+            width: 85%;
+            max-width: 340px;
+            padding: 30px 25px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transform: scale(0.8);
+            animation: scaleUp 0.3s forwards;
+        }
+
+        .sub-page {
+            display: none;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .sub-page.active {
+            display: block;
+        }
 
         /* --- Notifications --- */
-        .notif-badge { width: 8px; height: 8px; background: #ff4d4f; border-radius: 50%; display: none; margin-left: 5px; vertical-align: middle; }
-        .notif-item { display: flex; gap: 15px; padding: 18px; background: #fff; border-radius: 20px; margin-bottom: 12px; border: 1px solid #f2f2f2; position: relative; align-items: center; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02); }
-        .notif-item.unread { background: #f9fffb; border-color: #dcf2e3; }
-        .notif-icon-box { width: 48px; height: 48px; background: #e9f5ee; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-        .notif-content { flex: 1; text-align: left; }
-        .notif-title { font-size: 14px; font-weight: 700; color: #1b4332; margin-bottom: 3px; }
-        .notif-text { font-size: 12px; color: #666; line-height: 1.4; }
-        .unread-dot { width: 10px; height: 10px; background: #27ae60; border-radius: 50%; position: absolute; top: 20px; right: 20px; }
+        .notif-badge {
+            width: 8px;
+            height: 8px;
+            background: #ff4d4f;
+            border-radius: 50%;
+            display: none;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        .notif-item {
+            display: flex;
+            gap: 15px;
+            padding: 18px;
+            background: #fff;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            border: 1px solid #f2f2f2;
+            position: relative;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .notif-item.unread {
+            background: #f9fffb;
+            border-color: #dcf2e3;
+        }
+
+        .notif-icon-box {
+            width: 48px;
+            height: 48px;
+            background: #e9f5ee;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .notif-content {
+            flex: 1;
+            text-align: left;
+        }
+
+        .notif-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1b4332;
+            margin-bottom: 3px;
+        }
+
+        .notif-text {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .unread-dot {
+            width: 10px;
+            height: 10px;
+            background: #27ae60;
+            border-radius: 50%;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
 
         /* --- Camera & AI --- */
-        .camera-container { position: relative; width: 100%; border-radius: 18px; overflow: hidden; background: #000; line-height: 0; }
-        #videoFeed { width: 100%; transform: scaleX(-1); }
-        .camera-guide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none; background-size: contain; background-repeat: no-repeat; background-position: center; opacity: 0.8; transition: all 0.4s ease; }
-        .camera-guide.detected { filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(118deg) brightness(118%) contrast(119%); opacity: 1; }
-        .guide-face { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500'%3E%3Cpath d='M200,100 c-50,0 -80,40 -80,100 s30,120 80,120 s80,-60 80,-120 s-30,-100 -80,-100' fill='none' stroke='white' stroke-width='3' stroke-dasharray='10'/%3E%3C/svg%3E"); }
-        .guide-ktp { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500'%3E%3Crect x='50' y='150' width='300' height='200' rx='15' fill='none' stroke='white' stroke-width='3' stroke-dasharray='10'/%3E%3C/svg%3E"); }
-        .guide-selfie { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500'%3E%3Ccircle cx='200' cy='180' r='70' fill='none' stroke='white' stroke-width='3' stroke-dasharray='10'/%3E%3Crect x='100' y='280' width='200' height='120' rx='10' fill='none' stroke='white' stroke-width='3' stroke-dasharray='10'/%3E%3C/svg%3E"); }
+        .camera-container {
+            position: relative;
+            width: 100%;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #000;
+            line-height: 0;
+        }
+
+        #videoFeed {
+            width: 100%;
+            transform: scaleX(-1);
+        }
+
+        .camera-guide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: none;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.8;
+            transition: all 0.4s ease;
+        }
+
+        .camera-guide.detected {
+            filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(118deg) brightness(118%) contrast(119%);
+            opacity: 1;
+        }
+
+        .guide-face {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500'%3E%3Cpath d='M200,100 c-50,0 -80,40 -80,100 s30,120 80,120 s80,-60 80,-120 s-30,-100 -80,-100' fill='none' stroke='white' stroke-width='3' stroke-dasharray='10'/%3E%3C/svg%3E");
+        }
+
+        .guide-ktp {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500'%3E%3Crect x='50' y='150' width='300' height='200' rx='15' fill='none' stroke='white' stroke-width='3' stroke-dasharray='10'/%3E%3C/svg%3E");
+        }
+
+        .guide-selfie {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500'%3E%3Ccircle cx='200' cy='180' r='70' fill='none' stroke='white' stroke-width='3' stroke-dasharray='10'/%3E%3Crect x='100' y='280' width='200' height='120' rx='10' fill='none' stroke='white' stroke-width='3' stroke-dasharray='10'/%3E%3C/svg%3E");
+        }
 
         /* --- Menu Items --- */
-        .menu-item { display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 12px 0; border: none; }
-        .menu-item.disabled { cursor: default; opacity: 0.5; }
-        .menu-section-title { font-size: 11px; font-weight: 700; color: #AEC3B0; text-transform: uppercase; margin-top: 25px; margin-bottom: 10px; letter-spacing: 1px; }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 12px 0;
+            border: none;
+        }
+
+        .menu-item.disabled {
+            cursor: default;
+            opacity: 0.5;
+        }
+
+        .menu-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #AEC3B0;
+            text-transform: uppercase;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
 
         /* --- Style Tambahan: VOUCHER --- */
-        .voucher-card { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border-radius: 15px; padding: 20px; color: white; position: relative; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(17, 153, 142, 0.3); display: flex; justify-content: space-between; align-items: center; overflow: hidden; }
-        .voucher-card::before, .voucher-card::after { content: ''; position: absolute; width: 30px; height: 30px; background-color: var(--bg-color); border-radius: 50%; top: 50%; transform: translateY(-50%); z-index: 1; }
-        .voucher-card::before { left: -15px; box-shadow: inset -3px 0 5px rgba(0, 0, 0, 0.1); }
-        .voucher-card::after { right: -15px; box-shadow: inset 3px 0 5px rgba(0, 0, 0, 0.1); }
-        .voucher-code { display: inline-block; background: rgba(0, 0, 0, 0.15); border: 1px dashed rgba(255, 255, 255, 0.6); padding: 8px 15px; border-radius: 8px; font-weight: bold; font-family: monospace; font-size: 14px; letter-spacing: 2px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .voucher-code:hover { background: rgba(0, 0, 0, 0.25); transform: scale(1.05); }
+        .voucher-card {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            position: relative;
+            margin-bottom: 15px;
+            box-shadow: 0 8px 20px rgba(17, 153, 142, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .voucher-card::before,
+        .voucher-card::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: var(--bg-color);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .voucher-card::before {
+            left: -15px;
+            box-shadow: inset -3px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .voucher-card::after {
+            right: -15px;
+            box-shadow: inset 3px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .voucher-code {
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px dashed rgba(255, 255, 255, 0.6);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 14px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .voucher-code:hover {
+            background: rgba(0, 0, 0, 0.25);
+            transform: scale(1.05);
+        }
 
         /* Label Verified Header */
-        .status-verified { color: #1b4332; font-weight: 800; font-size: 11px; display: none; margin-top: 4px; }
+        .status-verified {
+            color: #1b4332;
+            font-weight: 800;
+            font-size: 11px;
+            display: none;
+            margin-top: 4px;
+        }
 
         /* Buttons */
-        .btn-camera-trigger { background: #f8f8f8; border: 1px solid #ddd; padding: 10px 15px; border-radius: 12px; font-size: 11px; font-weight: bold; color: #555; margin-top: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
-        .upload-box { border: 2px dashed #ccc; padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 10px; cursor: pointer; min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .upload-preview { width: 100%; height: 120px; object-fit: contain; border-radius: 10px; display: none; margin-top: 10px; }
-        .modal-btn-group { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 15px; }
-        .modal-btn { border: none; padding: 14px; border-radius: 14px; font-weight: 600; font-size: 14px; cursor: pointer; width: 100%; transition: 0.2s; }
-        .btn-potret { background: #1b4332; color: white; }
-        .btn-potret:disabled { background: #ccc !important; cursor: not-allowed; opacity: 0.7; }
-        .btn-batal { background: #f0f0f0; color: #666; }
-        .success-checkmark { width: 80px; height: 80px; margin: 0 auto 20px; background: #e9f5ee; color: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+        .btn-camera-trigger {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #555;
+            margin-top: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes scaleUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .upload-box {
+            border: 2px dashed #ccc;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-preview {
+            width: 100%;
+            height: 120px;
+            object-fit: contain;
+            border-radius: 10px;
+            display: none;
+            margin-top: 10px;
+        }
+
+        .modal-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .modal-btn {
+            border: none;
+            padding: 14px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+        }
+
+        .btn-potret {
+            background: #1b4332;
+            color: white;
+        }
+
+        .btn-potret:disabled {
+            background: #ccc !important;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-batal {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: #e9f5ee;
+            color: #27ae60;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleUp {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 
@@ -95,7 +422,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
         <div id="profileHeaderInfo" class="p-20" style="display: flex; align-items: center; gap: 15px;">
             <div class="profile-header-icon"><img id="mainAvatar" src="<?php echo htmlspecialchars($userAvatar); ?>" alt="Avatar"></div>
             <div>
-                <h3 id="profileName" style="font-size: 18px; margin: 0; text-transform: capitalize;"><?php echo htmlspecialchars($userName); ?></h3>
+                <h3 id="profileName" style="font-size: 18px; margin: 0;"><?php echo htmlspecialchars($userName); ?></h3>
                 <p id="profileEmail" style="color: var(--text-muted); font-size: 12px; margin: 2px 0 0 0;"><?php echo htmlspecialchars($userEmail); ?></p>
                 <div id="verifiedLabel" class="status-verified">✓ Verified</div>
             </div>
@@ -111,7 +438,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
             </div>
 
             <div class="menu-item" onclick="openSubPage('notificationsPage', 'Notifications')"><span>Notifications <span class="notif-badge" id="menuNotifDot"></span></span> <span style="color:#ccc;">›</span></div>
-            
+
             <div class="menu-item" onclick="openSubPage('voucherPage', 'Voucher Saya'); renderVouchers();">
                 <span>Voucher Saya <span id="voucherBadge" style="font-size:10px; background:#ff4d4f; color:white; padding:2px 8px; border-radius:10px; margin-left: 8px; display: none;">Baru</span></span>
                 <span style="color:#ccc;">›</span>
@@ -210,11 +537,63 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
         let stream = null;
         let scanInterval = null;
 
-        // --- FUNGSI RENDER VOUCHER DITAMBAHKAN ---
+        // ==========================================
+        // 1. SINKRONISASI DATA EDIT PROFILE LANGSUNG JALAN
+        // ==========================================
+        // Pakai DOMContentLoaded agar lebih cepat dari window.onload
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedName = localStorage.getItem('mountsterUserName');
+            const savedAvatar = localStorage.getItem('mountsterUserAvatar');
+
+            // Timpa nama dari PHP dengan nama dari Memori Browser
+            if (savedName) {
+                document.getElementById('profileName').innerText = savedName;
+                document.getElementById('editNameInput').value = savedName;
+            }
+
+            // Timpa foto dari PHP dengan foto dari Memori Browser
+            if (savedAvatar) {
+                document.getElementById('mainAvatar').src = savedAvatar;
+                document.getElementById('editAvatarPreview').src = savedAvatar;
+            }
+
+            // Jalankan fungsi awal lainnya
+            updateVerificationUI();
+
+            let vouchers = JSON.parse(localStorage.getItem('mountsterVouchers')) || [];
+            let hasActive = vouchers.find(v => !v.used);
+            if (hasActive && document.getElementById('voucherBadge')) {
+                document.getElementById('voucherBadge').style.display = 'inline-block';
+            }
+
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('require') === 'verif') openSubPage('verifPage', 'Verifikasi 2 Langkah');
+        });
+
+        // ==========================================
+        // 2. FUNGSI SAVE CHANGES KE MEMORI BROWSER
+        // ==========================================
+        function showSuccessModal() {
+            const nameVal = document.getElementById('editNameInput').value;
+            const avatarSrc = document.getElementById('mainAvatar').src;
+
+            if (nameVal && nameVal.trim() !== "") {
+                document.getElementById('profileName').innerText = nameVal;
+                // SIMPAN NAMA BARU KE MEMORI
+                localStorage.setItem('mountsterUserName', nameVal);
+            }
+
+            // SIMPAN FOTO BARU KE MEMORI
+            localStorage.setItem('mountsterUserAvatar', avatarSrc);
+
+            document.getElementById('successModal').style.display = 'flex';
+        }
+
+        // --- Logika Voucher ---
         function renderVouchers() {
             const container = document.getElementById('voucherContainer');
             let vouchers = JSON.parse(localStorage.getItem('mountsterVouchers')) || [];
-            let activeVouchers = vouchers.filter(v => !v.used); 
+            let activeVouchers = vouchers.filter(v => !v.used);
 
             if (activeVouchers.length === 0) {
                 container.innerHTML = `
@@ -234,10 +613,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
                             <span style="font-size: 10px; background: rgba(255,255,255,0.3); padding: 3px 8px; border-radius: 10px; font-weight: bold; text-transform: uppercase;">♻️ Promo Eco-Warrior</span>
                             <h4 style="margin: 8px 0 4px 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">${v.title}</h4>
                             <p style="font-size: 11px; color: #f0fff0; line-height: 1.4;">${v.desc}</p>
-                            
-                            <div class="voucher-code" onclick="alert('Kode voucher ${v.code} berhasil disalin!'); navigator.clipboard.writeText('${v.code}')">
-                                ✂️ ${v.code}
-                            </div>
+                            <div class="voucher-code" onclick="alert('Kode voucher ${v.code} berhasil disalin!'); navigator.clipboard.writeText('${v.code}')">✂️ ${v.code}</div>
                         </div>
                         <div style="font-size: 45px; opacity: 0.9; z-index: 2; transform: rotate(-15deg);">🎟️</div>
                     </div>
@@ -245,7 +621,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
             });
         }
 
-        // --- Logika Sinkronisasi Status Verifikasi ---
+        // --- Logika Status Verifikasi ---
         function updateVerificationUI() {
             const isVerified = localStorage.getItem('is_verified') === 'true';
             const verifMenu = document.getElementById('verifMenu');
@@ -274,23 +650,10 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
             showSuccessModal();
         }
 
-        function showSuccessModal() {
-            const nameVal = document.getElementById('editNameInput').value;
-            if (nameVal && nameVal.trim() !== "") document.getElementById('profileName').innerText = nameVal;
-            document.getElementById('successModal').style.display = 'flex';
-        }
-
+        // --- Logika Bug Report (Gmail) ---
         function reportViaGmail() {
             const subject = encodeURIComponent("Bug Report - Mountster [<?= $userName ?>]");
-            const body = encodeURIComponent(
-                "Halo Admin Mountster,\n\n" +
-                "Saya menemukan kendala pada aplikasi menggunakan akun <?= $userEmail ?>.\n\n" +
-                "Deskripsi Kendala:\n" +
-                "(Silakan ketik detail masalah Anda di sini...)\n\n" +
-                "Terima kasih atas bantuannya.\n\n" +
-                "Salam,\n" +
-                "<?= $userName ?>"
-            );
+            const body = encodeURIComponent("Halo Admin Mountster,\n\nSaya menemukan kendala...\n\nSalam,\n<?= $userName ?>");
             window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=admin@mountster.com&su=${subject}&body=${body}`, '_blank');
             closeBugModal();
         }
@@ -322,7 +685,11 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
             document.getElementById('cameraModal').style.display = 'flex';
             btn.disabled = true;
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "user"
+                    }
+                });
                 document.getElementById('videoFeed').srcObject = stream;
 
                 function startScanningLoop() {
@@ -408,20 +775,6 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
         function closeBugModal() {
             document.getElementById('bugModal').style.display = 'none';
         }
-
-        window.onload = function() {
-            updateVerificationUI();
-            
-            // --- LOGIKA BADGE VOUCHER DITAMBAHKAN SAAT LOAD ---
-            let vouchers = JSON.parse(localStorage.getItem('mountsterVouchers')) || [];
-            let hasActive = vouchers.find(v => !v.used);
-            if (hasActive && document.getElementById('voucherBadge')) {
-                document.getElementById('voucherBadge').style.display = 'inline-block';
-            }
-
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('require') === 'verif') openSubPage('verifPage', 'Verifikasi 2 Langkah');
-        };
 
         document.getElementById('backBtn').onclick = () => {
             if (document.querySelector('.sub-page.active')) closeSubPages();
