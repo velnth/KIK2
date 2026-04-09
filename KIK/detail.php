@@ -30,7 +30,7 @@ include 'auth.php';
             <div id="overview" class="tab-content active">
                 
                 <div style="position: relative; margin-bottom: 20px;">
-                    <img src="" alt="Product" style="width: 100%; height: 200px; background-color: #eee; border-radius: 15px; object-fit: contain;">
+                    <img id="detImage" src="" alt="Product" style="width: 100%; height: 200px; background-color: #eee; border-radius: 15px; object-fit: contain;">
                     <span class="heart-icon" id="detHeartIcon" style="position: absolute; bottom: 15px; right: 15px; background: white; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor:pointer; font-size: 24px;">♥</span>
                 </div>
                 
@@ -100,6 +100,7 @@ include 'auth.php';
         document.getElementById('detHeartIcon').setAttribute('onclick', `toggleWishlist(${product.id})`);
         document.getElementById('detName').innerText = product.name;
         document.getElementById('detPrice').innerText = product.price;
+        document.getElementById('detImage').src = product.image || getProductImageByName(product.name);
         document.getElementById('detDesc').innerText = `${product.name} adalah salah satu perlengkapan terbaik di kategori ${product.category}. Dirancang dengan material berkualitas tinggi untuk menunjang keamanan dan kenyamanan aktivitas outdoor Anda di segala cuaca. Pastikan perlengkapan ini masuk dalam list penyewaan Anda!`;
         
         function switchTab(tabId) {
@@ -115,7 +116,7 @@ include 'auth.php';
             randomContainer.innerHTML += `
                 <div class="card-new">
                     <a href="detail.php?id=${p.id}" style="text-decoration:none; color:inherit; display:block;">
-                        <img src="" alt="IMG" style="height: 80px;">
+                        <img src="${p.image || getProductImageByName(p.name)}" alt="${p.name}" style="height: 80px;">
                         <h4 class="card-new-title" style="font-size:12px;">${p.name}</h4>
                         <p class="card-new-price" style="font-size:12px;">${p.price}</p>
                     </a>

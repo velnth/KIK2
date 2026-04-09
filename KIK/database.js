@@ -60,3 +60,64 @@ const products = [
     { id: 49, name: "Gaiter Anti Pacet", category: "Apparel", price: "Rp 10.000 / Hari" },
     { id: 50, name: "Topi Rimba Eiger", category: "Apparel", price: "Rp 10.000 / Hari" }
 ];
+
+const productImageMap = {
+    "Eiger Wanderlust 60": "images/eiger-wanderlust-60.jpeg",
+    "Consina Magnum 4": "images/consina-magnum-4.jpeg",
+    "Naturehike Cloud Up 2": "images/naturehike-cloud-up-2.jpeg",
+    "Great Outdoor Java 4": "images/great-outdoor-java-4.jpeg",
+    "Antarestar": "images/antarestar.png",
+    "Merapi Mountain Half Moon": "images/merapi-mountain-half-moon.jpeg",
+    "Tenda Pramuka Regu": "images/tenda-pramuka-regu.jpg",
+    "Tenda Dome 2 Orang": "images/tenda-dome-2-orang.jpg",
+    "Naturehike Village 5": "images/naturehike-village-5.jpg",
+    "Eiger Shira 1P": "images/eiger-shira-1p.jpg",
+    "Osprey Aether 65L": "images/osprey-aether-65l.jpg",
+    "Deuter Futura Pro 40": "images/deuter-futura-pro-40.jpg",
+    "Eiger Eliptic Solaris 65L": "images/eiger-eliptic-solaris-65l.jpg",
+    "Consina Tarebbi 60L": "images/consina-tarebbi-60l.jpg",
+    "Arei Ramandika 60L": "images/arei-ramandika-60l.jpg",
+    "Eiger Rhinos 60L": "images/eiger-rhinos-60l.jpg",
+    "Osprey Ariel 55L (Women)": "images/osprey-ariel-55l-women.jpg",
+    "Consina Extraterrestrial 60L": "images/consina-extraterrestrial-60l.jpg",
+    "Deuter Aircontact 50+10": "images/deuter-aircontact-50plus10.jpg",
+    "Naturehike Rock 60L": "images/naturehike-rock-60l.jpg",
+    "Salomon Quest 4 GTX": "images/salomon-quest-4-gtx.jpg",
+    "Eiger Pollock": "images/eiger-pollock.jpg",
+    "Consina Alpine": "images/consina-alpine.jpg",
+    "SNTA 471": "images/snta-471.jpg",
+    "La Sportiva TX4": "images/la-sportiva-tx4.jpg",
+    "Merrell Moab 3": "images/merrell-moab-3.jpg",
+    "Eiger Anaconda": "images/eiger-anaconda.jpg",
+    "Columbia Newton Ridge": "images/columbia-newton-ridge.png",
+    "Arei Outdoorgear Shoes": "images/arei-outdoorgear-shoes.jpg",
+    "Karrimor Bodmin": "images/karrimor-bodmin.jpg",
+    "Kompor Portable Kotak": "images/kompor-portable-kotak.jpg",
+    "Trangia 27-1 UL": "images/trangia-27-1-ul.jpg",
+    "Nesting Bulat 4 in 1": "images/nesting-bulat-4-in-1.png",
+    "Nesting Kotak TNI": "images/nesting-kotak-tni.jpg",
+    "Kompor Mawar (Windproof)": "images/kompor-mawar-windproof.jpg",
+    "Panci Lipat Naturehike": "images/panci-lipat-naturehike.png",
+    "Gas Kaleng Hi-Cook": "images/gas-kaleng-hi-cook.jpg",
+    "Windshield (Pelindung Angin)": "images/windshield-pelindung-angin.jpg",
+    "Jerigen Air Lipat 5L": "images/jerigen-air-lipat-5l.jpg",
+    "Set Alat Makan (Sendok Garpu Pisau)": "images/set-alat-makan-sendok-garpu-pisau.jpg",
+    "Jaket Eiger Tropic": "images/jaket-eiger-tropic.jpg",
+    "Celana Sambung Consina": "images/celana-sambung-consina.jpg",
+    "Jas Hujan Arei Ponco": "images/jas-hujan-arei-ponco.jpg",
+    "Base Layer Thermal": "images/base-layer-thermal.jpg",
+    "Kupluk Rajut (Beanie)": "images/kupluk-rajut-beanie.jpg",
+    "Sarung Tangan Polar": "images/sarung-tangan-polar.jpg",
+    "Jaket Bulang (Down Jacket)": "images/jaket-bulang-down-jacket.jpg",
+    "Kaos Kaki Trekking Tebal": "images/kaos-kaki-trekking-tebal.jpg",
+    "Gaiter Anti Pacet": "images/gaiter-anti-pacet.jpg",
+    "Topi Rimba Eiger": "images/topi-rimba-eiger.jpg"
+};
+
+function getProductImageByName(productName) {
+    return productImageMap[productName] || "";
+}
+
+products.forEach(product => {
+    product.image = getProductImageByName(product.name);
+});

@@ -1,5 +1,6 @@
 <?php
 include 'auth.php';
+$userEmail = $_SESSION['user_email'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -65,6 +66,8 @@ include 'auth.php';
             align-items: center;
             padding: 15px 0;
             cursor: pointer;
+            border-radius: 12px;
+            transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .custom-radio input[type="radio"] {
@@ -74,204 +77,48 @@ include 'auth.php';
             cursor: pointer;
         }
 
-        .qris-box {
-            text-align: center;
-            padding: 10px 0;
-        }
-
-        .qris-code-wrap {
-            width: 240px;
-            height: 240px;
-            margin: 18px auto;
+        .custom-radio.payment-choice {
+            border: 1.5px solid #e5e5e5;
+            padding: 14px 16px;
+            margin-bottom: 12px;
             background: #fff;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
-        .qris-code-wrap img,
-        .qris-code-wrap canvas {
-            max-width: 100%;
-            max-height: 100%;
-        }
-
-        .qris-amount {
-            font-size: 30px;
-            font-weight: 800;
-            color: var(--primary);
-            margin-top: 8px;
-        }
-
-        .qris-subtext {
-            font-size: 13px;
-            color: var(--text-muted);
-            line-height: 1.5;
-            max-width: 280px;
-            margin: 12px auto 0;
-        }
-
-        .qris-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 14px;
+        .custom-radio.payment-choice.active {
+            border-color: var(--primary);
             background: #f4fbf4;
-            border-radius: 999px;
-            color: var(--primary);
-            font-size: 12px;
-            font-weight: 700;
+            box-shadow: 0 8px 18px rgba(31, 81, 48, 0.08);
         }
 
-        .qris-chip-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #2eb872;
-        }
+        /* Modal & QRIS CSS ... */
+        .qris-box { text-align: center; padding: 10px 0; }
+        .qris-code-wrap { width: 240px; height: 240px; margin: 18px auto; background: #fff; border-radius: 20px; padding: 20px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08); display: flex; align-items: center; justify-content: center; }
+        .qris-code-wrap img, .qris-code-wrap canvas { max-width: 100%; max-height: 100%; }
+        .qris-amount { font-size: 30px; font-weight: 800; color: var(--primary); margin-top: 8px; }
+        .qris-subtext { font-size: 13px; color: var(--text-muted); line-height: 1.5; max-width: 280px; margin: 12px auto 0; }
+        .qris-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; background: #f4fbf4; border-radius: 999px; color: var(--primary); font-size: 12px; font-weight: 700; }
+        .qris-chip-dot { width: 8px; height: 8px; border-radius: 50%; background: #2eb872; }
+        .qris-meta { background: #f7faf8; border: 1px solid #e5efea; border-radius: 16px; padding: 14px; margin-top: 16px; text-align: left; }
+        .qris-meta-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; margin-bottom: 8px; }
+        .qris-meta-row:last-child { margin-bottom: 0; }
+        .qris-meta-row span:first-child { color: var(--text-muted); }
+        .qris-meta-row span:last-child { color: var(--text-main); font-weight: 700; text-align: right; }
+        .qris-expired { color: #d9534f; font-weight: 700; }
+        .qris-loading { width: 56px; height: 56px; border-radius: 50%; border: 5px solid #dbe7df; border-top-color: var(--primary); margin: 18px auto 0; animation: qrisSpin 0.8s linear infinite; }
+        .success-shell { text-align: center; padding: 10px 0 5px; }
+        .success-ring { width: 92px; height: 92px; border-radius: 50%; margin: 5px auto 18px; background: linear-gradient(135deg, #dff7ea, #effcf4); display: flex; align-items: center; justify-content: center; }
+        .success-check { width: 48px; height: 24px; border-left: 6px solid #1fa65a; border-bottom: 6px solid #1fa65a; transform: rotate(-45deg) scale(0.3); opacity: 0; animation: checkPop 0.45s ease forwards; animation-delay: 0.1s; }
+        .success-title { font-size: 24px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
+        .success-caption { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+        .success-card { background: #f7faf8; border: 1px solid #e5efea; border-radius: 16px; padding: 16px; text-align: left; margin-bottom: 18px; }
+        .success-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; margin-bottom: 10px; }
+        .success-row:last-child { margin-bottom: 0; }
+        .success-row span:first-child { color: var(--text-muted); }
+        .success-row span:last-child { font-weight: 700; color: var(--text-main); text-align: right; }
+        .success-countdown { color: var(--primary); font-weight: 700; font-size: 13px; }
 
-        .qris-meta {
-            background: #f7faf8;
-            border: 1px solid #e5efea;
-            border-radius: 16px;
-            padding: 14px;
-            margin-top: 16px;
-            text-align: left;
-        }
-
-        .qris-meta-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            font-size: 13px;
-            margin-bottom: 8px;
-        }
-
-        .qris-meta-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .qris-meta-row span:first-child {
-            color: var(--text-muted);
-        }
-
-        .qris-meta-row span:last-child {
-            color: var(--text-main);
-            font-weight: 700;
-            text-align: right;
-        }
-
-        .qris-expired {
-            color: #d9534f;
-            font-weight: 700;
-        }
-
-        .qris-loading {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            border: 5px solid #dbe7df;
-            border-top-color: var(--primary);
-            margin: 18px auto 0;
-            animation: qrisSpin 0.8s linear infinite;
-        }
-
-        .success-shell {
-            text-align: center;
-            padding: 10px 0 5px;
-        }
-
-        .success-ring {
-            width: 92px;
-            height: 92px;
-            border-radius: 50%;
-            margin: 5px auto 18px;
-            background: linear-gradient(135deg, #dff7ea, #effcf4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .success-check {
-            width: 48px;
-            height: 24px;
-            border-left: 6px solid #1fa65a;
-            border-bottom: 6px solid #1fa65a;
-            transform: rotate(-45deg) scale(0.3);
-            opacity: 0;
-            animation: checkPop 0.45s ease forwards;
-            animation-delay: 0.1s;
-        }
-
-        .success-title {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--text-main);
-            margin-bottom: 8px;
-        }
-
-        .success-caption {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-        }
-
-        .success-card {
-            background: #f7faf8;
-            border: 1px solid #e5efea;
-            border-radius: 16px;
-            padding: 16px;
-            text-align: left;
-            margin-bottom: 18px;
-        }
-
-        .success-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            font-size: 13px;
-            margin-bottom: 10px;
-        }
-
-        .success-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .success-row span:first-child {
-            color: var(--text-muted);
-        }
-
-        .success-row span:last-child {
-            font-weight: 700;
-            color: var(--text-main);
-            text-align: right;
-        }
-
-        .success-countdown {
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 13px;
-        }
-
-        @keyframes qrisSpin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes checkPop {
-            from {
-                transform: rotate(-45deg) scale(0.3);
-                opacity: 0;
-            }
-
-            to {
-                transform: rotate(-45deg) scale(1);
-                opacity: 1;
-            }
-        }
+        @keyframes qrisSpin { to { transform: rotate(360deg); } }
+        @keyframes checkPop { from { transform: rotate(-45deg) scale(0.3); opacity: 0; } to { transform: rotate(-45deg) scale(1); opacity: 1; } }
     </style>
 </head>
 
@@ -305,6 +152,9 @@ include 'auth.php';
                         <p id="shippingDesc" style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Estimasi tiba hari ini - besok, maks. 14:00 WIB</p>
                     </div>
                 </div>
+
+                <div class="checkout-card" id="voucherCard">
+                    </div>
             </div>
 
             <div>
@@ -333,7 +183,7 @@ include 'auth.php';
                         <span style="font-weight: bold; font-size: 16px;">Total Tagihan</span>
                         <span id="summaryGrandTotal" style="font-weight: bold; font-size: 18px; color: var(--primary);">Rp0</span>
                     </div>
-                    <button class="btn btn-primary" onclick="processPayment()">Buat Pesanan</button>
+                    <button id="checkoutSubmitBtn" class="btn btn-primary" type="button" style="position: relative; z-index: 5; pointer-events: auto;">Buat Pesanan</button>
                 </div>
             </div>
         </div>
@@ -389,17 +239,17 @@ include 'auth.php';
             </div>
             <div class="modal-body" style="overflow-y: auto; padding: 20px;">
 
-                <label class="custom-radio" style="border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                <label class="custom-radio payment-choice" id="paymentChoiceQris" onclick="selectPayment('<b>QRIS</b>', 'QRIS', false); event.preventDefault();">
                     <span><b>QRIS</b></span>
-                    <input type="radio" name="modal_payment" value="QRIS" onclick="selectPayment('<b>QRIS</b>', 'QRIS', false)">
+                    <input type="radio" name="modal_payment" value="QRIS">
                 </label>
 
-                <label class="custom-radio" style="border-top: 1px solid #eee; padding-top: 15px;">
+                <label class="custom-radio payment-choice" id="paymentChoiceCod" onclick="selectPayment('COD (Bayar di Tempat)', 'COD', true); event.preventDefault();">
                     <span>
                         <b>COD (Bayar di Tempat)</b>
                         <div class="payment-option-note">Bayar tunai saat pesanan diterima kurir atau saat ambil di toko.</div>
                     </span>
-                    <input type="radio" name="modal_payment" value="COD" onclick="selectPayment('COD (Bayar di Tempat)', 'COD', true)">
+                    <input type="radio" name="modal_payment" value="COD">
                 </label>
             </div>
         </div>
@@ -409,7 +259,7 @@ include 'auth.php';
         <div class="modal-content" style="max-width: 360px; padding: 22px;">
             <div class="modal-header" style="padding: 0 0 18px; border-bottom: none;">
                 <h3 style="font-size: 18px; flex: 1; text-align: center;">QRIS Demo Payment</h3>
-                <span class="modal-close" onclick="closeQrisModal()">x</span>
+                <span class="modal-close" id="qrisModalClose" onclick="closeQrisModal()">×</span>
             </div>
             <div id="qrisModalBody" class="qris-box">
                 <div class="qris-chip"><span class="qris-chip-dot"></span>Menunggu Pembayaran</div>
@@ -417,7 +267,7 @@ include 'auth.php';
                 <div class="qris-code-wrap">
                     <div id="qrisCode"></div>
                 </div>
-                <p class="qris-subtext">Scan QR ini menggunakan kamera HP untuk membuka halaman pembayaran demo. Setelah tombol bayar di HP ditekan, status di web ini akan otomatis berubah.</p>
+                <p class="qris-subtext">Scan QR ini menggunakan kamera HP untuk membuka halaman pembayaran demo.</p>
                 <div class="qris-meta">
                     <div class="qris-meta-row"><span>Order ID</span><span id="qrisOrderIdText">-</span></div>
                     <div class="qris-meta-row"><span>Status</span><span id="qrisStatusText">Menunggu pembayaran</span></div>
@@ -428,7 +278,13 @@ include 'auth.php';
     </div>
 
     <script>
-        // --- 1. INISIALISASI DATA ---
+        const USER_ID = "<?php echo $userEmail; ?>";
+        const KEY_VOUCHER = 'mountsterVouchers_' + USER_ID;
+        const KEY_ECO_POINTS = 'mountsterEcoPoints_' + USER_ID;
+
+        let appliedVoucher = null;
+        let discountAmount = 0;
+
         let addresses = JSON.parse(localStorage.getItem('mountsterAddresses')) || [];
         let selectedAddressId = localStorage.getItem('mountsterSelectedAddress') || null;
         let pendingDeleteId = null;
@@ -446,85 +302,18 @@ include 'auth.php';
         let currentQrisPaymentUrl = '';
         let currentServerBaseUrl = '';
 
-        function getApiBaseUrl() {
-            if (window.location.port === '5500') {
-                return `${window.location.protocol}//${window.location.hostname}:3000`;
-            }
-            return window.location.origin;
-        }
-
-        async function initializeServerBaseUrl() {
-            try {
-                const response = await fetch(`${getApiBaseUrl()}/api/server-info`, {
-                    cache: 'no-store'
-                });
-                if (!response.ok) throw new Error('server-info gagal dibaca');
-                const data = await response.json();
-                currentServerBaseUrl = data.baseUrl || getApiBaseUrl();
-            } catch (error) {
-                currentServerBaseUrl = getApiBaseUrl();
-            }
-        }
-
-        function createDemoPaymentToken() {
-            return Math.random().toString(36).slice(2, 10).toUpperCase();
-        }
+        function getApiBaseUrl() { return `${window.location.protocol}//${window.location.hostname}:3000`; }
+        async function initializeServerBaseUrl() { currentServerBaseUrl = window.location.origin; }
+        function createDemoPaymentToken() { return Math.random().toString(36).slice(2, 10).toUpperCase(); }
 
         function getProductImage(productName) {
             if (productName === 'Eiger Wanderlust 60') return 'images/eiger-wanderlust-60.jpeg';
             if (productName === 'Consina Magnum 4') return 'images/consina-magnum-4.jpeg';
             if (productName === 'Great Outdoor Java 4') return 'images/great-outdoor-java-4.jpeg';
             if (productName === 'Naturehike Cloud Up 2') return 'images/naturehike-cloud-up-2.jpeg';
-            if (productName === 'Antarestar') return 'images/antarestar.png';
-            if (productName === 'Merapi Mountain Half Moon') return 'images/merapi-mountain-half-moon.jpeg';
-            if (productName === 'Tenda Pramuka Regu') return 'images/tenda-pramuka-regu.jpg';
-            if (productName === 'Tenda Dome 2 Orang') return 'images/tenda-dome-2-orang.jpg';
-            if (productName === 'Naturehike Village 5') return 'images/naturehike-village-5.jpg';
-            if (productName === 'Eiger Shira 1P') return 'images/eiger-shira-1p.jpg';
-            if (productName === 'Osprey Aether 65L') return 'images/osprey-aether-65l.jpg';
-            if (productName === 'Deuter Futura Pro 40') return 'images/deuter-futura-pro-40.jpg';
-            if (productName === 'Eiger Eliptic Solaris 65L') return 'images/eiger-eliptic-solaris-65l.jpg';
-            if (productName === 'Consina Tarebbi 60L') return 'images/consina-tarebbi-60l.jpg';
-            if (productName === 'Arei Ramandika 60L') return 'images/arei-ramandika-60l.jpg';
-            if (productName === 'Eiger Rhinos 60L') return 'images/eiger-rhinos-60l.jpg';
-            if (productName === 'Osprey Ariel 55L (Women)') return 'images/osprey-ariel-55l-women.jpg';
-            if (productName === 'Consina Extraterrestrial 60L') return 'images/consina-extraterrestrial-60l.jpg';
-            if (productName === 'Deuter Aircontact 50+10') return 'images/deuter-aircontact-50plus10.jpg';
-            if (productName === 'Naturehike Rock 60L') return 'images/naturehike-rock-60l.jpg';
-            if (productName === 'Salomon Quest 4 GTX') return 'images/salomon-quest-4-gtx.jpg';
-            if (productName === 'Eiger Pollock') return 'images/eiger-pollock.jpg';
-            if (productName === 'Consina Alpine') return 'images/consina-alpine.jpg';
-            if (productName === 'SNTA 471') return 'images/snta-471.jpg';
-            if (productName === 'La Sportiva TX4') return 'images/la-sportiva-tx4.jpg';
-            if (productName === 'Merrell Moab 3') return 'images/merrell-moab-3.jpg';
-            if (productName === 'Eiger Anaconda') return 'images/eiger-anaconda.jpg';
-            if (productName === 'Columbia Newton Ridge') return 'images/columbia-newton-ridge.png';
-            if (productName === 'Arei Outdoorgear Shoes') return 'images/arei-outdoorgear-shoes.jpg';
-            if (productName === 'Karrimor Bodmin') return 'images/karrimor-bodmin.jpg';
-            if (productName === 'Kompor Portable Kotak') return 'images/kompor-portable-kotak.jpg';
-            if (productName === 'Trangia 27-1 UL') return 'images/trangia-27-1-ul.jpg';
-            if (productName === 'Nesting Bulat 4 in 1') return 'images/nesting-bulat-4-in-1.png';
-            if (productName === 'Nesting Kotak TNI') return 'images/nesting-kotak-tni.jpg';
-            if (productName === 'Kompor Mawar (Windproof)') return 'images/kompor-mawar-windproof.jpg';
-            if (productName === 'Panci Lipat Naturehike') return 'images/panci-lipat-naturehike.png';
-            if (productName === 'Gas Kaleng Hi-Cook') return 'images/gas-kaleng-hi-cook.jpg';
-            if (productName === 'Windshield (Pelindung Angin)') return 'images/windshield-pelindung-angin.jpg';
-            if (productName === 'Jerigen Air Lipat 5L') return 'images/jerigen-air-lipat-5l.jpg';
-            if (productName === 'Set Alat Makan (Sendok Garpu Pisau)') return 'images/set-alat-makan-sendok-garpu-pisau.jpg';
-            if (productName === 'Jaket Eiger Tropic') return 'images/jaket-eiger-tropic.jpg';
-            if (productName === 'Celana Sambung Consina') return 'images/celana-sambung-consina.jpg';
-            if (productName === 'Jas Hujan Arei Ponco') return 'images/jas-hujan-arei-ponco.jpg';
-            if (productName === 'Base Layer Thermal') return 'images/base-layer-thermal.jpg';
-            if (productName === 'Kupluk Rajut (Beanie)') return 'images/kupluk-rajut-beanie.jpg';
-            if (productName === 'Sarung Tangan Polar') return 'images/sarung-tangan-polar.jpg';
-            if (productName === 'Jaket Bulang (Down Jacket)') return 'images/jaket-bulang-down-jacket.jpg';
-            if (productName === 'Kaos Kaki Trekking Tebal') return 'images/kaos-kaki-trekking-tebal.jpg';
-            if (productName === 'Gaiter Anti Pacet') return 'images/gaiter-anti-pacet.jpg';
-            if (productName === 'Topi Rimba Eiger') return 'images/topi-rimba-eiger.jpg';
-            return '';
+            return 'logo_mountster.png';
         }
 
-        // Cek "Beli Langsung" atau "Keranjang"
         let directBuy = JSON.parse(localStorage.getItem('mountsterDirectBuy'));
         if (directBuy) {
             cartToCheckout = directBuy;
@@ -533,10 +322,30 @@ include 'auth.php';
             cartToCheckout = JSON.parse(localStorage.getItem('mountsterCart')) || [];
         }
 
-        // --- Variabel Pembayaran (Kosong secara default) ---
         let finalPaymentMethod = null;
         let finalPaymentDisplayName = null;
         let isFinalPaymentCOD = false;
+
+        function updateSubmitButtonState() {
+            const submitBtn = document.getElementById('checkoutSubmitBtn');
+            if (!submitBtn) return;
+            const isReady = Boolean(selectedAddressId && finalPaymentMethod);
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = isReady ? '1' : '0.65';
+            submitBtn.style.cursor = isReady ? 'pointer' : 'not-allowed';
+            submitBtn.setAttribute('aria-disabled', isReady ? 'false' : 'true');
+        }
+
+        function syncPaymentSelectionUI() {
+            const qrisChoice = document.getElementById('paymentChoiceQris');
+            const codChoice = document.getElementById('paymentChoiceCod');
+            const paymentInputs = document.querySelectorAll('input[name="modal_payment"]');
+
+            paymentInputs.forEach(input => { input.checked = input.value === finalPaymentMethod; });
+            if (qrisChoice) qrisChoice.classList.toggle('active', finalPaymentMethod === 'QRIS');
+            if (codChoice) codChoice.classList.toggle('active', finalPaymentMethod === 'COD');
+            updateSubmitButtonState();
+        }
 
         // --- 2. RENDER PRODUK & RINGKASAN ---
         function loadCheckout() {
@@ -570,30 +379,135 @@ include 'auth.php';
             document.getElementById('summaryTotalItems').innerText = `Total Harga (${totalItems} Barang)`;
             document.getElementById('summaryItemPrice').innerText = `Rp ` + totalItemPrice.toLocaleString('id-ID');
 
+            renderVoucherPickerCard();
             updateSummary();
             renderActiveAddress();
-            renderPaymentUI(); // Render tampilan pembayaran awal (Pilih Metode)
+            renderPaymentUI();
+            syncPaymentSelectionUI();
         }
 
         function updateSummary() {
             const selectEl = document.getElementById('shippingSelect');
-            const shippingCost = parseInt(selectEl.value);
+            let shippingCost = parseInt(selectEl.value);
             document.getElementById('shippingDesc').innerText = selectEl.options[selectEl.selectedIndex].getAttribute('data-desc');
-            document.getElementById('summaryShippingPrice').innerText = `Rp ` + shippingCost.toLocaleString('id-ID');
-            document.getElementById('summaryGrandTotal').innerText = `Rp ` + (totalItemPrice + shippingCost).toLocaleString('id-ID');
+
+            discountAmount = 0;
+            if (appliedVoucher) {
+                if (appliedVoucher.type === 'percent') discountAmount = Math.round(totalItemPrice * appliedVoucher.value / 100);
+                else if (appliedVoucher.type === 'flat') discountAmount = appliedVoucher.value;
+            }
+
+            const grandTotal = Math.max(0, totalItemPrice - discountAmount + shippingCost);
+
+            document.getElementById('summaryShippingPrice').innerText = 'Rp ' + shippingCost.toLocaleString('id-ID');
+
+            let discountRow = document.getElementById('summaryDiscountRow');
+            if (discountAmount > 0) {
+                if (!discountRow) {
+                    const hr = document.querySelector('.checkout-card hr');
+                    const row = document.createElement('div');
+                    row.id = 'summaryDiscountRow';
+                    row.className = 'flex-between';
+                    row.style = 'margin-bottom: 10px; font-size: 14px; color: #009933;';
+                    row.innerHTML = `<span id="summaryDiscountLabel">Diskon Voucher</span><span id="summaryDiscountValue">-Rp0</span>`;
+                    hr.parentNode.insertBefore(row, hr);
+                    discountRow = row;
+                }
+                document.getElementById('summaryDiscountLabel').innerText = `Voucher (${appliedVoucher.code})`;
+                document.getElementById('summaryDiscountValue').innerText = `-Rp ${discountAmount.toLocaleString('id-ID')}`;
+                discountRow.style.display = 'flex';
+            } else if (discountRow) {
+                discountRow.style.display = 'none';
+            }
+
+            document.getElementById('summaryGrandTotal').innerText = 'Rp ' + grandTotal.toLocaleString('id-ID');
         }
 
         function getGrandTotalValue() {
-            return totalItemPrice + parseInt(document.getElementById('shippingSelect').value);
+            const selectEl = document.getElementById('shippingSelect');
+            let shippingCost = parseInt(selectEl.value);
+            return Math.max(0, totalItemPrice - discountAmount + shippingCost);
         }
 
-        function formatRupiah(amount) {
-            return `Rp ${amount.toLocaleString('id-ID')}`;
+        // --- Fitur Input Kode Voucher ---
+        function renderVoucherPickerCard() {
+            const card = document.getElementById('voucherCard');
+            if (!card) return;
+            card.innerHTML = `
+                <div class="checkout-card-title">Voucher & Promo</div>
+                <div style="display: flex; gap: 10px;" id="voucherInputArea">
+                    <input type="text" id="manualVoucherCode" class="input-form" placeholder="Contoh: ECO20" style="flex: 1; text-transform: uppercase;">
+                    <button class="btn btn-primary" style="margin: 0; padding: 10px 20px; width: auto;" onclick="applyManualVoucher()">Pakai</button>
+                </div>
+                <div id="voucherFeedback" style="margin-top: 10px; font-size: 13px;"></div>
+                <div id="voucherAppliedBanner" style="display: none; margin-top: 15px;"></div>
+            `;
         }
 
-        function createDummyTransactionId() {
-            return `TRX-${Date.now().toString().slice(-8)}`;
+        function applyManualVoucher() {
+            const inputEl = document.getElementById('manualVoucherCode');
+            const code = inputEl.value.trim().toUpperCase();
+            const feedback = document.getElementById('voucherFeedback');
+
+            if (!code) {
+                feedback.innerHTML = '<span style="color: #ff4d4f;">Masukkan kode voucher terlebih dahulu.</span>';
+                return;
+            }
+
+            const VALID_VOUCHERS = {
+                "ECO20": { code: "ECO20", label: "Diskon 20% Eco-Warrior", type: "percent", value: 20, reqPoints: 25 }
+            };
+
+            const voucher = VALID_VOUCHERS[code];
+
+            if (!voucher) {
+                feedback.innerHTML = '<span style="color: #ff4d4f;">Kode voucher tidak ditemukan atau tidak valid.</span>';
+                return;
+            }
+
+            const allVouchers = JSON.parse(localStorage.getItem(KEY_VOUCHER) || '[]');
+            const existingVoucher = allVouchers.find(v => v.code === code);
+            if (existingVoucher && existingVoucher.used) {
+                feedback.innerHTML = '<span style="color: #ff4d4f;">Voucher ini sudah pernah Anda gunakan di transaksi sebelumnya.</span>';
+                return;
+            }
+
+            if (voucher.code === 'ECO20') {
+                const currentEcoPoints = parseInt(localStorage.getItem(KEY_ECO_POINTS)) || 0;
+                if (currentEcoPoints < voucher.reqPoints) {
+                    feedback.innerHTML = `<span style="color: #ff4d4f;">Poin Eco kamu belum cukup (${currentEcoPoints}/${voucher.reqPoints} Poin). Terus kumpulkan sampah!</span>`;
+                    return;
+                }
+            }
+
+            feedback.innerHTML = '';
+            inputEl.value = '';
+            appliedVoucher = voucher;
+
+            document.getElementById('voucherInputArea').style.display = 'none';
+            document.getElementById('voucherAppliedBanner').style.display = 'block';
+            document.getElementById('voucherAppliedBanner').innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:#f4fbf4; border:1px solid #c3e6cb; border-radius:8px; padding:12px;">
+                    <div>
+                        <span style="font-weight:bold; color:var(--primary);">${voucher.code}</span>
+                        <div style="font-size:12px; color:#555; margin-top:2px;">${voucher.label} berhasil diterapkan.</div>
+                    </div>
+                    <span onclick="removeManualVoucher()" style="color:#ff4d4f; font-size:20px; cursor:pointer; font-weight:bold; padding:0 4px;" title="Hapus Voucher">×</span>
+                </div>`;
+
+            updateSummary();
         }
+
+        function removeManualVoucher() {
+            appliedVoucher = null;
+            discountAmount = 0;
+            document.getElementById('voucherAppliedBanner').style.display = 'none';
+            document.getElementById('voucherInputArea').style.display = 'flex';
+            updateSummary();
+        }
+
+        function formatRupiah(amount) { return `Rp ${amount.toLocaleString('id-ID')}`; }
+        function createDummyTransactionId() { return `TRX-${Date.now().toString().slice(-8)}`; }
 
         // --- 3. LOGIKA ALAMAT ---
         function renderActiveAddress() {
@@ -615,11 +529,8 @@ include 'auth.php';
             document.getElementById('modalTitle').innerText = 'Daftar Alamat';
             renderAddressList();
         }
-
-        function closeAddressModal() {
-            document.getElementById('addressModal').classList.remove('active');
-        }
-
+        function closeAddressModal() { document.getElementById('addressModal').classList.remove('active'); }
+        
         function renderAddressList() {
             const container = document.getElementById('addressListContainer');
             container.innerHTML = "";
@@ -634,51 +545,22 @@ include 'auth.php';
                 container.innerHTML += `<div style="${borderStyle} padding: 15px; border-radius: 8px; margin-bottom: 15px;"><p style="font-weight: bold; font-size: 14px; margin-bottom: 5px;">${addr.name}</p><p style="font-size: 13px; color: var(--text-main); margin-bottom: 5px;">+${addr.phone}</p><p style="font-size: 13px; color: var(--text-main); line-height: 1.4; margin-bottom: 15px;">${addr.address}</p><div class="flex-between" style="border-top: 1px solid #eee; margin-top: 10px; padding-top: 10px;"><div style="display: flex; gap: 15px;"><span style="color: var(--primary); font-size: 12px; font-weight: bold; cursor: pointer;">Ubah</span><span style="color: #ff4d4f; font-size: 12px; font-weight: bold; cursor: pointer;" onclick="deleteAddress(${addr.id})">Hapus</span></div>${actionBtn}</div></div>`;
             });
         }
-
-        function selectAddress(id) {
-            selectedAddressId = id;
-            localStorage.setItem('mountsterSelectedAddress', id);
-            renderActiveAddress();
-            closeAddressModal();
-        }
-
-        function deleteAddress(id) {
-            pendingDeleteId = id;
-            document.getElementById('confirmDeleteModal').classList.add('active');
-        }
-
-        function closeConfirmModal() {
-            pendingDeleteId = null;
-            document.getElementById('confirmDeleteModal').classList.remove('active');
-        }
-
+        function selectAddress(id) { selectedAddressId = id; localStorage.setItem('mountsterSelectedAddress', id); renderActiveAddress(); closeAddressModal(); }
+        function deleteAddress(id) { pendingDeleteId = id; document.getElementById('confirmDeleteModal').classList.add('active'); }
+        function closeConfirmModal() { pendingDeleteId = null; document.getElementById('confirmDeleteModal').classList.remove('active'); }
         function executeDeleteAddress() {
             if (pendingDeleteId !== null) {
                 addresses = addresses.filter(a => a.id !== pendingDeleteId);
                 localStorage.setItem('mountsterAddresses', JSON.stringify(addresses));
-                if (selectedAddressId == pendingDeleteId) {
-                    selectedAddressId = null;
-                    localStorage.removeItem('mountsterSelectedAddress');
-                }
-                renderAddressList();
-                renderActiveAddress();
-                closeConfirmModal();
+                if (selectedAddressId == pendingDeleteId) { selectedAddressId = null; localStorage.removeItem('mountsterSelectedAddress'); }
+                renderAddressList(); renderActiveAddress(); closeConfirmModal();
             }
         }
+        function showAlert(message) { document.getElementById('alertModalMessage').innerText = message; document.getElementById('alertModal').classList.add('active'); }
+        function closeAlertModal() { document.getElementById('alertModal').classList.remove('active'); }
 
-        // --- 4. LOGIKA ALERT MODAL ---
-        function showAlert(message) {
-            document.getElementById('alertModalMessage').innerText = message;
-            document.getElementById('alertModal').classList.add('active');
-        }
-
-        function closeAlertModal() {
-            document.getElementById('alertModal').classList.remove('active');
-        }
-
-        // --- 5. LOGIKA PETA (LEAFLET) ---
+        // --- 5. PETA ---
         let map, marker;
-
         function showAddForm() {
             document.getElementById('addressListView').style.display = 'none';
             document.getElementById('addressFormView').style.display = 'block';
@@ -686,379 +568,262 @@ include 'auth.php';
             if (!map) {
                 map = L.map('mapContainer').setView([-6.238270, 106.975573], 13);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-                marker = L.marker([-6.238270, 106.975573], {
-                    draggable: true
-                }).addTo(map);
+                marker = L.marker([-6.238270, 106.975573], { draggable: true }).addTo(map);
                 marker.on('dragend', function(e) {
                     let pos = marker.getLatLng();
-                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.lat}&lon=${pos.lng}`).then(res => res.json()).then(data => {
-                        document.getElementById('formDetail').value = data.display_name;
-                    });
+                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.lat}&lon=${pos.lng}`).then(res => res.json()).then(data => { document.getElementById('formDetail').value = data.display_name; });
                 });
             }
-            setTimeout(() => {
-                map.invalidateSize();
-            }, 300);
+            setTimeout(() => { map.invalidateSize(); }, 300);
         }
         document.getElementById('mapSearchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${this.value}&limit=1`).then(res => res.json()).then(data => {
                     if (data.length > 0) {
-                        let lat = data[0].lat;
-                        let lon = data[0].lon;
-                        map.setView([lat, lon], 16);
-                        marker.setLatLng([lat, lon]);
-                        document.getElementById('formDetail').value = data[0].display_name;
-                    } else {
-                        showAlert("Lokasi tidak ditemukan!");
-                    }
+                        let lat = data[0].lat; let lon = data[0].lon;
+                        map.setView([lat, lon], 16); marker.setLatLng([lat, lon]); document.getElementById('formDetail').value = data[0].display_name;
+                    } else { showAlert("Lokasi tidak ditemukan!"); }
                 });
             }
         });
-
         function saveNewAddress() {
-            const name = document.getElementById('formName').value,
-                phone = document.getElementById('formPhone').value,
-                detail = document.getElementById('formDetail').value;
-            if (!name || !phone || !detail) {
-                showAlert("Harap lengkapi semua data alamat!");
-                return;
-            }
+            const name = document.getElementById('formName').value, phone = document.getElementById('formPhone').value, detail = document.getElementById('formDetail').value;
+            if (!name || !phone || !detail) { showAlert("Harap lengkapi semua data alamat!"); return; }
             const newId = Date.now();
-            addresses.push({
-                id: newId,
-                name: name,
-                phone: phone,
-                address: detail
-            });
+            addresses.push({ id: newId, name: name, phone: phone, address: detail });
             localStorage.setItem('mountsterAddresses', JSON.stringify(addresses));
-            document.getElementById('formName').value = "";
-            document.getElementById('formPhone').value = "";
-            document.getElementById('formDetail').value = "";
+            document.getElementById('formName').value = ""; document.getElementById('formPhone').value = ""; document.getElementById('formDetail').value = "";
             selectAddress(newId);
         }
 
-        // --- 6. LOGIKA METODE PEMBAYARAN (MODAL & UI) ---
+        // --- 6. PEMBAYARAN ---
         function renderPaymentUI() {
             const container = document.getElementById('selectedPaymentContainer');
-
             if (!finalPaymentMethod) {
-                // Tampilan jika belum ada yang dipilih
-                container.innerHTML = `
-                    <div style="padding: 12px; border: 1px dashed var(--primary); border-radius: 8px; text-align: center; background: #f4fbf4;">
-                        <span style="font-size: 14px; font-weight: bold; color: var(--primary);">+ Pilih Metode Pembayaran</span>
-                    </div>
-                `;
+                container.innerHTML = `<div style="padding: 12px; border: 1px dashed var(--primary); border-radius: 8px; text-align: center; background: #f4fbf4;"><span style="font-size: 14px; font-weight: bold; color: var(--primary);">+ Pilih Metode Pembayaran</span></div>`;
             } else if (isFinalPaymentCOD) {
-                container.innerHTML = `
-                    <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px;">Pembayaran COD</div>
-                    <label class="custom-radio" style="padding: 0; border: none; pointer-events: none;">
-                        <span style="color: #333; font-size: 14px;">${finalPaymentDisplayName}</span>
-                        <input type="radio" checked>
-                    </label>
-                `;
+                container.innerHTML = `<div style="font-weight: bold; font-size: 14px; margin-bottom: 5px;">Pembayaran COD</div><label class="custom-radio" style="padding: 0; border: none; pointer-events: none;"><span style="color: #333; font-size: 14px;">${finalPaymentDisplayName}</span><input type="radio" checked></label>`;
             } else {
-                // Tampilan jika milih QRIS
-                container.innerHTML = `
-                    <label class="custom-radio" style="padding: 0; border: none; pointer-events: none;">
-                        <span style="font-size: 14px;">${finalPaymentDisplayName}</span>
-                        <input type="radio" checked>
-                    </label>
-                `;
+                container.innerHTML = `<label class="custom-radio" style="padding: 0; border: none; pointer-events: none;"><span style="font-size: 14px;">${finalPaymentDisplayName}</span><input type="radio" checked></label>`;
             }
+            updateSubmitButtonState();
         }
+        function openPaymentModal() { document.getElementById('paymentModal').classList.add('active'); syncPaymentSelectionUI(); }
+        function closePaymentModal() { document.getElementById('paymentModal').classList.remove('active'); }
+        function selectPayment(displayName, systemName, isCOD) { finalPaymentMethod = systemName; finalPaymentDisplayName = displayName; isFinalPaymentCOD = isCOD; renderPaymentUI(); syncPaymentSelectionUI(); closePaymentModal(); }
 
-        function openPaymentModal() {
-            document.getElementById('paymentModal').classList.add('active');
-        }
-
-        function closePaymentModal() {
-            document.getElementById('paymentModal').classList.remove('active');
-        }
-
-        function selectPayment(displayName, systemName, isCOD) {
-            finalPaymentMethod = systemName;
-            finalPaymentDisplayName = displayName;
-            isFinalPaymentCOD = isCOD;
-
-            renderPaymentUI();
-            closePaymentModal();
-        }
-
+        // QRIS Logic
         function renderQrisWaitingState() {
+            const isLocalhostHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+            const networkHint = isLocalhostHost ? `<p class="qris-subtext" style="margin-top:12px; color:#d9534f;">Buka website ini memakai IP LAN yang sama supaya QR bisa discan dari HP lain.</p>` : `<p class="qris-subtext" style="margin-top:12px;">Akses dari HP: ${currentServerBaseUrl || getApiBaseUrl()}</p>`;
+
             document.getElementById('qrisModalBody').innerHTML = `
-                <div class="qris-chip"><span class="qris-chip-dot"></span>Menunggu Pembayaran dari HP</div>
+                <div class="qris-chip"><span class="qris-chip-dot"></span>Menunggu Pembayaran</div>
                 <p class="qris-amount">${formatRupiah(currentQrisAmount)}</p>
-                <div class="qris-code-wrap">
-                    <div id="qrisCode"></div>
-                </div>
-                <p class="qris-subtext">Scan QR ini dengan kamera HP Anda. Begitu halaman hasil scan terbuka di HP, pembayaran akan langsung ter-trigger otomatis.</p>
+                <div class="qris-code-wrap"><div id="qrisCode"></div></div>
+                <p class="qris-subtext">Scan QR ini dengan kamera HP Anda. Pembayaran otomatis ter-trigger saat halaman scan terbuka di HP.</p>
                 <div class="qris-meta">
                     <div class="qris-meta-row"><span>Order ID</span><span id="qrisOrderIdText">${currentQrisOrderId}</span></div>
                     <div class="qris-meta-row"><span>Status</span><span id="qrisStatusText">Menunggu pembayaran</span></div>
                     <div class="qris-meta-row"><span>Berlaku sampai</span><span id="qrisExpiryText">10:00</span></div>
                 </div>
-                <p class="qris-subtext" style="margin-top:12px;">Akses dari HP: ${currentServerBaseUrl || getApiBaseUrl()}</p>
+                ${networkHint}
                 <a href="${currentQrisPaymentUrl}" target="_blank" style="display:block; margin-top:14px; color:var(--primary); font-size:13px; font-weight:700; word-break:break-word;">Buka link hasil scan</a>
             `;
 
             const qrisCodeEl = document.getElementById('qrisCode');
             if (qrisCodeEl) {
                 qrisCodeEl.innerHTML = '';
-                new QRCode(qrisCodeEl, {
-                    text: currentQrisPaymentUrl,
-                    width: 200,
-                    height: 200
-                });
+                if (typeof QRCode === 'function') new QRCode(qrisCodeEl, { text: currentQrisPaymentUrl, width: 200, height: 200 });
             }
         }
-
-        function showQrisLoadingState() {
-            document.getElementById('qrisModalBody').innerHTML = `
-                <div class="qris-chip"><span class="qris-chip-dot"></span>Mempersiapkan QR Demo</div>
-                <p class="qris-amount">${formatRupiah(currentQrisAmount)}</p>
-                <div class="qris-loading"></div>
-                <p class="qris-subtext">Sedang membuat link pembayaran demo untuk HP. Tunggu sebentar, QR akan muncul otomatis.</p>
-            `;
-        }
-
-        function showQrisErrorState(message) {
-            document.getElementById('qrisModalBody').innerHTML = `
-                <div class="qris-chip"><span class="qris-chip-dot" style="background:#d9534f;"></span>QRIS Belum Siap</div>
-                <p class="qris-amount">${formatRupiah(currentQrisAmount)}</p>
-                <p class="qris-subtext">${message}</p>
-                <div class="qris-meta">
-                    <div class="qris-meta-row"><span>Status</span><span>Gagal membuat QR</span></div>
-                    <div class="qris-meta-row"><span>Saran</span><span>Pastikan server Node aktif dan HP terhubung ke WiFi yang sama</span></div>
-                </div>
-            `;
-        }
-
-        function startQrisExpiryCountdown() {
-            updateQrisExpiryText();
-            qrisExpiryTimer = setInterval(() => {
-                updateQrisExpiryText();
-            }, 1000);
-        }
-
+        function showQrisLoadingState() { document.getElementById('qrisModalBody').innerHTML = `<div class="qris-chip"><span class="qris-chip-dot"></span>Mempersiapkan QR Demo</div><p class="qris-amount">${formatRupiah(currentQrisAmount)}</p><div class="qris-loading"></div>`; }
+        function showQrisErrorState(msg) { document.getElementById('qrisModalBody').innerHTML = `<div class="qris-chip"><span class="qris-chip-dot" style="background:#d9534f;"></span>QRIS Belum Siap</div><p class="qris-amount">${formatRupiah(currentQrisAmount)}</p><p class="qris-subtext">${msg}</p>`; }
+        function startQrisExpiryCountdown() { updateQrisExpiryText(); qrisExpiryTimer = setInterval(updateQrisExpiryText, 1000); }
         function updateQrisExpiryText() {
-            const expiryEl = document.getElementById('qrisExpiryText');
-            const statusEl = document.getElementById('qrisStatusText');
+            const expiryEl = document.getElementById('qrisExpiryText'); const statusEl = document.getElementById('qrisStatusText');
             if (!expiryEl || !currentQrisExpiryAt) return;
-
             const remainingMs = currentQrisExpiryAt - Date.now();
             if (remainingMs <= 0) {
-                expiryEl.innerText = 'Expired';
-                expiryEl.classList.add('qris-expired');
+                expiryEl.innerText = 'Expired'; expiryEl.classList.add('qris-expired');
                 if (statusEl) statusEl.innerText = 'QR expired';
-                stopQrisRealtimeChecks();
-                return;
+                stopQrisRealtimeChecks(); return;
             }
-
             const totalSeconds = Math.floor(remainingMs / 1000);
-            const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
-            const seconds = String(totalSeconds % 60).padStart(2, '0');
-            expiryEl.innerText = `${minutes}:${seconds}`;
+            expiryEl.innerText = `${String(Math.floor(totalSeconds / 60)).padStart(2, '0')}:${String(totalSeconds % 60).padStart(2, '0')}`;
         }
-
-        async function startQrisStatusPolling() {
-            await checkPaymentStatus();
-            qrisStatusPollingTimer = setInterval(() => {
-                checkPaymentStatus();
-            }, 3000);
-        }
-
+        async function startQrisStatusPolling() { await checkPaymentStatus(); qrisStatusPollingTimer = setInterval(checkPaymentStatus, 3000); }
         async function checkPaymentStatus() {
             if (!currentQrisOrderId) return;
             try {
-                const response = await fetch(`${getApiBaseUrl()}/api/payment/status?orderId=${encodeURIComponent(currentQrisOrderId)}`, {
-                    cache: 'no-store'
-                });
+                const response = await fetch(`${getApiBaseUrl()}/api/payment/status?orderId=${encodeURIComponent(currentQrisOrderId)}`, { cache: 'no-store' });
                 if (!response.ok) return;
                 const data = await response.json();
                 const statusEl = document.getElementById('qrisStatusText');
-                if (statusEl) {
-                    statusEl.innerText = data.status === 'paid' ?
-                        'Pembayaran terdeteksi' :
-                        data.status === 'expired' ?
-                        'QR expired' :
-                        'Menunggu pembayaran';
-                }
-                if (data.status === 'paid') {
-                    stopQrisRealtimeChecks();
-                    showQrisSuccess();
-                } else if (data.status === 'expired') {
-                    stopQrisRealtimeChecks();
-                }
-            } catch (error) {
-                const statusEl = document.getElementById('qrisStatusText');
-                if (statusEl) statusEl.innerText = 'Menunggu koneksi server';
-            }
+                if (statusEl) statusEl.innerText = data.status === 'paid' ? 'Pembayaran terdeteksi' : (data.status === 'expired' ? 'QR expired' : 'Menunggu pembayaran');
+                if (data.status === 'paid') { stopQrisRealtimeChecks(); showQrisSuccess(); }
+                else if (data.status === 'expired') { stopQrisRealtimeChecks(); }
+            } catch (error) { }
         }
-
         function stopQrisRealtimeChecks() {
-            if (qrisStatusPollingTimer) {
-                clearInterval(qrisStatusPollingTimer);
-                qrisStatusPollingTimer = null;
-            }
-            if (qrisExpiryTimer) {
-                clearInterval(qrisExpiryTimer);
-                qrisExpiryTimer = null;
-            }
+            if (qrisStatusPollingTimer) clearInterval(qrisStatusPollingTimer);
+            if (qrisExpiryTimer) clearInterval(qrisExpiryTimer);
+            qrisStatusPollingTimer = null; qrisExpiryTimer = null;
         }
 
         async function openQrisModal() {
-            await initializeServerBaseUrl();
             currentQrisOrderId = qrisTransactionId;
             currentQrisAmount = getGrandTotalValue();
             currentQrisPaymentToken = createDemoPaymentToken();
             currentQrisExpiryAt = Date.now() + (10 * 60 * 1000);
-            currentQrisPaymentUrl = `${currentServerBaseUrl || getApiBaseUrl()}/api/payment/confirm-direct?orderId=${encodeURIComponent(currentQrisOrderId)}&token=${encodeURIComponent(currentQrisPaymentToken)}&amount=${encodeURIComponent(currentQrisAmount)}`;
+
             document.getElementById('qrisModal').classList.add('active');
-            renderQrisWaitingState();
-            startQrisExpiryCountdown();
-            startQrisStatusPolling();
-        }
+            showQrisLoadingState();
 
+            try {
+                await initializeServerBaseUrl();
+                currentQrisPaymentUrl = `${currentServerBaseUrl || getApiBaseUrl()}/api/payment/confirm-direct?orderId=${encodeURIComponent(currentQrisOrderId)}&token=${encodeURIComponent(currentQrisPaymentToken)}&amount=${encodeURIComponent(currentQrisAmount)}`;
+                renderQrisWaitingState();
+                startQrisExpiryCountdown();
+                startQrisStatusPolling();
+            } catch (error) { showQrisErrorState('QRIS gagal dimuat.'); }
+        }
         function closeQrisModal() {
-            if (qrisCountdownTimer) {
-                clearInterval(qrisCountdownTimer);
-                qrisCountdownTimer = null;
-            }
+            if (qrisCountdownTimer) clearInterval(qrisCountdownTimer);
             stopQrisRealtimeChecks();
-            currentQrisOrderId = null;
-            currentQrisExpiryAt = null;
-            currentQrisPaymentToken = null;
-            currentQrisAmount = 0;
-            currentQrisPaymentUrl = '';
+            currentQrisOrderId = null; currentQrisExpiryAt = null; currentQrisPaymentToken = null; currentQrisAmount = 0; currentQrisPaymentUrl = '';
             document.getElementById('qrisModal').classList.remove('active');
+
+            // --- REDIRECT KE ORDER.PHP SAAT MODAL QRIS DICLOSE ---
+            window.location.href = 'order.php';
         }
 
+        // --- MANAJEMEN ORDER ---
         function normalizeOrderItems(items) {
-            if (!Array.isArray(items)) return [];
-            return items.map(item => ({
-                id: item?.id ?? Date.now(),
-                name: item?.name || 'Produk Mountster',
-                price: item?.price || 'Rp0',
-                image: getProductImage(item?.name || ''),
-                qty: Number.isFinite(Number(item?.qty)) && Number(item.qty) > 0 ? Number(item.qty) : 1
+            return (Array.isArray(items) ? items : []).map(item => ({
+                id: item?.id ?? Date.now(), name: item?.name || 'Produk Mountster', price: item?.price || 'Rp0', image: getProductImage(item?.name || ''), qty: Number.isFinite(Number(item?.qty)) && Number(item.qty) > 0 ? Number(item.qty) : 1
             }));
+        }
+        function formatOrderDateRange(isoString) {
+            const date = new Date(isoString); const nextDate = new Date(date); nextDate.setDate(nextDate.getDate() + 1);
+            const options = { day: 'numeric', month: 'short' };
+            return `${date.toLocaleDateString('id-ID', options)} - ${nextDate.toLocaleDateString('id-ID', options)}`;
+        }
+
+        function markVoucherAsUsed() {
+            if (appliedVoucher) {
+                const allVouchers = JSON.parse(localStorage.getItem(KEY_VOUCHER) || '[]');
+                const idx = allVouchers.findIndex(v => v.code === appliedVoucher.code);
+                if (idx !== -1) {
+                    allVouchers[idx].used = true;
+                    allVouchers[idx].usedAt = new Date().toISOString();
+                } else {
+                    allVouchers.push({ code: appliedVoucher.code, title: appliedVoucher.label, used: true, usedAt: new Date().toISOString() });
+                }
+                localStorage.setItem(KEY_VOUCHER, JSON.stringify(allVouchers));
+            }
+        }
+
+        function savePendingQrisOrder() {
+            const activeAddr = addresses.find(a => a.id == selectedAddressId) || null;
+            const normalizedItems = normalizeOrderItems(cartToCheckout);
+            const createdAt = new Date().toISOString();
+            const orderPayload = {
+                id: qrisTransactionId, paymentMethod: 'QRIS Demo Payment', status: 'Belum Dibayar',
+                createdAt, estimatedArrival: formatOrderDateRange(createdAt), deadline: Date.now() + (24 * 60 * 60 * 1000),
+                items: normalizedItems, productName: normalizedItems[0]?.name || 'Produk Mountster', productImage: normalizedItems[0]?.image || '', productPrice: normalizedItems[0]?.price || 'Rp0',
+                address: activeAddr, totalItemPrice, shippingCost: parseInt(document.getElementById('shippingSelect').value),
+                grandTotal: getGrandTotalValue(), voucherCode: appliedVoucher ? appliedVoucher.code : null, discountAmount: discountAmount
+            };
+
+            localStorage.setItem('mountsterLastOrder', JSON.stringify(orderPayload));
+            const existingOrders = JSON.parse(localStorage.getItem('mountsterOrders') || '[]');
+            existingOrders.unshift(orderPayload);
+            localStorage.setItem('mountsterOrders', JSON.stringify(existingOrders));
+            
+            markVoucherAsUsed();
+            if (!directBuy) localStorage.removeItem('mountsterCart');
+        }
+
+        function updateOrderStatusToPaid(orderId) {
+            const existingOrders = JSON.parse(localStorage.getItem('mountsterOrders') || '[]');
+            const idx = existingOrders.findIndex(o => String(o.id) === String(orderId));
+            if (idx !== -1) {
+                existingOrders[idx].status = 'Dikemas'; existingOrders[idx].paidAt = new Date().toISOString();
+                localStorage.setItem('mountsterOrders', JSON.stringify(existingOrders));
+                localStorage.setItem('mountsterLastOrder', JSON.stringify(existingOrders[idx]));
+            }
         }
 
         function saveSuccessfulOrder() {
             const activeAddr = addresses.find(a => a.id == selectedAddressId) || null;
             const normalizedItems = normalizeOrderItems(cartToCheckout);
             const createdAt = new Date().toISOString();
-            const estimatedArrival = formatOrderDateRange(createdAt);
             const orderPayload = {
-                id: qrisTransactionId,
-                paymentMethod: finalPaymentMethod === 'QRIS' ? 'QRIS Demo Payment' : finalPaymentDisplayName.replace(/<[^>]*>?/gm, ''),
-                status: 'Dikemas',
-                createdAt,
-                estimatedArrival,
-                items: normalizedItems,
-                productName: normalizedItems[0]?.name || 'Produk Mountster',
-                productImage: normalizedItems[0]?.image || '',
-                productPrice: normalizedItems[0]?.price || 'Rp0',
-                address: activeAddr,
-                totalItemPrice,
-                shippingCost: parseInt(document.getElementById('shippingSelect').value),
-                grandTotal: getGrandTotalValue()
+                id: qrisTransactionId, paymentMethod: finalPaymentMethod === 'QRIS' ? 'QRIS Demo Payment' : finalPaymentDisplayName.replace(/<[^>]*>?/gm, ''), status: 'Dikemas',
+                createdAt, estimatedArrival: formatOrderDateRange(createdAt), items: normalizedItems,
+                productName: normalizedItems[0]?.name || 'Produk Mountster', productImage: normalizedItems[0]?.image || '', productPrice: normalizedItems[0]?.price || 'Rp0',
+                address: activeAddr, totalItemPrice, shippingCost: parseInt(document.getElementById('shippingSelect').value),
+                grandTotal: getGrandTotalValue(), voucherCode: appliedVoucher ? appliedVoucher.code : null, discountAmount: discountAmount
             };
 
             localStorage.setItem('mountsterLastOrder', JSON.stringify(orderPayload));
-            const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const existingOrders = JSON.parse(localStorage.getItem('mountsterOrders') || '[]');
             existingOrders.unshift(orderPayload);
-            localStorage.setItem('orders', JSON.stringify(existingOrders));
             localStorage.setItem('mountsterOrders', JSON.stringify(existingOrders));
-            if (!directBuy) {
-                localStorage.removeItem('mountsterCart');
-            }
+            
+            markVoucherAsUsed();
+            if (!directBuy) localStorage.removeItem('mountsterCart');
         }
 
-        function redirectToOrderPage() {
-            window.location.href = 'order.html?tab=riwayat';
-        }
+        function redirectToOrderPage() { window.location.href = 'order.php'; }
 
-        function showQrisSuccess() {
-            stopQrisRealtimeChecks();
-            saveSuccessfulOrder();
-            document.getElementById('qrisModalBody').innerHTML = `
-                <div class="success-shell">
-                    <div class="success-ring"><div class="success-check"></div></div>
-                    <h3 class="success-title">Pembayaran Berhasil!</h3>
-                    <p class="success-caption">Pembayaran QRIS demo berhasil diproses dari halaman HP. Pesanan sedang kami siapkan dan Anda akan diarahkan ke halaman order.</p>
-                    <div class="success-card">
-                        <div class="success-row"><span>Nominal</span><span>${formatRupiah(currentQrisAmount)}</span></div>
-                        <div class="success-row"><span>Order ID</span><span>${currentQrisOrderId || qrisTransactionId}</span></div>
-                        <div class="success-row"><span>Token</span><span>${currentQrisPaymentToken || '-'}</span></div>
-                        <div class="success-row"><span>Metode</span><span>QRIS Demo Payment</span></div>
-                    </div>
-                    <p class="success-countdown" id="successCountdownText">Mengalihkan ke halaman order dalam 3 detik...</p>
-                </div>
-            `;
+        function renderPaymentSuccessModal(title, message) {
+            const closeBtn = document.getElementById('qrisModalClose');
+            if (closeBtn) closeBtn.style.display = 'none';
+            document.getElementById('qrisModal').style.pointerEvents = 'all';
+            document.getElementById('qrisModal').style.background = 'rgba(0,0,0,0.55)';
 
-            let countdown = 3;
-            qrisCountdownTimer = setInterval(() => {
-                countdown -= 1;
-                if (countdown <= 0) {
-                    clearInterval(qrisCountdownTimer);
-                    qrisCountdownTimer = null;
-                    redirectToOrderPage();
-                    return;
-                }
-                document.getElementById('successCountdownText').innerText = `Mengalihkan ke halaman order dalam ${countdown} detik...`;
-            }, 1000);
-        }
-
-        function showCodSuccess() {
-            currentQrisAmount = getGrandTotalValue();
             document.getElementById('qrisModal').classList.add('active');
             document.getElementById('qrisModalBody').innerHTML = `
                 <div class="success-shell">
                     <div class="success-ring"><div class="success-check"></div></div>
-                    <h3 class="success-title">Pesanan COD Berhasil!</h3>
-                    <p class="success-caption">Pesanan Anda berhasil dibuat dengan metode COD. Pembayaran dilakukan saat pesanan diterima atau saat ambil di toko.</p>
-                    <div class="success-card">
-                        <div class="success-row"><span>Nominal</span><span>${formatRupiah(currentQrisAmount)}</span></div>
-                        <div class="success-row"><span>Order ID</span><span>${qrisTransactionId}</span></div>
-                        <div class="success-row"><span>Metode</span><span>${finalPaymentDisplayName.replace(/<[^>]*>?/gm, '')}</span></div>
-                        <div class="success-row"><span>Status</span><span>Menunggu Pengiriman</span></div>
-                    </div>
-                    <p class="success-countdown" id="successCountdownText">Mengalihkan ke halaman order dalam 3 detik...</p>
+                    <h3 class="success-title">${title}</h3>
+                    <p class="success-caption">${message}</p>
+                    <p class="success-countdown" id="successCountdownText">Beralih ke Pesanan Saya dalam 5 detik...</p>
+                    <button class="btn btn-primary" type="button" style="margin-top: 16px;" onclick="redirectToOrderPage()">Lihat Pesanan</button>
                 </div>
             `;
 
-            let countdown = 3;
+            let countdown = 5;
             qrisCountdownTimer = setInterval(() => {
                 countdown -= 1;
-                if (countdown <= 0) {
-                    clearInterval(qrisCountdownTimer);
-                    qrisCountdownTimer = null;
-                    redirectToOrderPage();
-                    return;
-                }
-                document.getElementById('successCountdownText').innerText = `Mengalihkan ke halaman order dalam ${countdown} detik...`;
+                if (countdown <= 0) { clearInterval(qrisCountdownTimer); redirectToOrderPage(); return; }
+                const el = document.getElementById('successCountdownText');
+                if (el) el.innerText = `Beralih ke Pesanan Saya dalam ${countdown} detik...`;
             }, 1000);
+        }
+
+        function showQrisSuccess() {
+            stopQrisRealtimeChecks();
+            updateOrderStatusToPaid(currentQrisOrderId || qrisTransactionId);
+            renderPaymentSuccessModal('Pembayaran Berhasil!', 'Pesananmu sedang diproses. Terima kasih!');
+        }
+
+        function showCodSuccess() {
+            currentQrisAmount = getGrandTotalValue();
+            renderPaymentSuccessModal('Pesanan COD Berhasil!', 'Silakan siapkan pembayaran saat pesanan diantar kurir atau saat Anda mengambil barang ke toko.');
         }
 
         // --- 7. PROSES BAYAR ---
         function processPayment() {
-            // Validasi Alamat menggunakan Modal Alert yang baru
-            if (!selectedAddressId) {
-                showAlert("Harap isi alamat pengiriman terlebih dahulu sebelum membayar!");
-                return;
-            }
-
-            // Validasi Pembayaran menggunakan Modal Alert yang baru
-            if (!finalPaymentMethod) {
-                showAlert("Harap pilih metode pembayaran terlebih dahulu!");
-                return;
-            }
+            if (!selectedAddressId) { showAlert('Harap isi alamat pengiriman terlebih dahulu sebelum membayar!'); return; }
+            if (!finalPaymentMethod) { showAlert('Harap pilih metode pembayaran terlebih dahulu!'); return; }
 
             qrisTransactionId = createDummyTransactionId();
 
             if (finalPaymentMethod === 'QRIS') {
+                savePendingQrisOrder();
                 openQrisModal();
                 return;
             }
@@ -1067,7 +832,9 @@ include 'auth.php';
             showCodSuccess();
         }
 
-        // Jalankan saat pertama load
+        const checkoutSubmitBtn = document.getElementById('checkoutSubmitBtn');
+        if (checkoutSubmitBtn) checkoutSubmitBtn.addEventListener('click', processPayment);
+
         loadCheckout();
     </script>
 </body>

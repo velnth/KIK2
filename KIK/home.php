@@ -25,7 +25,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
         .weather-select { width: 100%; padding: 10px; border-radius: 10px; border: none; outline: none; margin-bottom: 10px; font-weight: bold; color: #333; }
         .btn-weather { background: #ffc107; color: #000; font-weight: bold; width: 100%; padding: 10px; border-radius: 10px; border: none; cursor: pointer; transition: 0.3s; }
         .weather-result { background: rgba(0,0,0,0.3); border-radius: 15px; padding: 15px; margin-top: 15px; display: none; animation: fadeIn 0.5s ease; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px); }
-        .eco-banner { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border-radius: 20px; padding: 20px; color: white; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 8px 15px rgba(17, 153, 142, 0.3); margin-bottom: 20px; cursor: pointer; }
+        .eco-banner { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border-radius: 20px; padding: 20px; color: white; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 8px 15px rgba(17, 153, 142, 0.3); margin-bottom: 20px; cursor: pointer; transition: filter 0.3s ease; }
         .compare-section { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin: 0 20px 20px 20px; }
         .compare-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; }
         .vs-badge { background: #ff4d4f; color: white; font-weight: bold; padding: 5px 10px; border-radius: 50%; font-size: 12px; }
@@ -73,7 +73,10 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
             <div class="flex-between">
                 <a href="cart.php" style="text-decoration: none; font-size: 24px;">🛒</a>
                 <h1 style="font-size: 20px; flex: 1; text-align: center; margin: 0;">mountster</h1>
-                <a href="profile.php"><div class="profile-icon"></div></a>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div id="ecoBadgeHeader" style="background: rgba(255,255,255,0.25); color: white; padding: 6px 10px; border-radius: 14px; font-size: 12px; font-weight: bold; border: 1px solid rgba(255,255,255,0.4);">🌿 <span id="ecoPointsText">0</span>/25</div>
+                    <a href="profile.php"><div class="profile-icon"></div></a>
+                </div>
             </div>
             <div style="margin-top: 20px;">
                 <p id="greetingName" style="font-size: 14px;">Hi, <?php echo htmlspecialchars($userName); ?></p>
@@ -126,12 +129,12 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
             </div>
         </div>
 
-        <div class="p-20" style="padding-top: 0;" onclick="openEcoCamera()">
-            <div class="eco-banner">
+        <div class="p-20" style="padding-top: 0;">
+            <div class="eco-banner" id="ecoBannerMain">
                 <div style="flex: 1;">
                     <span style="background: rgba(255,255,255,0.3); padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: bold; color: white; border: 1px solid rgba(255,255,255,0.5);">♻️ ECO-WARRIOR</span>
                     <h3 style="margin: 10px 0 5px 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">Bawa Turun Sampahmu!</h3>
-                    <p style="font-size: 11px; color: #f0fff0; margin-bottom: 12px; line-height: 1.4; max-width: 90%;">Klik di sini untuk memotret sampah bawaanmu dan klaim voucher 20%.</p>
+                    <p style="font-size: 11px; color: #f0fff0; margin-bottom: 12px; line-height: 1.4; max-width: 90%;">Kumpulkan 25 poin untuk voucher diskon 20%. 1 Foto = 1 Poin.</p>
                 </div>
                 <div style="font-size: 60px; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2));">📸</div>
             </div>
@@ -232,9 +235,14 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
     </div>
 
     <script>
-        // Sinkronisasi Nama & Avatar hasil editan di Home
+        // Data LocalStorage
+        const userEmailKey = "<?php echo $userEmail; ?>";
+        const KEY_ECO_POINTS = 'mountsterEcoPoints_' + userEmailKey;
+        const KEY_VOUCHER = 'mountsterVouchers_' + userEmailKey;
+
+        let currentEcoPoints = parseInt(localStorage.getItem(KEY_ECO_POINTS)) || 0;
+
         window.addEventListener('DOMContentLoaded', (event) => {
-            const userEmailKey = "<?php echo $userEmail; ?>";
             const editedName = localStorage.getItem('mountsterUserName_' + userEmailKey);
             const editedAvatar = localStorage.getItem('mountsterUserAvatar_' + userEmailKey);
             if (editedName) { document.getElementById('greetingName').innerText = "Hi, " + editedName; }
@@ -242,14 +250,33 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
                 const profileIcon = document.querySelector('.profile-icon');
                 if(profileIcon) { profileIcon.style.backgroundImage = `url('${editedAvatar}')`; }
             }
+
+            // Render UI Poin Eco
+            document.getElementById('ecoPointsText').innerText = currentEcoPoints;
+            
+            // Cek status Voucher Eco
+            let vouchers = JSON.parse(localStorage.getItem(KEY_VOUCHER)) || [];
+            let isEcoClaimed = vouchers.some(v => v.code === 'ECO20');
+
+            const ecoBanner = document.getElementById('ecoBannerMain');
+            if (isEcoClaimed) {
+                // Tampilan Abu-abu jika sudah diklaim
+                ecoBanner.style.filter = "grayscale(100%) opacity(0.8)";
+                ecoBanner.style.cursor = "not-allowed";
+                ecoBanner.onclick = function() {
+                    showCustomAlert("Anda sudah mengklaim voucher bulan ini, silahkan coba lagi bulan depan.", "Voucher Habis", "🛑");
+                }
+            } else {
+                // Normal
+                ecoBanner.onclick = openEcoCamera;
+            }
         });
         
-        // FUNGSI INI YANG MEMASTIKAN SEMUA NOTIF MUNCUL DI TENGAH
         function showCustomAlert(message, title = "Perhatian", emoji = "⚠️") {
             document.getElementById('alertEmoji').innerText = emoji;
             document.getElementById('alertTitle').innerText = title;
             document.getElementById('alertMessage').innerText = message;
-            document.getElementById('customAlertModal').style.display = 'flex'; // display: flex memastikan modal ke-center
+            document.getElementById('customAlertModal').style.display = 'flex';
         }
         function closeCustomAlert() { document.getElementById('customAlertModal').style.display = 'none'; }
 
@@ -331,7 +358,6 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
             else { isFlashing = true; overlay.style.display = 'block'; let isWhite = true; flashInterval = setInterval(() => { overlay.style.background = isWhite ? 'black' : 'white'; overlay.style.color = isWhite ? 'white' : 'black'; isWhite = !isWhite; }, 200); }
         }
 
-        // LOGIKA KAMERA ECO-WARRIOR
         let ecoStream = null;
         
         async function openEcoCamera() {
@@ -347,8 +373,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
                 ecoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
                 document.getElementById('ecoVideoFeed').srcObject = ecoStream;
             } catch (err) {
-                // NOTIFIKASI ERROR KAMERA JUGA SUDAH DI TENGAH
-                showCustomAlert("Kamera tidak tersedia atau izin akses ditolak oleh browser Anda.", "Kamera Gagal", "📸");
+                showCustomAlert("Kamera tidak tersedia atau izin akses ditolak oleh browser.", "Kamera Gagal", "📸");
                 closeEcoCamera();
             }
         }
@@ -393,24 +418,18 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
             setTimeout(() => {
                 closeEcoCamera();
                 
-                const userEmailKey = "<?php echo $userEmail; ?>";
-                const voucherKey = 'mountsterVouchers_' + userEmailKey;
-                let vouchers = JSON.parse(localStorage.getItem(voucherKey)) || [];
+                // Tambah Poin
+                currentEcoPoints += 1;
+                localStorage.setItem(KEY_ECO_POINTS, currentEcoPoints);
+                document.getElementById('ecoPointsText').innerText = currentEcoPoints;
                 
-                let hasActive = vouchers.find(v => !v.used);
-                if(!hasActive) {
-                    vouchers.push({
-                        id: 'ECO20', 
-                        title: 'Diskon 20% Eco-Warrior', 
-                        desc: 'Terima kasih telah membersihkan gunung! Diskon 20% untuk sewa alat.', 
-                        code: 'ECOHERO' + Math.floor(Math.random() * 1000),
-                        used: false 
-                    });
-                    localStorage.setItem(voucherKey, JSON.stringify(vouchers));
+                let message = `Mantap! Anda mendapatkan 1 Poin Eco. (Total: ${currentEcoPoints}/25).`;
+                if(currentEcoPoints >= 25) {
+                    message += " Poin sudah cukup, segera klaim voucher di Profil!";
                 }
 
-                // NOTIFIKASI BERHASIL JUGA SUDAH DI TENGAH!
-                showCustomAlert("Verifikasi AI berhasil! Voucher Diskon 20% sudah ditambahkan. Silakan cek menu 'Voucher Saya' di halaman Profil.", "Pahlawan Gunung!", "🌿");
+                showCustomAlert(message, "Verifikasi Berhasil!", "🌿");
+
                 btnVerif.innerText = "Verifikasi Foto"; 
                 btnVerif.style.background = "#27ae60"; 
             }, 3000); 
@@ -419,6 +438,10 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
         function closeEcoCamera() {
             if (ecoStream) ecoStream.getTracks().forEach(track => track.stop());
             document.getElementById('ecoCameraModal').style.display = 'none';
+        }
+
+        function getProductImage(product) {
+            return product.image || getProductImageByName(product.name);
         }
     </script>
 </body>

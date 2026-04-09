@@ -54,7 +54,6 @@ include 'auth.php';
         const searchQuery = urlParams.get('q');
         const catQuery = urlParams.get('cat');
         const ratingQuery = urlParams.get('rating');
-
         let filteredProducts = products;
         let resultTitle = "Semua Produk";
 
@@ -82,7 +81,7 @@ include 'auth.php';
                 container.innerHTML += `
                     <div class="card-new">
                         <a href="detail.php?id=${p.id}" style="text-decoration:none; color:inherit; display:block;">
-                            <img src="" alt="IMG">
+                             <img src="${p.image || getProductImageByName(p.name)}" alt="${p.name}">
                             <h4 class="card-new-title">${p.name}</h4>
                             <p class="card-new-price">${p.price}</p>
                         </a>
