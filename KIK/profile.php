@@ -12,6 +12,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -204,6 +205,17 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
         </div>
     </div>
 
+    <div id="customAlertModal" class="modal-overlay">
+        <div class="modal-box">
+            <div id="alertEmoji" style="font-size: 40px; margin-bottom: 10px;">⚠️</div>
+            <h3 id="alertTitle" class="modal-title" style="margin-bottom: 10px; font-size: 16px; color: #333;">Perhatian</h3>
+            <p id="alertMessage" class="modal-text" style="color: #666; font-size: 13px; margin-bottom: 20px;">Pesan di sini.</p>
+            <div class="modal-btn-group">
+                <button class="modal-btn btn-potret" onclick="closeCustomAlert()">Mengerti</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // KUNCI GEMBOK EMAIL KHUSUS UNTUK MEMORI BROWSER
         const USER_ID = "<?php echo $userEmail; ?>";
@@ -216,11 +228,23 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
         let stream = null;
         let scanInterval = null;
 
+        // --- FUNGSI CUSTOM ALERT BARU ---
+        function showCustomAlert(message, title = "Perhatian", emoji = "⚠️") {
+            document.getElementById('alertEmoji').innerText = emoji;
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerText = message;
+            document.getElementById('customAlertModal').style.display = 'flex';
+        }
+        
+        function closeCustomAlert() {
+            document.getElementById('customAlertModal').style.display = 'none';
+        }
+
         // --- SINKRONISASI SAAT HALAMAN DIMUAT ---
         document.addEventListener('DOMContentLoaded', () => {
             const savedName = localStorage.getItem(KEY_NAME);
             const savedAvatar = localStorage.getItem(KEY_AVATAR);
-            
+
             if (savedName) {
                 document.getElementById('profileName').innerText = savedName;
                 document.getElementById('editNameInput').value = savedName;
@@ -231,7 +255,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
             }
 
             updateVerificationUI();
-            
+
             let vouchers = JSON.parse(localStorage.getItem(KEY_VOUCHER)) || [];
             let hasActive = vouchers.find(v => !v.used);
             if (hasActive && document.getElementById('voucherBadge')) {
@@ -242,32 +266,35 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
             if (params.get('require') === 'verif') openSubPage('verifPage', 'Verifikasi 2 Langkah');
         });
 
-        // --- FUNGSI SAVE DENGAN KUNCI EMAIL ---
         function showSuccessModal() {
             const nameVal = document.getElementById('editNameInput').value;
             const avatarSrc = document.getElementById('mainAvatar').src;
 
             if (nameVal && nameVal.trim() !== "") {
                 document.getElementById('profileName').innerText = nameVal;
-                localStorage.setItem(KEY_NAME, nameVal); // Simpan pakai gembok
+                localStorage.setItem(KEY_NAME, nameVal); 
             }
-            localStorage.setItem(KEY_AVATAR, avatarSrc); // Simpan pakai gembok
+            localStorage.setItem(KEY_AVATAR, avatarSrc); 
 
             document.getElementById('successModal').style.display = 'flex';
         }
 
-        // --- RENDER VOUCHER DENGAN KUNCI EMAIL ---
         function renderVouchers() {
             const container = document.getElementById('voucherContainer');
             let vouchers = JSON.parse(localStorage.getItem(KEY_VOUCHER)) || [];
             let activeVouchers = vouchers.filter(v => !v.used); 
 
             if (activeVouchers.length === 0) {
-                container.innerHTML = `<div style="text-align: center; padding: 40px 20px;"><span style="font-size: 50px; color: #ccc;">🎟️</span><p style="color:#888; margin-top: 10px; font-size: 13px;">Belum ada voucher aktif.<br>Bantu bawa turun sampah dari gunung untuk dapat voucher!</p></div>`;
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <span style="font-size: 50px; color: #ccc;">🎟️</span>
+                        <p style="color:#888; margin-top: 10px; font-size: 13px;">Belum ada voucher aktif.<br>Bantu bawa turun sampah dari gunung untuk dapat voucher!</p>
+                    </div>`;
                 return;
             }
 
             container.innerHTML = '<h3 style="margin-bottom: 15px; font-size: 14px;">Voucher Tersedia</h3>';
+
             activeVouchers.forEach(v => {
                 container.innerHTML += `
                     <div class="voucher-card">
@@ -275,14 +302,16 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
                             <span style="font-size: 10px; background: rgba(255,255,255,0.3); padding: 3px 8px; border-radius: 10px; font-weight: bold; text-transform: uppercase;">♻️ Promo Eco-Warrior</span>
                             <h4 style="margin: 8px 0 4px 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">${v.title}</h4>
                             <p style="font-size: 11px; color: #f0fff0; line-height: 1.4;">${v.desc}</p>
-                            <div class="voucher-code" onclick="alert('Kode voucher ${v.code} berhasil disalin!'); navigator.clipboard.writeText('${v.code}')">✂️ ${v.code}</div>
+                            <div class="voucher-code" onclick="showCustomAlert('Kode voucher ${v.code} berhasil disalin!', 'Tersalin!', '✅'); navigator.clipboard.writeText('${v.code}')">
+                                ✂️ ${v.code}
+                            </div>
                         </div>
                         <div style="font-size: 45px; opacity: 0.9; z-index: 2; transform: rotate(-15deg);">🎟️</div>
-                    </div>`;
+                    </div>
+                `;
             });
         }
 
-        // --- STATUS VERIFIKASI DENGAN KUNCI EMAIL ---
         function updateVerificationUI() {
             const isVerified = localStorage.getItem(KEY_VERIF) === 'true';
             const verifMenu = document.getElementById('verifMenu');
@@ -305,8 +334,11 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
         }
 
         function submitVerifikasi() {
-            if (!document.getElementById('ktpPreview').src || !document.getElementById('selfiePreview').src) return alert("Ambil foto identitas dulu!");
-            localStorage.setItem(KEY_VERIF, 'true'); // Simpan pakai gembok
+            if (!document.getElementById('ktpPreview').src || !document.getElementById('selfiePreview').src) {
+                // ✅ DIGANTI DARI ALERT BAWAAN JADI CUSTOM ALERT ✅
+                return showCustomAlert("Ambil foto identitas dulu sebelum menyimpan!", "Perhatian", "⚠️");
+            }
+            localStorage.setItem(KEY_VERIF, 'true'); 
             updateVerificationUI();
             showSuccessModal();
         }
@@ -321,15 +353,21 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
             }
         }
 
-        // --- REPORT BUG GMAIL ---
         function reportViaGmail() {
             const subject = encodeURIComponent("Bug Report - Mountster [<?= $userName ?>]");
-            const body = encodeURIComponent("Halo Admin Mountster,\n\nSaya menemukan kendala pada aplikasi menggunakan akun <?= $userEmail ?>.\n\nDeskripsi Kendala:\n(Silakan ketik detail masalah Anda di sini...)\n\nTerima kasih atas bantuannya.\n\nSalam,\n<?= $userName ?>");
+            const body = encodeURIComponent(
+                "Halo Admin Mountster,\n\n" +
+                "Saya menemukan kendala pada aplikasi menggunakan akun <?= $userEmail ?>.\n\n" +
+                "Deskripsi Kendala:\n" +
+                "(Silakan ketik detail masalah Anda di sini...)\n\n" +
+                "Terima kasih atas bantuannya.\n\n" +
+                "Salam,\n" +
+                "<?= $userName ?>"
+            );
             window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=admin@mountster.com&su=${subject}&body=${body}`, '_blank');
             closeBugModal();
         }
 
-        // --- KAMERA & GALERI LOGIC (SAMA SEPERTI SEBELUMNYA) ---
         function handleGalleryUpload(input, targetId) {
             const file = input.files[0];
             if (file) {
@@ -356,7 +394,11 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
             document.getElementById('cameraModal').style.display = 'flex';
             btn.disabled = true;
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "user"
+                    }
+                });
                 document.getElementById('videoFeed').srcObject = stream;
 
                 function startScanningLoop() {
@@ -374,7 +416,8 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
                 startScanningLoop();
                 scanInterval = setInterval(startScanningLoop, 5000);
             } catch (err) {
-                alert("Kamera tidak tersedia.");
+                // ✅ DIGANTI DARI ALERT BAWAAN JADI CUSTOM ALERT ✅
+                showCustomAlert("Kamera tidak tersedia atau izin akses ditolak.", "Error Kamera", "📷");
                 stopCamera();
             }
         }
@@ -401,7 +444,6 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
             document.getElementById('cameraModal').style.display = 'none';
         }
 
-        // --- SUB PAGE NAVIGATOR ---
         function openSubPage(pageId, titleText) {
             document.getElementById('pageTitle').innerText = titleText;
             document.getElementById('profileHeaderInfo').style.display = 'none';
@@ -426,8 +468,13 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
             closeSubPages();
         }
 
-        function showBugModal() { document.getElementById('bugModal').style.display = 'flex'; }
-        function closeBugModal() { document.getElementById('bugModal').style.display = 'none'; }
+        function showBugModal() {
+            document.getElementById('bugModal').style.display = 'flex';
+        }
+
+        function closeBugModal() {
+            document.getElementById('bugModal').style.display = 'none';
+        }
 
         document.getElementById('backBtn').onclick = () => {
             if (document.querySelector('.sub-page.active')) closeSubPages();
@@ -435,4 +482,5 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
         };
     </script>
 </body>
+
 </html>
