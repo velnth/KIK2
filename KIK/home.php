@@ -140,16 +140,66 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
             color: #009933;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
+        /* --- CSS BARU UNTUK SLIDER PAKET HEMAT (FULL WIDTH & DOTS) --- */
+        .carousel-wrapper {
+            position: relative;
+            margin-bottom: 25px;
+            margin-top: 10px;
+            width: 100%; 
+        }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .slider-paket {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none; 
+            -ms-overflow-style: none;  
+            scroll-behavior: smooth;
+            padding: 0 20px; 
+            gap: 15px; 
+        }
+        
+        .slider-paket::-webkit-scrollbar {
+            display: none; 
+        }
+
+        .slider-item {
+            flex: 0 0 100%; 
+            scroll-snap-align: center;
+            border-radius: 18px;
+            overflow: hidden;
+            position: relative;
+            height: 210px; 
+            background-size: cover;
+            background-position: center;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .slider-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #d1d5db;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .slider-dot.active {
+            background-color: var(--primary);
+            transform: scale(1.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* SOS CSS */
@@ -165,15 +215,11 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
         }
 
         @media (min-width: 768px) {
-            .sos-container {
-                max-width: 800px;
-            }
+            .sos-container { max-width: 800px; }
         }
 
         @media (min-width: 1024px) {
-            .sos-container {
-                max-width: 1000px;
-            }
+            .sos-container { max-width: 1000px; }
         }
 
         .sos-floating-btn {
@@ -198,17 +244,9 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
         }
 
         @keyframes pulseSOS {
-            0% {
-                box-shadow: 0 0 0 0 rgba(255, 77, 79, 0.7);
-            }
-
-            70% {
-                box-shadow: 0 0 0 15px rgba(255, 77, 79, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(255, 77, 79, 0);
-            }
+            0% { box-shadow: 0 0 0 0 rgba(255, 77, 79, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 77, 79, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 77, 79, 0); }
         }
 
         .sos-modal {
@@ -257,151 +295,28 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
             transition: transform 0.2s ease-out;
         }
 
-        .compass-label {
-            position: absolute;
-            font-size: 14px;
-            font-weight: bold;
-            color: #888;
-        }
-
-        .survival-card {
-            background: #1a1a1a;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .survival-card h4 {
-            margin: 0 0 5px 0;
-            font-size: 14px;
-            color: #ffc107;
-        }
-
-        .survival-card p {
-            margin: 0;
-            font-size: 12px;
-            color: #ccc;
-            line-height: 1.5;
-        }
-
-        .btn-flash {
-            background: white;
-            color: black;
-            font-weight: bold;
-            padding: 15px;
-            border-radius: 12px;
-            border: none;
-            width: 100%;
-            font-size: 16px;
-            margin-bottom: 20px;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        .screen-flash-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            z-index: 10000;
-            display: none;
-        }
-
+        .compass-label { position: absolute; font-size: 14px; font-weight: bold; color: #888; }
+        .survival-card { background: #1a1a1a; border-left: 4px solid #ffc107; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .survival-card h4 { margin: 0 0 5px 0; font-size: 14px; color: #ffc107; }
+        .survival-card p { margin: 0; font-size: 12px; color: #ccc; line-height: 1.5; }
+        .btn-flash { background: white; color: black; font-weight: bold; padding: 15px; border-radius: 12px; border: none; width: 100%; font-size: 16px; margin-bottom: 20px; cursor: pointer; text-transform: uppercase; }
+        .screen-flash-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 10000; display: none; }
+        
         /* Modal General (Tengah Layar) */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 9000;
-            backdrop-filter: blur(4px);
-        }
-
-        .modal-box-alert {
-            background: white;
-            width: 85%;
-            max-width: 320px;
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            animation: scaleUp 0.3s forwards;
-        }
-
-        @keyframes scaleUp {
-            from {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 9000; backdrop-filter: blur(4px); }
+        .modal-box-alert { background: white; width: 85%; max-width: 320px; padding: 25px; border-radius: 20px; text-align: center; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); animation: scaleUp 0.3s forwards; }
+        @keyframes scaleUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         /* Kamera Eco */
-        .camera-container {
-            position: relative;
-            width: 100%;
-            border-radius: 18px;
-            overflow: hidden;
-            background: #000;
-            line-height: 0;
-            margin-bottom: 15px;
-        }
-
-        #ecoVideoFeed {
-            width: 100%;
-            transform: scaleX(-1);
-        }
-
-        .eco-preview-img {
-            width: 100%;
-            border-radius: 15px;
-            display: none;
-            margin-bottom: 15px;
-            border: 2px solid #11998e;
-        }
-
-        .modal-btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-        }
-
-        .modal-btn {
-            border: none;
-            padding: 14px;
-            border-radius: 14px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.2s;
-        }
-
-        .btn-potret {
-            background: #11998e;
-            color: white;
-        }
-
-        .btn-batal {
-            background: #f0f0f0;
-            color: #666;
-        }
+        .camera-container { position: relative; width: 100%; border-radius: 18px; overflow: hidden; background: #000; line-height: 0; margin-bottom: 15px; }
+        #ecoVideoFeed { width: 100%; transform: scaleX(-1); }
+        .eco-preview-img { width: 100%; border-radius: 15px; display: none; margin-bottom: 15px; border: 2px solid #11998e; }
+        .modal-btn-group { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+        .modal-btn { border: none; padding: 14px; border-radius: 14px; font-weight: 600; font-size: 14px; cursor: pointer; width: 100%; transition: 0.2s; }
+        .btn-potret { background: #11998e; color: white; }
+        .btn-batal { background: #f0f0f0; color: #666; }
     </style>
 </head>
-
 <body>
     <div class="app-container" style="padding-bottom: 100px;">
         <div class="header-green">
@@ -430,15 +345,42 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
             <a href="search.php?cat=Apparel" class="cat-chip" style="text-decoration: none;">Apparel</a>
         </div>
 
-        <div class="p-20" style="padding-top: 0;">
-            <div style="width: 100%; height: 150px; background-image: url('images/Tent_aglow.jpg'); background-size: cover; background-position: center; position: relative; border-radius: 15px; overflow: hidden; margin-bottom: 20px;">
-                <div style="position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 100%);"></div>
-                <div class="banner-paket" onclick="beliPaketSemeru()" style="position: relative; z-index: 2; padding: 20px; height: 100%; display: flex; flex-direction: column; justify-content: center; color: white;">
-                    <h3 style="margin: 0; font-weight: 800; font-size: 24px; line-height: 1.15;">Paket Hemat<br>Semeru</h3>
-                    <p style="margin: 8px 0 0; color: rgba(255,255,255,0.8); font-size: 13px; line-height: 1.4;">Sewa lengkap mulai Rp 150.000</p>
+        <div class="carousel-wrapper">
+            <div class="slider-paket" id="paketSlider">
+                
+                <div class="slider-item" style="background-image: url('images/Tent_aglow.jpg');" onclick="beliPaketSemeru()">
+                    <div style="position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);"></div>
+                    <div style="position: relative; z-index: 2; padding: 25px; height: 100%; display: flex; flex-direction: column; justify-content: center; color: white;">
+                        <h3 style="margin: 0; font-weight: 800; font-size: 28px; line-height: 1.2;">Paket Hemat<br>Semeru</h3>
+                        <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">Sewa lengkap Rp 150.000</p>
+                    </div>
                 </div>
+
+                <div class="slider-item" style="background-image: url('https://i.pinimg.com/1200x/33/a6/68/33a6682ba6589535ebdc8d816917748a.jpg');" onclick="beliPaketRinjani()">
+                    <div style="position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);"></div>
+                    <div style="position: relative; z-index: 2; padding: 25px; height: 100%; display: flex; flex-direction: column; justify-content: center; color: white;">
+                        <h3 style="margin: 0; font-weight: 800; font-size: 28px; line-height: 1.2; color: #ffeb3b;">Paket Hemat<br>Rinjani</h3>
+                        <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">Premium Gear Rp 200.000</p>
+                    </div>
+                </div>
+
+                <div class="slider-item" style="background-image: url('https://i.pinimg.com/1200x/08/5c/f6/085cf63f1d2bada08adc7ac4f31ee27b.jpg');" onclick="beliPaketPrau()">
+                    <div style="position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);"></div>
+                    <div style="position: relative; z-index: 2; padding: 25px; height: 100%; display: flex; flex-direction: column; justify-content: center; color: white;">
+                        <h3 style="margin: 0; font-weight: 800; font-size: 28px; line-height: 1.2; color: #a5d6a7;">Paket Santai<br>Prau</h3>
+                        <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">Sewa tektok Rp 100.000</p>
+                    </div>
+                </div>
+
             </div>
 
+            <div class="slider-dots" id="sliderDots">
+                <div class="slider-dot active" onclick="goToSlide(0)"></div>
+                <div class="slider-dot" onclick="goToSlide(1)"></div>
+                <div class="slider-dot" onclick="goToSlide(2)"></div>
+            </div>
+        </div>
+        <div class="p-20" style="padding-top: 0;">
             <div class="weather-banner">
                 <div style="text-align: center;">
                     <span style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 12px; font-size: 10px; font-weight: bold; border: 1px solid rgba(255,255,255,0.3);">🌦️ PREDIKSI CUACA CERDAS</span>
@@ -447,7 +389,6 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
                 <select id="selectGunung" class="weather-select">
                 </select>
                 <div id="hasilCuaca" style="margin-top: 15px;"></div>
-                <!-- <button class="btn-weather" onclick="checkWeather()" id="btnCheckWeather">Cek Kondisi & Rekomendasi</button> -->
                 <div class="weather-result" id="weatherResultBox">
                     <div style="display: flex; gap: 15px; align-items: center;">
                         <div id="wIcon" style="font-size: 40px;">⛈️</div>
@@ -631,6 +572,54 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
             }
         });
 
+        // --- SCRIPT AUTO SLIDER PAKET HEMAT ---
+        const slider = document.getElementById('paketSlider');
+        const dots = document.querySelectorAll('.slider-dot');
+        let currentSlide = 0;
+        const totalSlides = dots.length;
+        let slideInterval;
+
+        function updateDots(index) {
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            // Kita ukur lebar satu item secara dinamis
+            const slideWidth = document.querySelector('.slider-item').offsetWidth + 15; // 15px adalah gap
+            slider.scrollTo({ left: slideWidth * index, behavior: 'smooth' });
+            updateDots(index);
+            resetInterval();
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            goToSlide(currentSlide);
+        }
+
+        function resetInterval() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(nextSlide, 3500); // Ganti slide setiap 3.5 detik
+        }
+
+        // Sinkronisasi manual scroll/swipe dengan titik indikator
+        slider.addEventListener('scroll', () => {
+            const scrollLeft = slider.scrollLeft;
+            const slideWidth = document.querySelector('.slider-item').offsetWidth + 15;
+            const newIndex = Math.round(scrollLeft / slideWidth);
+            if (newIndex !== currentSlide && newIndex >= 0 && newIndex < totalSlides) {
+                currentSlide = newIndex;
+                updateDots(currentSlide);
+                resetInterval();
+            }
+        });
+
+        // Mulai auto slide
+        resetInterval();
+        // --- END SCRIPT SLIDER ---
+
         function showCustomAlert(message, title = "Perhatian", emoji = "⚠️") {
             document.getElementById('alertEmoji').innerText = emoji;
             document.getElementById('alertTitle').innerText = title;
@@ -655,136 +644,50 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
 
         const databaseGunung = {
             // --- SUMATERA ---
-            "Gunung Kerinci (Jambi)": {
-                lat: -1.6966,
-                lon: 101.2642
-            },
-            "Gunung Leuser (Aceh)": {
-                lat: 3.7547,
-                lon: 97.1683
-            },
-            "Gunung Dempo (Sumatera Selatan)": {
-                lat: -4.0150,
-                lon: 103.1119
-            },
+            "Gunung Kerinci (Jambi)": { lat: -1.6966, lon: 101.2642 },
+            "Gunung Leuser (Aceh)": { lat: 3.7547, lon: 97.1683 },
+            "Gunung Dempo (Sumatera Selatan)": { lat: -4.0150, lon: 103.1119 },
 
             // --- JAWA BARAT & BANTEN ---
-            "Gunung Gede (Jawa Barat)": {
-                lat: -6.7844,
-                lon: 106.9840
-            },
-            "Gunung Pangrango (Jawa Barat)": {
-                lat: -6.7758,
-                lon: 106.9639
-            },
-            "Gunung Salak (Jawa Barat)": {
-                lat: -6.7150,
-                lon: 106.7328
-            },
-            "Gunung Ciremai (Jawa Barat)": {
-                lat: -6.8922,
-                lon: 108.4064
-            },
-            "Gunung Papandayan (Jawa Barat)": {
-                lat: -7.3200,
-                lon: 107.7300
-            },
-            "Gunung Cikuray (Jawa Barat)": {
-                lat: -7.3217,
-                lon: 107.8600
-            },
+            "Gunung Gede (Jawa Barat)": { lat: -6.7844, lon: 106.9840 },
+            "Gunung Pangrango (Jawa Barat)": { lat: -6.7758, lon: 106.9639 },
+            "Gunung Salak (Jawa Barat)": { lat: -6.7150, lon: 106.7328 },
+            "Gunung Ciremai (Jawa Barat)": { lat: -6.8922, lon: 108.4064 },
+            "Gunung Papandayan (Jawa Barat)": { lat: -7.3200, lon: 107.7300 },
+            "Gunung Cikuray (Jawa Barat)": { lat: -7.3217, lon: 107.8600 },
 
             // --- JAWA TENGAH & DIY ---
-            "Gunung Slamet (Jawa Tengah)": {
-                lat: -7.2420,
-                lon: 109.2212
-            },
-            "Gunung Sindoro (Jawa Tengah)": {
-                lat: -7.3005,
-                lon: 109.9961
-            },
-            "Gunung Sumbing (Jawa Tengah)": {
-                lat: -7.3844,
-                lon: 110.0767
-            },
-            "Gunung Prau (Jawa Tengah)": {
-                lat: -7.1873,
-                lon: 109.9213
-            },
-            "Gunung Merbabu (Jawa Tengah)": {
-                lat: -7.4533,
-                lon: 110.4394
-            },
-            "Gunung Lawu (Jawa Tengah/Jatim)": {
-                lat: -7.6272,
-                lon: 111.1920
-            },
+            "Gunung Slamet (Jawa Tengah)": { lat: -7.2420, lon: 109.2212 },
+            "Gunung Sindoro (Jawa Tengah)": { lat: -7.3005, lon: 109.9961 },
+            "Gunung Sumbing (Jawa Tengah)": { lat: -7.3844, lon: 110.0767 },
+            "Gunung Prau (Jawa Tengah)": { lat: -7.1873, lon: 109.9213 },
+            "Gunung Merbabu (Jawa Tengah)": { lat: -7.4533, lon: 110.4394 },
+            "Gunung Lawu (Jawa Tengah/Jatim)": { lat: -7.6272, lon: 111.1920 },
 
             // --- JAWA TIMUR ---
-            "Gunung Semeru (Jawa Timur)": {
-                lat: -8.1077,
-                lon: 112.9223
-            },
-            "Gunung Arjuno (Jawa Timur)": {
-                lat: -7.7642,
-                lon: 112.5892
-            },
-            "Gunung Welirang (Jawa Timur)": {
-                lat: -7.7292,
-                lon: 112.5800
-            },
-            "Gunung Raung (Jawa Timur)": {
-                lat: -8.1256,
-                lon: 114.0456
-            },
-            "Gunung Argopuro (Jawa Timur)": {
-                lat: -7.9653,
-                lon: 113.5658
-            },
+            "Gunung Semeru (Jawa Timur)": { lat: -8.1077, lon: 112.9223 },
+            "Gunung Arjuno (Jawa Timur)": { lat: -7.7642, lon: 112.5892 },
+            "Gunung Welirang (Jawa Timur)": { lat: -7.7292, lon: 112.5800 },
+            "Gunung Raung (Jawa Timur)": { lat: -8.1256, lon: 114.0456 },
+            "Gunung Argopuro (Jawa Timur)": { lat: -7.9653, lon: 113.5658 },
 
             // --- BALI & NUSA TENGGARA ---
-            "Gunung Agung (Bali)": {
-                lat: -8.3433,
-                lon: 115.5072
-            },
-            "Gunung Batur (Bali)": {
-                lat: -8.2394,
-                lon: 115.3775
-            },
-            "Gunung Rinjani (Lombok)": {
-                lat: -8.4116,
-                lon: 116.4574
-            },
-            "Gunung Tambora (Sumbawa)": {
-                lat: -8.2478,
-                lon: 117.9922
-            },
+            "Gunung Agung (Bali)": { lat: -8.3433, lon: 115.5072 },
+            "Gunung Batur (Bali)": { lat: -8.2394, lon: 115.3775 },
+            "Gunung Rinjani (Lombok)": { lat: -8.4116, lon: 116.4574 },
+            "Gunung Tambora (Sumbawa)": { lat: -8.2478, lon: 117.9922 },
 
             // --- KALIMANTAN, SULAWESI, MALUKU, PAPUA ---
-            "Gunung Bukit Raya (Kalimantan)": {
-                lat: -0.6611,
-                lon: 112.6861
-            },
-            "Gunung Latimojong (Sulawesi Selatan)": {
-                lat: -3.3933,
-                lon: 120.0247
-            },
-            "Gunung Binaiya (Maluku)": {
-                lat: -3.1722,
-                lon: 129.4536
-            },
-            "Puncak Jaya / Carstensz (Papua)": {
-                lat: -4.0833,
-                lon: 137.1833
-            }
+            "Gunung Bukit Raya (Kalimantan)": { lat: -0.6611, lon: 112.6861 },
+            "Gunung Latimojong (Sulawesi Selatan)": { lat: -3.3933, lon: 120.0247 },
+            "Gunung Binaiya (Maluku)": { lat: -3.1722, lon: 129.4536 },
+            "Puncak Jaya / Carstensz (Papua)": { lat: -4.0833, lon: 137.1833 }
         };
 
-        // 2. Logic Mengisi Dropdown Otomatis (Sesuai Abjad)
         const selectGunung = document.getElementById('selectGunung');
         const wadahHasil = document.getElementById('hasilCuaca');
 
         if (selectGunung) {
-            // Mengambil nama gunung, mengurutkannya sesuai abjad, lalu memasukkannya ke dropdown
             Object.keys(databaseGunung).sort().forEach(namaGunung => {
                 const optionBaru = document.createElement('option');
                 optionBaru.value = namaGunung;
@@ -793,7 +696,6 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
             });
         }
 
-        // 3. Logika Penerjemah Kode Cuaca (Open-Meteo WMO Codes)
         function terjemahkanCuaca(code) {
             if (code === 0) return "Cerah ☀️";
             if (code >= 1 && code <= 3) return "Berawan ⛅";
@@ -804,7 +706,6 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
             return "Tidak Diketahui";
         }
 
-        // 4. Proses API Open-Meteo saat Dropdown berubah
         if (selectGunung && wadahHasil) {
             selectGunung.addEventListener('change', async function() {
                 const namaPilihan = this.value;
@@ -815,7 +716,6 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
                 wadahHasil.innerHTML = "<p style='color: white; font-size: 14px;'>Mengecek satelit cuaca untuk " + namaPilihan + "...</p>";
 
                 try {
-                    // Tembak koordinat ke API satelit cuaca Open-Meteo
                     const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${data.lat}&longitude=${data.lon}&current_weather=true`);
                     const result = await response.json();
                     const cuaca = result.current_weather;
@@ -823,7 +723,6 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
                     const suhu = Math.round(cuaca.temperature);
                     const kondisi = terjemahkanCuaca(cuaca.weathercode);
 
-                    // Logika Mountster Gear Recommendation
                     let rekomendasi = "";
                     if (suhu <= 12) {
                         rekomendasi = "🥶 <b>Suhu Ekstrem:</b> Wajib sewa Down Jacket tebal & Sleeping Bag Polar.";
@@ -837,7 +736,6 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
                         rekomendasi += "<br>☔ <b>Curah Hujan Tinggi:</b> Wajib sedia Jas Hujan (Raincoat) setelan & Cover Bag.";
                     }
 
-                    // Render Output tanpa merusak CSS bawaan
                     wadahHasil.innerHTML = `
                 <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; color: white; text-align: left; margin-top: 10px;">
                     <h3 style="margin: 0 0 10px 0; font-size: 20px;">${kondisi} | ${suhu}°C</h3>
@@ -852,36 +750,11 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
         }
 
         const gearDB = {
-            'naturehike_cloudup2': {
-                name: 'Naturehike Cloud Up 2',
-                weight: 1.5,
-                weightTxt: '1.5 kg',
-                price: 'Rp 60.000'
-            },
-            'eiger_shira1p': {
-                name: 'Eiger Shira 1P',
-                weight: 2.1,
-                weightTxt: '2.1 kg',
-                price: 'Rp 45.000'
-            },
-            'consina_magnum4': {
-                name: 'Consina Magnum 4',
-                weight: 3.9,
-                weightTxt: '3.9 kg',
-                price: 'Rp 80.000'
-            },
-            'arei_ds': {
-                name: 'Arei Discovery 2',
-                weight: 2.5,
-                weightTxt: '2.5 kg',
-                price: 'Rp 50.000'
-            },
-            'great_outdoor': {
-                name: 'Great Outdoor Java 4',
-                weight: 4.1,
-                weightTxt: '4.1 kg',
-                price: 'Rp 75.000'
-            }
+            'naturehike_cloudup2': { name: 'Naturehike Cloud Up 2', weight: 1.5, weightTxt: '1.5 kg', price: 'Rp 60.000' },
+            'eiger_shira1p': { name: 'Eiger Shira 1P', weight: 2.1, weightTxt: '2.1 kg', price: 'Rp 45.000' },
+            'consina_magnum4': { name: 'Consina Magnum 4', weight: 3.9, weightTxt: '3.9 kg', price: 'Rp 80.000' },
+            'arei_ds': { name: 'Arei Discovery 2', weight: 2.5, weightTxt: '2.5 kg', price: 'Rp 50.000' },
+            'great_outdoor': { name: 'Great Outdoor Java 4', weight: 4.1, weightTxt: '4.1 kg', price: 'Rp 75.000' }
         };
 
         function compareGear() {
@@ -906,8 +779,11 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
             if (product.name === 'Eiger Wanderlust 60') return 'images/eiger-wanderlust-60.jpeg';
             if (product.name === 'Consina Magnum 4') return 'images/consina-magnum-4.jpeg';
             if (product.name === 'Naturehike Cloud Up 2') return 'images/naturehike-cloud-up-2.jpeg';
+            // Tambahkan baris di bawah ini agar gambar Great Outdoor muncul
+            if (product.name === 'Great Outdoor Java 4') return 'images/great-outdoor-java-4.jpeg'; 
             if (product.name === 'Salomon Quest 4 GTX') return 'images/salomon-quest-4-gtx.jpg';
-            return 'logo_mountster.png';
+            
+            return product.image || 'logo_mountster.png';
         }
 
         products.forEach((p, i) => {
@@ -1058,63 +934,44 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/notionis
             document.getElementById('ecoCameraModal').style.display = 'none';
         }
 
-        function getProductImage(product) {
-            return product.image || getProductImageByName(product.name);
-        }
+        // --- FUNGSI PAKET HEMAT (SEMERU, RINJANI, PRAU) ---
 
-        // Fungsi untuk memproses Paket Hemat Semeru
         function beliPaketSemeru() {
-            // 1. Buat daftar barang yang termasuk dalam paket (Total Rp 150.000)
-            const paketSemeru = [{
-                    id: 'ps_01',
-                    name: 'Star River 2P Naturehike',
-                    price: 'Rp 60.000',
-                    qty: 1,
-                    image: 'images/naturehike-star-river.png'
-                },
-                {
-                    id: 'ps_02',
-                    name: 'Consina Tarebbi 60L',
-                    price: 'Rp 40.000',
-                    qty: 1,
-                    image: 'images/consina-tarebbi-60l.jpg'
-                },
-                {
-                    id: 'ps_03',
-                    name: 'Consina sleep warmer - sleeping bag',
-                    price: 'Rp 25.000',
-                    qty: 1,
-                    image: 'images/consina-sleepwarmer.png'
-                },
-                {
-                    id: 'ps_04',
-                    name: 'Kompor Mawar (Windproof)',
-                    price: 'Rp 15.000',
-                    qty: 1,
-                    image: 'images/kompor-mawar-windproof.jpg'
-                },
-                {
-                    id: 'ps_05',
-                    name: 'Nesting Bulat 4 in 1',
-                    price: 'Rp 15.000',
-                    qty: 1,
-                    image: 'images/nesting-bulat-4-in-1.png'
-                },
-                {
-                    id: 'ps_06',
-                    name: 'Consina Matras Alumunium',
-                    price: 'Rp 10.000',
-                    qty: 1,
-                    image: 'images/consina-matras-alumunium.png'
-                }
+            const paketSemeru = [
+                { id: 'ps_01', name: 'Star River 2P Naturehike', price: 'Rp 60.000', qty: 1, image: 'images/naturehike-star-river.png' },
+                { id: 'ps_02', name: 'Consina Tarebbi 60L', price: 'Rp 40.000', qty: 1, image: 'images/consina-tarebbi-60l.jpg' },
+                { id: 'ps_03', name: 'Consina sleep warmer - sleeping bag', price: 'Rp 25.000', qty: 1, image: 'images/consina-sleepwarmer.png' },
+                { id: 'ps_04', name: 'Kompor Mawar (Windproof)', price: 'Rp 7.500', qty: 1, image: 'images/kompor-mawar-windproof.jpg' },
+                { id: 'ps_05', name: 'Nesting Bulat 4 in 1', price: 'Rp 7.500', qty: 1, image: 'images/nesting-bulat-4-in-1.png' },
+                { id: 'ps_06', name: 'Consina Matras Alumunium', price: 'Rp 10.000', qty: 1, image: 'images/consina-matras-alumunium.png' }
             ];
-
-            // 2. Timpa data "Beli Langsung" sebelumnya dengan daftar paket ini
             localStorage.setItem('mountsterDirectBuy', JSON.stringify(paketSemeru));
-
-            // 3. Langsung arahkan user ke halaman checkout
             window.location.href = 'checkout.php';
         }
+
+        function beliPaketRinjani() {
+            const paketRinjani = [
+                { id: 'pr_01', name: 'Naturehike Cloud Up 2', price: 'Rp 60.000', qty: 1, image: 'images/naturehike-cloud-up-2.jpeg' },
+                { id: 'pr_02', name: 'Osprey Aether 65L', price: 'Rp 80.000', qty: 1, image: 'images/osprey-aether-65l.jpg' },
+                { id: 'pr_03', name: 'Sleeping Bag Polar', price: 'Rp 25.000', qty: 1, image: 'images/consina-sleepwarmer.png' },
+                { id: 'pr_04', name: 'Trangia 27-1 UL', price: 'Rp 25.000', qty: 1, image: 'images/trangia-27-1-ul.jpg' },
+                { id: 'pr_05', name: 'Matras Gulung', price: 'Rp 10.000', qty: 1, image: 'images/consina-matras-alumunium.png' }
+            ];
+            localStorage.setItem('mountsterDirectBuy', JSON.stringify(paketRinjani));
+            window.location.href = 'checkout.php';
+        }
+
+        function beliPaketPrau() {
+            const paketPrau = [
+                { id: 'pp_01', name: 'Eiger Shira 1P', price: 'Rp 45.000', qty: 1, image: 'images/eiger-shira-1p.jpg' },
+                { id: 'pp_02', name: 'Arei Ramandika 60L', price: 'Rp 30.000', qty: 1, image: 'images/arei-ramandika-60l.jpg' },
+                { id: 'pp_03', name: 'Kompor Portable Kotak', price: 'Rp 15.000', qty: 1, image: 'images/kompor-portable-kotak.jpg' },
+                { id: 'pp_04', name: 'Matras Gulung', price: 'Rp 10.000', qty: 1, image: 'images/consina-matras-alumunium.png' }
+            ];
+            localStorage.setItem('mountsterDirectBuy', JSON.stringify(paketPrau));
+            window.location.href = 'checkout.php';
+        }
+
     </script>
 </body>
 

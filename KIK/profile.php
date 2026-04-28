@@ -19,7 +19,6 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
     <title>Profile - Mountster</title>
     <link rel="stylesheet" href="style.css">
     <script src="database.js"></script>
-    <script src="wishlist.js"></script>
     <style>
         /* --- Core Layout --- */
         .profile-header-icon {
@@ -415,7 +414,6 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
                 <span style="color:#ccc;">&rsaquo;</span>
             </div>
 
-            <div class="menu-item" onclick="openSubPage('wishlistPage', 'Wishlist')"><span>Wishlist</span> <span style="color:#ccc;">&rsaquo;</span></div>
 
             <p class="menu-section-title">Legal</p>
             <div class="menu-item" onclick="openSubPage('termsPage', 'Terms of Use')"><span>Terms of Use</span> <span style="color:#ccc;">&rsaquo;</span></div>
@@ -463,9 +461,6 @@ $userAvatar = $_SESSION['user_avatar'] ?? 'https://api.dicebear.com/8.x/lorelei/
                 <button id="btnSubmitVerif" class="btn btn-primary" onclick="submitVerifikasi()">Ajukan Verifikasi</button>
             </div>
 
-            <div id="wishlistPage" class="sub-page">
-                <div id="wishlistContainer"></div>
-            </div>
 
             <div id="termsPage" class="sub-page">
                 <div style="padding: 10px 5px; text-align: left; font-size: 13px; line-height: 1.6; color: #444;">

@@ -15,84 +15,20 @@ $userEmail = $_SESSION['user_email'] ?? '';
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         /* CSS Tambahan Khusus Checkout */
-        .payment-option-note {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 6px;
-            line-height: 1.5;
-        }
+        .payment-option-note { font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.5; }
+        #mapContainer { height: 200px; width: 100%; border-radius: 8px; margin-bottom: 15px; z-index: 1; }
+        .checkout-wrapper { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 20px; }
+        @media (min-width: 768px) { .checkout-wrapper { grid-template-columns: 2fr 1fr; align-items: start; } }
+        .checkout-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); margin-bottom: 15px; }
+        .checkout-card-title { font-size: 14px; font-weight: bold; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; }
+        
+        .custom-radio { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; cursor: pointer; }
+        .custom-radio input[type="radio"] { accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer; }
 
-        #mapContainer {
-            height: 200px;
-            width: 100%;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            z-index: 1;
-        }
-
-        .checkout-wrapper {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            padding: 20px;
-        }
-
-        @media (min-width: 768px) {
-            .checkout-wrapper {
-                grid-template-columns: 2fr 1fr;
-                align-items: start;
-            }
-        }
-
-        .checkout-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            margin-bottom: 15px;
-        }
-
-        .checkout-card-title {
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--text-muted);
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-
-        .custom-radio {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            cursor: pointer;
-            border-radius: 12px;
-            transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .custom-radio input[type="radio"] {
-            accent-color: var(--primary);
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-
-        .custom-radio.payment-choice {
-            border: 1.5px solid #e5e5e5;
-            padding: 14px 16px;
-            margin-bottom: 12px;
-            background: #fff;
-        }
-
-        .custom-radio.payment-choice.active {
-            border-color: var(--primary);
-            background: #f4fbf4;
-            box-shadow: 0 8px 18px rgba(31, 81, 48, 0.08);
-        }
-
-        /* Modal & QRIS CSS ... */
+        /* Modal & QRIS CSS */
         .qris-box { text-align: center; padding: 10px 0; }
-        .qris-code-wrap { width: 240px; height: 240px; margin: 18px auto; background: #fff; border-radius: 20px; padding: 20px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08); display: flex; align-items: center; justify-content: center; }
+        .qris-code-wrap { width: 240px; height: 240px; margin: 18px auto; background: #fff; border-radius: 20px; padding: 20px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
+        .qris-code-wrap:hover { transform: scale(1.02); }
         .qris-code-wrap img, .qris-code-wrap canvas { max-width: 100%; max-height: 100%; }
         .qris-amount { font-size: 30px; font-weight: 800; color: var(--primary); margin-top: 8px; }
         .qris-subtext { font-size: 13px; color: var(--text-muted); line-height: 1.5; max-width: 280px; margin: 12px auto 0; }
@@ -110,15 +46,68 @@ $userEmail = $_SESSION['user_email'] ?? '';
         .success-check { width: 48px; height: 24px; border-left: 6px solid #1fa65a; border-bottom: 6px solid #1fa65a; transform: rotate(-45deg) scale(0.3); opacity: 0; animation: checkPop 0.45s ease forwards; animation-delay: 0.1s; }
         .success-title { font-size: 24px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
         .success-caption { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
-        .success-card { background: #f7faf8; border: 1px solid #e5efea; border-radius: 16px; padding: 16px; text-align: left; margin-bottom: 18px; }
-        .success-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; margin-bottom: 10px; }
-        .success-row:last-child { margin-bottom: 0; }
-        .success-row span:first-child { color: var(--text-muted); }
-        .success-row span:last-child { font-weight: 700; color: var(--text-main); text-align: right; }
         .success-countdown { color: var(--primary); font-weight: 700; font-size: 13px; }
 
         @keyframes qrisSpin { to { transform: rotate(360deg); } }
         @keyframes checkPop { from { transform: rotate(-45deg) scale(0.3); opacity: 0; } to { transform: rotate(-45deg) scale(1); opacity: 1; } }
+
+        /* Durasi Controls */
+        .duration-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f4fbf4;
+            padding: 5px 10px;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+        }
+        .duration-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0 5px;
+        }
+        .duration-text {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        /* --- CSS Search Suggestions Maps --- */
+        .search-suggestions {
+            position: absolute;
+            background: white;
+            width: 100%;
+            max-height: 160px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            top: 100%;
+            margin-top: 5px;
+        }
+        .suggestion-item {
+            padding: 12px;
+            font-size: 13px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            color: #333;
+            line-height: 1.4;
+        }
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        .suggestion-item:hover {
+            background-color: #f4fbf4;
+            color: var(--primary);
+        }
     </style>
 </head>
 
@@ -138,7 +127,16 @@ $userEmail = $_SESSION['user_email'] ?? '';
                 </div>
 
                 <div class="checkout-card">
-                    <p style="font-weight: bold; margin-bottom: 15px;">⛺ Mountster Rental Store</p>
+                    <div class="flex-between" style="margin-bottom: 15px;">
+                        <p style="font-weight: bold; margin: 0;">⛺ Mountster Rental Store</p>
+                        
+                        <div class="duration-controls">
+                            <button class="duration-btn" onclick="updateDuration(-1)">-</button>
+                            <span class="duration-text" id="durationText">1 Hari</span>
+                            <button class="duration-btn" onclick="updateDuration(1)">+</button>
+                        </div>
+                    </div>
+
                     <div id="checkoutItemsContainer"></div>
 
                     <div style="margin-top: 20px; border: 1px solid #ddd; border-radius: 8px; padding: 15px;">
@@ -164,8 +162,7 @@ $userEmail = $_SESSION['user_email'] ?? '';
                         <span style="color: var(--primary); font-size: 14px; font-weight: bold; cursor: pointer;" onclick="openPaymentModal()">Lihat Semua</span>
                     </div>
 
-                    <div id="selectedPaymentContainer" onclick="openPaymentModal()" style="cursor: pointer; padding-top: 5px;">
-                    </div>
+                    <div id="selectedPaymentContainer" onclick="openPaymentModal()" style="cursor: pointer; padding-top: 5px;"></div>
                 </div>
 
                 <div class="checkout-card">
@@ -200,7 +197,12 @@ $userEmail = $_SESSION['user_email'] ?? '';
                 <div id="addressListContainer"></div>
             </div>
             <div class="modal-body" id="addressFormView" style="display: none;">
-                <input type="text" id="mapSearchInput" class="input-form" placeholder="Cari lokasi di peta (Tekan Enter)..." style="margin-bottom: 10px;">
+                
+                <div style="position: relative; margin-bottom: 10px; text-align: left;">
+                    <input type="text" id="mapSearchInput" class="input-form" placeholder="Ketik area/jalan (cth: summarecon)...">
+                    <div id="searchSuggestions" class="search-suggestions"></div>
+                </div>
+
                 <div id="mapContainer"></div>
                 <div class="input-group"><label>Kontak (Nama Penerima)</label><input type="text" id="formName" class="input-form" placeholder="Contoh: Halena"></div>
                 <div class="input-group"><label>Nomor Telepon</label><input type="number" id="formPhone" class="input-form" placeholder="Contoh: 6281234567"></div>
@@ -231,6 +233,18 @@ $userEmail = $_SESSION['user_email'] ?? '';
         </div>
     </div>
 
+    <div class="modal-overlay" id="verifAlertModal">
+        <div class="modal-content" style="max-width: 350px; padding: 25px; text-align: center; border-radius: 15px; margin: 0 auto;">
+            <div style="font-size: 40px; margin-bottom: 10px;">🛡️</div>
+            <h3 style="margin-bottom: 10px; font-size: 18px;">Verifikasi Diperlukan</h3>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">Untuk keamanan bersama, Anda harus menyelesaikan Verifikasi 2 Langkah (KTP & Selfie) sebelum dapat menyewa alat.</p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn btn-primary" style="margin: 0; width: 100%; padding: 12px;" onclick="window.location.href='profile.php?require=verif'">Verifikasi Sekarang</button>
+                <button class="btn" style="margin: 0; width: 100%; padding: 12px; background: #f0f0f0; color: #666;" onclick="document.getElementById('verifAlertModal').classList.remove('active')">Nanti Saja</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="paymentModal">
         <div class="modal-content" style="max-height: 85vh; display: flex; flex-direction: column;">
             <div class="modal-header">
@@ -239,17 +253,17 @@ $userEmail = $_SESSION['user_email'] ?? '';
             </div>
             <div class="modal-body" style="overflow-y: auto; padding: 20px;">
 
-                <label class="custom-radio payment-choice" id="paymentChoiceQris" onclick="selectPayment('<b>QRIS</b>', 'QRIS', false); event.preventDefault();">
+                <label class="custom-radio" style="border-bottom: 1px solid #eee; padding-bottom: 15px;">
                     <span><b>QRIS</b></span>
-                    <input type="radio" name="modal_payment" value="QRIS">
+                    <input type="radio" name="modal_payment" value="QRIS" onclick="selectPayment('<b>QRIS</b>', 'QRIS', false)">
                 </label>
 
-                <label class="custom-radio payment-choice" id="paymentChoiceCod" onclick="selectPayment('COD (Bayar di Tempat)', 'COD', true); event.preventDefault();">
+                <label class="custom-radio" style="border-top: 1px solid #eee; padding-top: 15px;">
                     <span>
                         <b>COD (Bayar di Tempat)</b>
                         <div class="payment-option-note">Bayar tunai saat pesanan diterima kurir atau saat ambil di toko.</div>
                     </span>
-                    <input type="radio" name="modal_payment" value="COD">
+                    <input type="radio" name="modal_payment" value="COD" onclick="selectPayment('COD (Bayar di Tempat)', 'COD', true)">
                 </label>
             </div>
         </div>
@@ -259,15 +273,13 @@ $userEmail = $_SESSION['user_email'] ?? '';
         <div class="modal-content" style="max-width: 360px; padding: 22px;">
             <div class="modal-header" style="padding: 0 0 18px; border-bottom: none;">
                 <h3 style="font-size: 18px; flex: 1; text-align: center;">QRIS Demo Payment</h3>
-                <span class="modal-close" id="qrisModalClose" onclick="closeQrisModal()">×</span>
+                <span class="modal-close" onclick="closeQrisModal()">x</span>
             </div>
             <div id="qrisModalBody" class="qris-box">
                 <div class="qris-chip"><span class="qris-chip-dot"></span>Menunggu Pembayaran</div>
                 <p class="qris-amount" id="qrisAmountText">Rp0</p>
-                <div class="qris-code-wrap">
-                    <div id="qrisCode"></div>
-                </div>
-                <p class="qris-subtext">Scan QR ini menggunakan kamera HP untuk membuka halaman pembayaran demo.</p>
+                <div class="qris-code-wrap"><div id="qrisCode"></div></div>
+                <p class="qris-subtext">Scan QR ini menggunakan kamera HP untuk membuka halaman pembayaran demo. Setelah tombol bayar di HP ditekan, status di web ini akan otomatis berubah.</p>
                 <div class="qris-meta">
                     <div class="qris-meta-row"><span>Order ID</span><span id="qrisOrderIdText">-</span></div>
                     <div class="qris-meta-row"><span>Status</span><span id="qrisStatusText">Menunggu pembayaran</span></div>
@@ -281,16 +293,20 @@ $userEmail = $_SESSION['user_email'] ?? '';
         const USER_ID = "<?php echo $userEmail; ?>";
         const KEY_VOUCHER = 'mountsterVouchers_' + USER_ID;
         const KEY_ECO_POINTS = 'mountsterEcoPoints_' + USER_ID;
+        const KEY_VERIF = 'is_verified_' + USER_ID;
 
         let appliedVoucher = null;
         let discountAmount = 0;
+        let rentalDays = 1; // Variabel Durasi Sewa (Hari)
 
         let addresses = JSON.parse(localStorage.getItem('mountsterAddresses')) || [];
         let selectedAddressId = localStorage.getItem('mountsterSelectedAddress') || null;
         let pendingDeleteId = null;
 
         let cartToCheckout = [];
-        let totalItemPrice = 0;
+        let baseItemPrice = 0; // Total Harga Barang (Hanya 1 Hari)
+        let totalItemPrice = 0; // Total Harga Barang x Jumlah Hari
+
         let qrisTransactionId = null;
         let qrisCountdownTimer = null;
         let qrisStatusPollingTimer = null;
@@ -302,8 +318,12 @@ $userEmail = $_SESSION['user_email'] ?? '';
         let currentQrisPaymentUrl = '';
         let currentServerBaseUrl = '';
 
+        // Tambahkan fungsi ini agar tombol tidak error
+function createDummyTransactionId() {
+    return 'MNT-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+}
+
         function getApiBaseUrl() { return `${window.location.protocol}//${window.location.hostname}:3000`; }
-        async function initializeServerBaseUrl() { currentServerBaseUrl = window.location.origin; }
         function createDemoPaymentToken() { return Math.random().toString(36).slice(2, 10).toUpperCase(); }
 
         function getProductImage(productName) {
@@ -337,14 +357,21 @@ $userEmail = $_SESSION['user_email'] ?? '';
         }
 
         function syncPaymentSelectionUI() {
-            const qrisChoice = document.getElementById('paymentChoiceQris');
-            const codChoice = document.getElementById('paymentChoiceCod');
-            const paymentInputs = document.querySelectorAll('input[name="modal_payment"]');
-
-            paymentInputs.forEach(input => { input.checked = input.value === finalPaymentMethod; });
-            if (qrisChoice) qrisChoice.classList.toggle('active', finalPaymentMethod === 'QRIS');
-            if (codChoice) codChoice.classList.toggle('active', finalPaymentMethod === 'COD');
             updateSubmitButtonState();
+        }
+
+        // FUNGSI UPDATE DURASI
+        function updateDuration(change) {
+            let newDuration = rentalDays + change;
+            if (newDuration < 1) newDuration = 1;
+            
+            rentalDays = newDuration;
+            document.getElementById('durationText').innerText = `${rentalDays} Hari`;
+            
+            // Hitung ulang harga
+            totalItemPrice = baseItemPrice * rentalDays;
+            
+            updateSummary();
         }
 
         // --- 2. RENDER PRODUK & RINGKASAN ---
@@ -357,14 +384,13 @@ $userEmail = $_SESSION['user_email'] ?? '';
             const container = document.getElementById('checkoutItemsContainer');
             container.innerHTML = "";
             let totalItems = 0;
-            totalItemPrice = 0;
+            baseItemPrice = 0;
 
             cartToCheckout.forEach(item => {
                 let priceNumber = parseInt(item.price.replace(/[^0-9]/g, '')) || 0;
                 totalItems += item.qty;
-                totalItemPrice += (priceNumber * item.qty);
+                baseItemPrice += (priceNumber * item.qty);
 
-                // LOGIKA BARU: Cek apakah item bawa image sendiri. Jika tidak ada, baru cari di getProductImage()
                 let imageSrc = item.image ? item.image : getProductImage(item.name);
 
                 container.innerHTML += `
@@ -380,7 +406,9 @@ $userEmail = $_SESSION['user_email'] ?? '';
             });
 
             document.getElementById('summaryTotalItems').innerText = `Total Harga (${totalItems} Barang)`;
-            document.getElementById('summaryItemPrice').innerText = `Rp ` + totalItemPrice.toLocaleString('id-ID');
+            
+            // Set harga awal
+            totalItemPrice = baseItemPrice * rentalDays;
 
             renderVoucherPickerCard();
             updateSummary();
@@ -390,6 +418,8 @@ $userEmail = $_SESSION['user_email'] ?? '';
         }
 
         function updateSummary() {
+            document.getElementById('summaryItemPrice').innerText = `Rp ` + totalItemPrice.toLocaleString('id-ID');
+
             const selectEl = document.getElementById('shippingSelect');
             let shippingCost = parseInt(selectEl.value);
             document.getElementById('shippingDesc').innerText = selectEl.options[selectEl.selectedIndex].getAttribute('data-desc');
@@ -452,65 +482,46 @@ $userEmail = $_SESSION['user_email'] ?? '';
             const code = inputEl.value.trim().toUpperCase();
             const feedback = document.getElementById('voucherFeedback');
 
-            if (!code) {
-                feedback.innerHTML = '<span style="color: #ff4d4f;">Masukkan kode voucher terlebih dahulu.</span>';
-                return;
-            }
+            if (!code) { feedback.innerHTML = '<span style="color: #ff4d4f;">Masukkan kode voucher.</span>'; return; }
 
-            const VALID_VOUCHERS = {
-                "ECO20": { code: "ECO20", label: "Diskon 20% Eco-Warrior", type: "percent", value: 20, reqPoints: 25 }
-            };
-
+            const VALID_VOUCHERS = { "ECO20": { code: "ECO20", label: "Diskon 20% Eco-Warrior", type: "percent", value: 20, reqPoints: 25 } };
             const voucher = VALID_VOUCHERS[code];
 
-            if (!voucher) {
-                feedback.innerHTML = '<span style="color: #ff4d4f;">Kode voucher tidak ditemukan atau tidak valid.</span>';
-                return;
-            }
+            if (!voucher) { feedback.innerHTML = '<span style="color: #ff4d4f;">Kode tidak valid.</span>'; return; }
 
             const allVouchers = JSON.parse(localStorage.getItem(KEY_VOUCHER) || '[]');
             const existingVoucher = allVouchers.find(v => v.code === code);
             if (existingVoucher && existingVoucher.used) {
-                feedback.innerHTML = '<span style="color: #ff4d4f;">Voucher ini sudah pernah Anda gunakan di transaksi sebelumnya.</span>';
-                return;
+                feedback.innerHTML = '<span style="color: #ff4d4f;">Voucher sudah digunakan.</span>'; return;
             }
 
             if (voucher.code === 'ECO20') {
                 const currentEcoPoints = parseInt(localStorage.getItem(KEY_ECO_POINTS)) || 0;
                 if (currentEcoPoints < voucher.reqPoints) {
-                    feedback.innerHTML = `<span style="color: #ff4d4f;">Poin Eco kamu belum cukup (${currentEcoPoints}/${voucher.reqPoints} Poin). Terus kumpulkan sampah!</span>`;
-                    return;
+                    feedback.innerHTML = `<span style="color: #ff4d4f;">Poin Eco kurang (${currentEcoPoints}/${voucher.reqPoints}).</span>`; return;
                 }
             }
 
-            feedback.innerHTML = '';
-            inputEl.value = '';
-            appliedVoucher = voucher;
+            feedback.innerHTML = ''; inputEl.value = ''; appliedVoucher = voucher;
 
             document.getElementById('voucherInputArea').style.display = 'none';
             document.getElementById('voucherAppliedBanner').style.display = 'block';
             document.getElementById('voucherAppliedBanner').innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center; background:#f4fbf4; border:1px solid #c3e6cb; border-radius:8px; padding:12px;">
-                    <div>
-                        <span style="font-weight:bold; color:var(--primary);">${voucher.code}</span>
-                        <div style="font-size:12px; color:#555; margin-top:2px;">${voucher.label} berhasil diterapkan.</div>
-                    </div>
+                    <div><span style="font-weight:bold; color:var(--primary);">${voucher.code}</span><div style="font-size:12px; color:#555; margin-top:2px;">${voucher.label} diterapkan.</div></div>
                     <span onclick="removeManualVoucher()" style="color:#ff4d4f; font-size:20px; cursor:pointer; font-weight:bold; padding:0 4px;" title="Hapus Voucher">×</span>
                 </div>`;
-
             updateSummary();
         }
 
         function removeManualVoucher() {
-            appliedVoucher = null;
-            discountAmount = 0;
+            appliedVoucher = null; discountAmount = 0;
             document.getElementById('voucherAppliedBanner').style.display = 'none';
             document.getElementById('voucherInputArea').style.display = 'flex';
             updateSummary();
         }
 
         function formatRupiah(amount) { return `Rp ${amount.toLocaleString('id-ID')}`; }
-        function createDummyTransactionId() { return `TRX-${Date.now().toString().slice(-8)}`; }
 
         // --- 3. LOGIKA ALAMAT ---
         function renderActiveAddress() {
@@ -524,23 +535,12 @@ $userEmail = $_SESSION['user_email'] ?? '';
                 display.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: flex-start;"><div><p style="font-size: 14px; margin-bottom: 5px;"><span style="font-weight: bold;">${activeAddr.name}</span></p><p style="font-size: 13px; color: var(--text-main); line-height: 1.5; margin-bottom: 5px;">${activeAddr.address}</p><p style="font-size: 13px; color: var(--text-muted);">+${activeAddr.phone}</p></div><button style="background: none; border: 1px solid var(--primary); color: var(--primary); padding: 5px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px;" onclick="openAddressModal()">Ganti</button></div>`;
             }
         }
-
-        function openAddressModal() {
-            document.getElementById('addressModal').classList.add('active');
-            document.getElementById('addressListView').style.display = 'block';
-            document.getElementById('addressFormView').style.display = 'none';
-            document.getElementById('modalTitle').innerText = 'Daftar Alamat';
-            renderAddressList();
-        }
+        function openAddressModal() { document.getElementById('addressModal').classList.add('active'); document.getElementById('addressListView').style.display = 'block'; document.getElementById('addressFormView').style.display = 'none'; document.getElementById('modalTitle').innerText = 'Daftar Alamat'; renderAddressList(); }
         function closeAddressModal() { document.getElementById('addressModal').classList.remove('active'); }
-        
         function renderAddressList() {
             const container = document.getElementById('addressListContainer');
             container.innerHTML = "";
-            if (addresses.length === 0) {
-                container.innerHTML = `<p style="text-align:center; color:#888; font-size:14px; padding: 20px;">Belum ada alamat tersimpan.</p>`;
-                return;
-            }
+            if (addresses.length === 0) { container.innerHTML = `<p style="text-align:center; color:#888; font-size:14px; padding: 20px;">Belum ada alamat tersimpan.</p>`; return; }
             addresses.forEach(addr => {
                 const isActive = (addr.id == selectedAddressId);
                 const borderStyle = isActive ? 'border: 1px solid var(--primary); background-color: #f4fbf4;' : 'border: 1px solid #ddd;';
@@ -562,33 +562,95 @@ $userEmail = $_SESSION['user_email'] ?? '';
         function showAlert(message) { document.getElementById('alertModalMessage').innerText = message; document.getElementById('alertModal').classList.add('active'); }
         function closeAlertModal() { document.getElementById('alertModal').classList.remove('active'); }
 
-        // --- 5. PETA ---
+        // --- 5. PETA LOKASI DAN PENCARIAN (AUTOCOMPLETE) ---
         let map, marker;
         function showAddForm() {
             document.getElementById('addressListView').style.display = 'none';
             document.getElementById('addressFormView').style.display = 'block';
             document.getElementById('modalTitle').innerText = 'Tambah Alamat Baru';
+            
             if (!map) {
                 map = L.map('mapContainer').setView([-6.238270, 106.975573], 13);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
                 marker = L.marker([-6.238270, 106.975573], { draggable: true }).addTo(map);
+                
+                // Coba dapatkan lokasi pengguna otomatis dengan Geolocation API
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        let lat = position.coords.latitude;
+                        let lon = position.coords.longitude;
+                        map.setView([lat, lon], 16);
+                        marker.setLatLng([lat, lon]);
+                        
+                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                        .then(res => res.json())
+                        .then(data => { document.getElementById('formDetail').value = data.display_name; });
+                    }, function(error) {
+                        console.log("Akses lokasi ditolak atau gagal.");
+                    });
+                }
+
                 marker.on('dragend', function(e) {
                     let pos = marker.getLatLng();
-                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.lat}&lon=${pos.lng}`).then(res => res.json()).then(data => { document.getElementById('formDetail').value = data.display_name; });
+                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.lat}&lon=${pos.lng}`)
+                    .then(res => res.json())
+                    .then(data => { document.getElementById('formDetail').value = data.display_name; });
                 });
             }
             setTimeout(() => { map.invalidateSize(); }, 300);
         }
-        document.getElementById('mapSearchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${this.value}&limit=1`).then(res => res.json()).then(data => {
+
+        let searchTimeout;
+        document.getElementById('mapSearchInput').addEventListener('input', function(e) {
+            clearTimeout(searchTimeout);
+            let query = this.value.trim();
+            let suggestionsBox = document.getElementById('searchSuggestions');
+            
+            if (query.length < 3) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+
+            // Gunakan Debounce agar tidak spam API terlalu cepat (tunggu 500ms setelah selesai mengetik)
+            searchTimeout = setTimeout(() => {
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`)
+                .then(res => res.json())
+                .then(data => {
+                    suggestionsBox.innerHTML = '';
                     if (data.length > 0) {
-                        let lat = data[0].lat; let lon = data[0].lon;
-                        map.setView([lat, lon], 16); marker.setLatLng([lat, lon]); document.getElementById('formDetail').value = data[0].display_name;
-                    } else { showAlert("Lokasi tidak ditemukan!"); }
+                        data.forEach(item => {
+                            let div = document.createElement('div');
+                            div.className = 'suggestion-item';
+                            div.innerText = item.display_name;
+                            div.onclick = function() {
+                                let lat = parseFloat(item.lat);
+                                let lon = parseFloat(item.lon);
+                                map.setView([lat, lon], 16);
+                                marker.setLatLng([lat, lon]);
+                                document.getElementById('formDetail').value = item.display_name;
+                                document.getElementById('mapSearchInput').value = item.display_name;
+                                suggestionsBox.style.display = 'none';
+                            };
+                            suggestionsBox.appendChild(div);
+                        });
+                        suggestionsBox.style.display = 'block';
+                    } else {
+                        suggestionsBox.innerHTML = '<div class="suggestion-item" style="color:red; text-align:center;">Alamat tidak ditemukan</div>';
+                        suggestionsBox.style.display = 'block';
+                    }
                 });
+            }, 500); 
+        });
+
+        // Sembunyikan daftar pencarian jika mengklik di luar area input
+        document.addEventListener('click', function(e) {
+            let searchInput = document.getElementById('mapSearchInput');
+            let suggestionsBox = document.getElementById('searchSuggestions');
+            if (e.target !== searchInput && e.target !== suggestionsBox && !suggestionsBox.contains(e.target)) {
+                suggestionsBox.style.display = 'none';
             }
         });
+
         function saveNewAddress() {
             const name = document.getElementById('formName').value, phone = document.getElementById('formPhone').value, detail = document.getElementById('formDetail').value;
             if (!name || !phone || !detail) { showAlert("Harap lengkapi semua data alamat!"); return; }
@@ -596,6 +658,7 @@ $userEmail = $_SESSION['user_email'] ?? '';
             addresses.push({ id: newId, name: name, phone: phone, address: detail });
             localStorage.setItem('mountsterAddresses', JSON.stringify(addresses));
             document.getElementById('formName').value = ""; document.getElementById('formPhone').value = ""; document.getElementById('formDetail').value = "";
+            document.getElementById('mapSearchInput').value = "";
             selectAddress(newId);
         }
 
@@ -617,31 +680,26 @@ $userEmail = $_SESSION['user_email'] ?? '';
 
         // QRIS Logic
         function renderQrisWaitingState() {
-            const isLocalhostHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-            const networkHint = isLocalhostHost ? `<p class="qris-subtext" style="margin-top:12px; color:#d9534f;">Buka website ini memakai IP LAN yang sama supaya QR bisa discan dari HP lain.</p>` : `<p class="qris-subtext" style="margin-top:12px;">Akses dari HP: ${currentServerBaseUrl || getApiBaseUrl()}</p>`;
-
             document.getElementById('qrisModalBody').innerHTML = `
-                <div class="qris-chip"><span class="qris-chip-dot"></span>Menunggu Pembayaran</div>
-                <p class="qris-amount">${formatRupiah(currentQrisAmount)}</p>
-                <div class="qris-code-wrap"><div id="qrisCode"></div></div>
-                <p class="qris-subtext">Scan QR ini dengan kamera HP Anda. Pembayaran otomatis ter-trigger saat halaman scan terbuka di HP.</p>
+                <div class="qris-chip" style="margin-bottom: 10px;"><span class="qris-chip-dot"></span>Menunggu Pembayaran</div>
+                <p class="qris-amount" style="font-size: 32px; color: #1b4332; margin-bottom: 20px;">${formatRupiah(currentQrisAmount)}</p>
+                <div class="qris-code-wrap" style="cursor: pointer;" onclick="window.open('${currentQrisPaymentUrl}', '_blank')" title="Klik untuk simulasi bayar">
+                    <div id="qrisCode"></div>
+                </div>
+                <p class="qris-subtext">Scan QR ini dengan kamera HP Anda.<br>Pembayaran otomatis ter-trigger saat<br>halaman scan terbuka di HP.</p>
                 <div class="qris-meta">
                     <div class="qris-meta-row"><span>Order ID</span><span id="qrisOrderIdText">${currentQrisOrderId}</span></div>
                     <div class="qris-meta-row"><span>Status</span><span id="qrisStatusText">Menunggu pembayaran</span></div>
                     <div class="qris-meta-row"><span>Berlaku sampai</span><span id="qrisExpiryText">10:00</span></div>
                 </div>
-                ${networkHint}
-                <a href="${currentQrisPaymentUrl}" target="_blank" style="display:block; margin-top:14px; color:var(--primary); font-size:13px; font-weight:700; word-break:break-word;">Buka link hasil scan</a>
             `;
-
             const qrisCodeEl = document.getElementById('qrisCode');
             if (qrisCodeEl) {
                 qrisCodeEl.innerHTML = '';
-                if (typeof QRCode === 'function') new QRCode(qrisCodeEl, { text: currentQrisPaymentUrl, width: 200, height: 200 });
+                new QRCode(qrisCodeEl, { text: currentQrisPaymentUrl, width: 200, height: 200 });
             }
         }
         function showQrisLoadingState() { document.getElementById('qrisModalBody').innerHTML = `<div class="qris-chip"><span class="qris-chip-dot"></span>Mempersiapkan QR Demo</div><p class="qris-amount">${formatRupiah(currentQrisAmount)}</p><div class="qris-loading"></div>`; }
-        function showQrisErrorState(msg) { document.getElementById('qrisModalBody').innerHTML = `<div class="qris-chip"><span class="qris-chip-dot" style="background:#d9534f;"></span>QRIS Belum Siap</div><p class="qris-amount">${formatRupiah(currentQrisAmount)}</p><p class="qris-subtext">${msg}</p>`; }
         function startQrisExpiryCountdown() { updateQrisExpiryText(); qrisExpiryTimer = setInterval(updateQrisExpiryText, 1000); }
         function updateQrisExpiryText() {
             const expiryEl = document.getElementById('qrisExpiryText'); const statusEl = document.getElementById('qrisStatusText');
@@ -655,18 +713,18 @@ $userEmail = $_SESSION['user_email'] ?? '';
             const totalSeconds = Math.floor(remainingMs / 1000);
             expiryEl.innerText = `${String(Math.floor(totalSeconds / 60)).padStart(2, '0')}:${String(totalSeconds % 60).padStart(2, '0')}`;
         }
-        async function startQrisStatusPolling() { await checkPaymentStatus(); qrisStatusPollingTimer = setInterval(checkPaymentStatus, 3000); }
-        async function checkPaymentStatus() {
+        
+        function startQrisStatusPolling() { checkPaymentStatus(); qrisStatusPollingTimer = setInterval(checkPaymentStatus, 2000); }
+        function checkPaymentStatus() {
             if (!currentQrisOrderId) return;
-            try {
-                const response = await fetch(`${getApiBaseUrl()}/api/payment/status?orderId=${encodeURIComponent(currentQrisOrderId)}`, { cache: 'no-store' });
-                if (!response.ok) return;
-                const data = await response.json();
-                const statusEl = document.getElementById('qrisStatusText');
-                if (statusEl) statusEl.innerText = data.status === 'paid' ? 'Pembayaran terdeteksi' : (data.status === 'expired' ? 'QR expired' : 'Menunggu pembayaran');
-                if (data.status === 'paid') { stopQrisRealtimeChecks(); showQrisSuccess(); }
-                else if (data.status === 'expired') { stopQrisRealtimeChecks(); }
-            } catch (error) { }
+            const status = localStorage.getItem('payment_status_' + currentQrisOrderId);
+            const statusEl = document.getElementById('qrisStatusText');
+            if (status === 'paid') {
+                if (statusEl) statusEl.innerText = 'Pembayaran terdeteksi';
+                stopQrisRealtimeChecks(); 
+                localStorage.removeItem('payment_status_' + currentQrisOrderId);
+                showQrisSuccess(); 
+            }
         }
         function stopQrisRealtimeChecks() {
             if (qrisStatusPollingTimer) clearInterval(qrisStatusPollingTimer);
@@ -674,41 +732,41 @@ $userEmail = $_SESSION['user_email'] ?? '';
             qrisStatusPollingTimer = null; qrisExpiryTimer = null;
         }
 
-        async function openQrisModal() {
-            currentQrisOrderId = qrisTransactionId;
-            currentQrisAmount = getGrandTotalValue();
-            currentQrisPaymentToken = createDemoPaymentToken();
-            currentQrisExpiryAt = Date.now() + (10 * 60 * 1000);
+       function openQrisModal() {
+    currentQrisOrderId = qrisTransactionId;
+    currentQrisAmount = getGrandTotalValue();
+    currentQrisExpiryAt = Date.now() + (10 * 60 * 1000);
+    
+    // Perbaikan: Ubah 'orderId=' menjadi 'id=' agar cocok dengan payment.php
+    currentQrisPaymentUrl = `${window.location.origin}/payment.php?id=${encodeURIComponent(currentQrisOrderId)}&amount=${encodeURIComponent(currentQrisAmount)}`;
+    
+    document.getElementById('qrisModal').classList.add('active');
+    showQrisLoadingState();
 
-            document.getElementById('qrisModal').classList.add('active');
-            showQrisLoadingState();
-
-            try {
-                await initializeServerBaseUrl();
-                currentQrisPaymentUrl = `${currentServerBaseUrl || getApiBaseUrl()}/api/payment/confirm-direct?orderId=${encodeURIComponent(currentQrisOrderId)}&token=${encodeURIComponent(currentQrisPaymentToken)}&amount=${encodeURIComponent(currentQrisAmount)}`;
-                renderQrisWaitingState();
-                startQrisExpiryCountdown();
-                startQrisStatusPolling();
-            } catch (error) { showQrisErrorState('QRIS gagal dimuat.'); }
-        }
+    setTimeout(() => {
+        renderQrisWaitingState();
+        startQrisExpiryCountdown();
+        startQrisStatusPolling();
+    }, 500);
+}
         function closeQrisModal() {
             if (qrisCountdownTimer) clearInterval(qrisCountdownTimer);
             stopQrisRealtimeChecks();
             currentQrisOrderId = null; currentQrisExpiryAt = null; currentQrisPaymentToken = null; currentQrisAmount = 0; currentQrisPaymentUrl = '';
             document.getElementById('qrisModal').classList.remove('active');
-
-            // --- REDIRECT KE ORDER.PHP SAAT MODAL QRIS DICLOSE ---
             window.location.href = 'order.php';
         }
 
-        // --- MANAJEMEN ORDER ---
         function normalizeOrderItems(items) {
             return (Array.isArray(items) ? items : []).map(item => ({
                 id: item?.id ?? Date.now(), name: item?.name || 'Produk Mountster', price: item?.price || 'Rp0', image: getProductImage(item?.name || ''), qty: Number.isFinite(Number(item?.qty)) && Number(item.qty) > 0 ? Number(item.qty) : 1
             }));
         }
         function formatOrderDateRange(isoString) {
-            const date = new Date(isoString); const nextDate = new Date(date); nextDate.setDate(nextDate.getDate() + 1);
+            // Karena sudah ditambahkan input durasi, waktu tibanya tetap tapi batas pengembaliannya nambah
+            const date = new Date(isoString); 
+            const nextDate = new Date(date); 
+            nextDate.setDate(nextDate.getDate() + rentalDays);
             const options = { day: 'numeric', month: 'short' };
             return `${date.toLocaleDateString('id-ID', options)} - ${nextDate.toLocaleDateString('id-ID', options)}`;
         }
@@ -727,36 +785,44 @@ $userEmail = $_SESSION['user_email'] ?? '';
             }
         }
 
-        function savePendingQrisOrder() {
-            const activeAddr = addresses.find(a => a.id == selectedAddressId) || null;
-            const normalizedItems = normalizeOrderItems(cartToCheckout);
-            const createdAt = new Date().toISOString();
-            const orderPayload = {
-                id: qrisTransactionId, paymentMethod: 'QRIS Demo Payment', status: 'Belum Dibayar',
-                createdAt, estimatedArrival: formatOrderDateRange(createdAt), deadline: Date.now() + (24 * 60 * 60 * 1000),
-                items: normalizedItems, productName: normalizedItems[0]?.name || 'Produk Mountster', productImage: normalizedItems[0]?.image || '', productPrice: normalizedItems[0]?.price || 'Rp0',
-                address: activeAddr, totalItemPrice, shippingCost: parseInt(document.getElementById('shippingSelect').value),
-                grandTotal: getGrandTotalValue(), voucherCode: appliedVoucher ? appliedVoucher.code : null, discountAmount: discountAmount
-            };
+       function savePendingQrisOrder() {
+    const activeAddr = addresses.find(a => a.id == selectedAddressId) || null;
+    const normalizedItems = normalizeOrderItems(cartToCheckout);
+    const createdAt = new Date().toISOString();
+    
+    // Perbaikan: Tambahkan field yang dibutuhkan oleh payment.php
+    const orderPayload = {
+        id: qrisTransactionId, 
+        paymentMethod: 'QRIS', 
+        paymentName: 'QRIS Demo Payment', // Dibaca oleh payment.php
+        isVA: false,                      // Dibaca oleh payment.php
+        status: 'Belum Dibayar',
+        createdAt, 
+        estimatedArrival: formatOrderDateRange(createdAt), 
+        deadline: Date.now() + (24 * 60 * 60 * 1000),
+        items: normalizedItems, 
+        productName: normalizedItems[0]?.name || 'Produk Mountster', 
+        productImage: normalizedItems[0]?.image || '', 
+        productPrice: normalizedItems[0]?.price || 'Rp0',
+        address: activeAddr, 
+        totalItemPrice, 
+        shippingCost: parseInt(document.getElementById('shippingSelect').value),
+        shippingType: document.getElementById('shippingSelect').value === '0' ? 'pickup' : 'delivery', // Dibaca oleh payment.php
+        grandTotal: getGrandTotalValue(), 
+        totalPay: getGrandTotalValue(), // Dibaca oleh payment.php
+        voucherCode: appliedVoucher ? appliedVoucher.code : null, 
+        discountAmount: discountAmount, 
+        rentalDays: rentalDays
+    };
 
-            localStorage.setItem('mountsterLastOrder', JSON.stringify(orderPayload));
-            const existingOrders = JSON.parse(localStorage.getItem('mountsterOrders') || '[]');
-            existingOrders.unshift(orderPayload);
-            localStorage.setItem('mountsterOrders', JSON.stringify(existingOrders));
-            
-            markVoucherAsUsed();
-            if (!directBuy) localStorage.removeItem('mountsterCart');
-        }
-
-        function updateOrderStatusToPaid(orderId) {
-            const existingOrders = JSON.parse(localStorage.getItem('mountsterOrders') || '[]');
-            const idx = existingOrders.findIndex(o => String(o.id) === String(orderId));
-            if (idx !== -1) {
-                existingOrders[idx].status = 'Dikemas'; existingOrders[idx].paidAt = new Date().toISOString();
-                localStorage.setItem('mountsterOrders', JSON.stringify(existingOrders));
-                localStorage.setItem('mountsterLastOrder', JSON.stringify(existingOrders[idx]));
-            }
-        }
+    localStorage.setItem('mountsterLastOrder', JSON.stringify(orderPayload));
+    const existingOrders = JSON.parse(localStorage.getItem('mountsterOrders') || '[]');
+    existingOrders.unshift(orderPayload);
+    localStorage.setItem('mountsterOrders', JSON.stringify(existingOrders));
+    
+    markVoucherAsUsed();
+    if (!directBuy) localStorage.removeItem('mountsterCart');
+}
 
         function saveSuccessfulOrder() {
             const activeAddr = addresses.find(a => a.id == selectedAddressId) || null;
@@ -767,7 +833,7 @@ $userEmail = $_SESSION['user_email'] ?? '';
                 createdAt, estimatedArrival: formatOrderDateRange(createdAt), items: normalizedItems,
                 productName: normalizedItems[0]?.name || 'Produk Mountster', productImage: normalizedItems[0]?.image || '', productPrice: normalizedItems[0]?.price || 'Rp0',
                 address: activeAddr, totalItemPrice, shippingCost: parseInt(document.getElementById('shippingSelect').value),
-                grandTotal: getGrandTotalValue(), voucherCode: appliedVoucher ? appliedVoucher.code : null, discountAmount: discountAmount
+                grandTotal: getGrandTotalValue(), voucherCode: appliedVoucher ? appliedVoucher.code : null, discountAmount: discountAmount, rentalDays: rentalDays
             };
 
             localStorage.setItem('mountsterLastOrder', JSON.stringify(orderPayload));
@@ -809,7 +875,16 @@ $userEmail = $_SESSION['user_email'] ?? '';
 
         function showQrisSuccess() {
             stopQrisRealtimeChecks();
-            updateOrderStatusToPaid(currentQrisOrderId || qrisTransactionId);
+            
+            // Update status yang ada di localStorage
+            let existingOrders = JSON.parse(localStorage.getItem('mountsterOrders')) || [];
+            const idx = existingOrders.findIndex(o => String(o.id) === String(currentQrisOrderId || qrisTransactionId));
+            if (idx !== -1) {
+                existingOrders[idx].status = 'Dikemas'; 
+                existingOrders[idx].paidAt = new Date().toISOString();
+                localStorage.setItem('mountsterOrders', JSON.stringify(existingOrders));
+            }
+            
             renderPaymentSuccessModal('Pembayaran Berhasil!', 'Pesananmu sedang diproses. Terima kasih!');
         }
 
@@ -820,6 +895,12 @@ $userEmail = $_SESSION['user_email'] ?? '';
 
         // --- 7. PROSES BAYAR ---
         function processPayment() {
+            // TAMBAHAN: Cek verifikasi
+            if (localStorage.getItem(KEY_VERIF) !== 'true') {
+                document.getElementById('verifAlertModal').classList.add('active');
+                return;
+            }
+
             if (!selectedAddressId) { showAlert('Harap isi alamat pengiriman terlebih dahulu sebelum membayar!'); return; }
             if (!finalPaymentMethod) { showAlert('Harap pilih metode pembayaran terlebih dahulu!'); return; }
 
